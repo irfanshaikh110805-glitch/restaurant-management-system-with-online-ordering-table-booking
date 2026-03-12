@@ -1,0 +1,124 @@
+# Performance & Security Headers for Netlify/Vercel deployment
+# Optimized for 100% Performance Score
+
+# Root - HTML with preconnect hints
+/
+  Cache-Control: public, max-age=0, must-revalidate
+  Link: <https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://www.googletagmanager.com https://connect.facebook.net https://checkout.razorpay.com https://*.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://*.razorpay.com; frame-src 'self' https://www.google.com https://www.openstreetmap.org https://api.razorpay.com; object-src 'none'; base-uri 'self'; form-action 'self';
+
+# Static assets - aggressive caching with immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# JavaScript files
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/javascript; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+# CSS files
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: text/css; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+# Images - long-term caching
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/jpeg
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/png
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/webp
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/svg+xml
+
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: image/gif
+
+# Fonts - long-term caching with CORS
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff2
+  Access-Control-Allow-Origin: *
+
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/woff
+  Access-Control-Allow-Origin: *
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: font/ttf
+  Access-Control-Allow-Origin: *
+
+# HTML - no caching
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+
+# Service Worker - no caching
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+
+# Manifest files
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+# Sitemap
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+# Robots
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
+# Offline page
+/offline.html
+  Cache-Control: public, max-age=86400
+
+# API routes - no caching
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0

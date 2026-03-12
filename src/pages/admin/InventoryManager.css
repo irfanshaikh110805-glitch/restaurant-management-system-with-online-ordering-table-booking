@@ -1,0 +1,230 @@
+/* Inventory Manager Styles */
+
+.inventory-manager {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.inventory-header h1 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+}
+
+/* Summary Cards */
+.inventory-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.summary-card {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.summary-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.summary-card.total .summary-icon {
+  background: linear-gradient(135deg, #2196F3, #03A9F4);
+  color: white;
+}
+
+.summary-card.low-stock .summary-icon {
+  background: linear-gradient(135deg, #FF9800, #FFC107);
+  color: white;
+}
+
+.summary-card.out-stock .summary-icon {
+  background: linear-gradient(135deg, #F44336, #E91E63);
+  color: white;
+}
+
+.summary-card.in-stock .summary-icon {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+}
+
+.summary-content {
+  flex: 1;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+/* Inventory Table */
+.inventory-table-container {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+  overflow: hidden;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table thead {
+  background: var(--bg-tertiary);
+}
+
+.inventory-table th {
+  text-align: left;
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.inventory-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.inventory-table tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+.inventory-table tbody tr.stock-out {
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.inventory-table tbody tr.stock-low {
+  background: rgba(255, 152, 0, 0.05);
+}
+
+.item-name {
+  font-weight: 600;
+}
+
+.item-price {
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.quantity-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.quantity {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.threshold {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.stock-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.btn-update {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-update:hover {
+  background: var(--secondary-color);
+}
+
+/* Stock Update Form */
+.stock-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.item-info {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.item-info h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.item-info p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin: 0.25rem 0;
+}
+
+@media (max-width: 768px) {
+  .inventory-manager {
+    padding: 1rem;
+  }
+
+  .inventory-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-value {
+    font-size: 1.5rem;
+  }
+
+  .inventory-table {
+    font-size: 0.875rem;
+  }
+
+  .inventory-table th,
+  .inventory-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}

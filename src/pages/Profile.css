@@ -1,0 +1,232 @@
+.profile-page {
+  min-height: 100vh;
+  padding: var(--space-3xl) 0;
+}
+
+.profile-page h1 {
+  margin-bottom: var(--space-2xl);
+}
+
+.profile-card {
+  margin-bottom: var(--space-2xl);
+  padding: var(--space-2xl);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-2xl);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border-radius: 50%;
+}
+
+.profile-details h2 {
+  margin-bottom: var(--space-xs);
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-xl);
+}
+
+.info-item {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.info-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(217, 119, 6, 0.2);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  padding: 8px;
+}
+
+.info-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.tabs {
+display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  min-height: 44px;
+}
+
+.tab:hover {
+  color: var(--primary-light);
+}
+
+.tab.active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  animation: fadeIn var(--transition-base);
+}
+
+.bookings-list,
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.booking-item,
+.order-item {
+  padding: var(--space-xl);
+}
+
+.booking-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.booking-info h4 {
+  margin-bottom: var(--space-xs);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-status {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.order-item-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.order-total {
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: right;
+  font-size: 1.125rem;
+  color: var(--primary-light);
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    overflow-x: auto;
+  }
+
+  .booking-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Order Footer */
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-color);
+}
+
+.order-total-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.payment-method-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.order-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.order-actions .btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}

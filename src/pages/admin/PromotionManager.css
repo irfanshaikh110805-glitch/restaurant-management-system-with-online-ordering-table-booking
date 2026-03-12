@@ -1,0 +1,213 @@
+/* Promotion Manager Styles */
+
+.promotion-manager {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.manager-header h1 {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.promo-card {
+  background: var(--bg-secondary);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.promo-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.promo-card.inactive {
+  opacity: 0.6;
+}
+
+.promo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.promo-code-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.promo-code-display h3 {
+  font-family: monospace;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.copy-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: var(--hover-bg);
+  color: var(--primary-color);
+}
+
+.promo-description {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.promo-details {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-item .label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.detail-item .value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.tier-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tier-bronze { background: #CD7F32; color: white; }
+.tier-silver { background: #C0C0C0; color: #333; }
+.tier-gold { background: #FFD700; color: #333; }
+.tier-platinum { background: #E5E4E2; color: #333; }
+
+.promo-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-edit,
+.btn-delete {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-edit:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-delete {
+  background: #F44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #E53935;
+}
+
+/* Promo Form */
+.promo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .promotion-manager {
+    padding: 1rem;
+  }
+
+  .manager-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .manager-header button {
+    width: 100%;
+  }
+
+  .promotions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .promo-actions {
+    flex-direction: column;
+  }
+}

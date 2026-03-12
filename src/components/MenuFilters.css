@@ -1,0 +1,193 @@
+/* Menu Filters Styles */
+
+.menu-filters {
+  position: relative;
+}
+
+.filter-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.filter-toggle-btn:hover {
+  border-color: var(--primary-color);
+}
+
+.filter-count {
+  background: var(--primary-color);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.filters-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 998;
+}
+
+.filters-panel {
+  position: fixed;
+  top: auto;
+  right: 1rem;
+  width: 350px;
+  max-height: 80vh;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 999;
+  display: none;
+  flex-direction: column;
+  animation: slideDown 0.2s ease;
+}
+
+.filters-panel.open {
+  display: flex;
+}
+
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filters-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.filters-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clear-filters {
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.clear-filters:hover {
+  background: var(--primary-color-light);
+}
+
+.close-filters {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.close-filters:hover {
+  background: var(--hover-bg);
+}
+
+.filters-content {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-option {
+  padding: 0.75rem 1rem;
+  background: var(--bg-tertiary);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.filter-option:hover {
+  background: var(--hover-bg);
+}
+
+.filter-option.active {
+  background: var(--primary-color-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.filter-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 640px) {
+  .filters-panel {
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 90vh;
+    border-radius: 16px 16px 0 0;
+  }
+}

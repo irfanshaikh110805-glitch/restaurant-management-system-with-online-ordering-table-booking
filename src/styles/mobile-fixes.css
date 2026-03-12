@@ -1,0 +1,1327 @@
+
+/* ============================================
+   COMPREHENSIVE MOBILE FIXES
+   Applied: 2026-02-16T16:32:15.242Z
+   ============================================ */
+
+/* ============================================
+   1. NAVBAR MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Ensure navbar content doesn't overflow */
+  .navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+
+  /* Compact logo for mobile */
+  .navbar-logo {
+    max-width: 140px;
+    padding: 0.375rem 0.5rem;
+  }
+
+  .navbar-logo .logo-text {
+    font-size: 0.75rem;
+    max-width: 100px;
+  }
+
+  .logo-icon {
+    font-size: 1.25rem;
+  }
+
+  /* Ensure navbar actions are visible and properly sized */
+  .navbar-actions {
+    display: flex !important;
+    align-items: center;
+    gap: 0.375rem;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+  }
+
+  /* Cart button mobile styling */
+  .cart-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  /* User menu mobile styling */
+  .navbar-actions .user-menu {
+    display: flex !important;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  .navbar-actions .user-menu .btn {
+    padding: 0.375rem;
+    min-width: 36px;
+    height: 36px;
+    width: auto;
+  }
+
+  .navbar-actions .user-menu .btn span {
+    display: none;
+  }
+
+  /* Login button mobile styling */
+  .navbar-actions > .btn,
+  .navbar-actions > div > .btn {
+    padding: 0.375rem 0.75rem;
+    min-height: 36px;
+    height: 36px;
+    font-size: 0.8125rem;
+    width: auto;
+    white-space: nowrap;
+  }
+
+  /* Mobile toggle button */
+  .mobile-toggle {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+}
+
+/* ============================================
+   2. ADMIN DASHBOARD MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    height: 100vh;
+    width: 280px;
+    z-index: var(--z-modal);
+    transition: left 0.3s ease;
+  }
+
+  .admin-sidebar.open {
+    left: 0;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .orders-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .orders-table {
+    min-width: 600px;
+  }
+
+  /* Card-based table view for mobile */
+  .orders-table.mobile-view {
+    min-width: 100%;
+  }
+
+  .orders-table.mobile-view thead {
+    display: none;
+  }
+
+  .orders-table.mobile-view tbody,
+  .orders-table.mobile-view tr,
+  .orders-table.mobile-view td {
+    display: block;
+    width: 100%;
+  }
+
+  .orders-table.mobile-view tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(55, 65, 81, 0.5);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .orders-table.mobile-view td {
+    padding: 0.5rem 0;
+    border: none;
+    text-align: right;
+  }
+
+  .orders-table.mobile-view td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .action-card {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   3. MENU PAGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .menu-header {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .menu-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .search-bar {
+    margin-top: 1rem;
+  }
+
+  .search-bar input {
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+
+  .category-filter {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    scrollbar-width: none;
+  }
+
+  .category-filter::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-btn {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .filter-label {
+    flex-shrink: 0;
+    font-size: 0.875rem;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .menu-card {
+    padding: 1rem;
+  }
+
+  .menu-card-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .menu-card-footer .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   4. CART PAGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .cart-page {
+    padding-bottom: 180px !important; /* Space for fixed checkout */
+  }
+
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .cart-item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cart-item-details {
+    width: 100%;
+  }
+
+  .cart-item-actions {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .quantity-controls {
+    flex-direction: row;
+  }
+
+  .quantity-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.25rem;
+  }
+
+  .quantity-value {
+    min-width: 44px;
+    font-size: 1.125rem;
+  }
+
+  .checkout-section {
+    position: fixed !important;
+    bottom: 64px !important; /* Above mobile bottom nav */
+    left: 0;
+    right: 0;
+    background: rgba(17, 24, 39, 0.98) !important;
+    backdrop-filter: blur(16px);
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 900 !important;
+    max-height: 50vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .checkout-section .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   5. BOOKING PAGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .booking-container {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-form {
+    padding: 1.5rem 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .time-slots {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .time-slot {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+
+  .booking-info {
+    position: static;
+    margin-top: 1rem;
+  }
+
+  /* Make date/time inputs mobile-friendly */
+  input[type="date"],
+  input[type="time"] {
+    font-size: 16px;
+    min-height: 44px;
+  }
+}
+
+/* ============================================
+   6. PROFILE PAGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  .profile-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    min-width: auto;
+    white-space: nowrap;
+  }
+
+  .order-card {
+    padding: 1rem;
+  }
+
+  .order-items {
+    flex-direction: column;
+  }
+
+  .order-item {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   7. SETTINGS PAGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-sidebar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    padding: 1rem 0;
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .settings-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .settings-nav-item {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .settings-section {
+    padding: 1rem;
+  }
+
+  .setting-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .toggle-switch {
+    align-self: flex-end;
+  }
+}
+
+/* ============================================
+   8. MODAL MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .modal-content {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-dark);
+    z-index: 10;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-dark);
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   9. FORM MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .form-control {
+    font-size: 16px; /* Prevent iOS zoom */
+    min-height: 44px;
+  }
+
+  select.form-control {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  textarea.form-control {
+    font-size: 16px;
+    min-height: 120px;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Form buttons should be full width */
+  .form-group .btn,
+  .auth-form .btn,
+  form .btn {
+    width: 100%;
+    min-height: 44px;
+    font-size: 1rem;
+  }
+
+  /* Navbar buttons should NOT be full width */
+  .navbar-actions .btn,
+  .navbar-actions .user-menu .btn {
+    width: auto !important;
+  }
+
+  .btn-sm {
+    min-height: 40px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ============================================
+   10. TABLE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  .data-table {
+    min-width: 600px;
+    font-size: 0.875rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Mobile card view option */
+  .data-table.card-view {
+    min-width: 100%;
+  }
+
+  .data-table.card-view thead {
+    display: none;
+  }
+
+  .data-table.card-view tbody,
+  .data-table.card-view tr,
+  .data-table.card-view td {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table.card-view tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(55, 65, 81, 0.5);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .data-table.card-view td {
+    padding: 0.5rem 0;
+    border: none;
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .data-table.card-view td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+/* ============================================
+   11. FOOTER MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .footer-section {
+    padding: 0;
+  }
+
+  .footer-links {
+    align-items: center;
+  }
+
+  .social-links {
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   12. HERO SECTION MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .hero {
+    min-height: 60vh;
+    padding: 3rem 0;
+  }
+
+  .hero-content {
+    padding: 2rem 1rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   13. CARD GRID MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .grid,
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .card-actions .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   14. PAGINATION MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .pagination {
+    gap: 0.25rem;
+  }
+
+  .pagination-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .pagination-info {
+    font-size: 0.875rem;
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ============================================
+   15. NOTIFICATION BELL MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .notification-dropdown {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: calc(100vh - 60px);
+    border-radius: 0;
+  }
+
+  .notification-item {
+    padding: 1rem;
+  }
+}
+
+/* ============================================
+   16. SEARCH BAR MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .search-bar {
+    width: 100%;
+  }
+
+  .search-bar input {
+    font-size: 16px;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+  }
+
+  .search-icon {
+    left: 1rem;
+  }
+}
+
+/* ============================================
+   17. BADGE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .badge {
+    font-size: 0.625rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* ============================================
+   18. EMPTY STATE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+
+  .empty-state-icon {
+    font-size: 3rem;
+  }
+
+  .empty-state h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ============================================
+   19. LOADING SPINNER MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+  }
+}
+
+/* ============================================
+   20. UTILITY CLASSES FOR MOBILE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .mobile-text-center {
+    text-align: center !important;
+  }
+
+  .mobile-flex-column {
+    flex-direction: column !important;
+  }
+
+  .mobile-no-padding {
+    padding: 0 !important;
+  }
+
+  .mobile-small-padding {
+    padding: 0.5rem !important;
+  }
+}
+
+/* Desktop only utilities */
+@media (min-width: 768px) {
+  .desktop-hidden {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   21. LANDSCAPE MOBILE FIXES
+   ============================================ */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .modal-content {
+    max-height: 90vh;
+  }
+
+  .navbar {
+    padding: 0.5rem 0;
+  }
+}
+
+/* ============================================
+   22. SAFE AREA INSETS (iOS Notch)
+   ============================================ */
+
+@supports (padding: env(safe-area-inset-left)) {
+  @media (max-width: 767px) {
+    .navbar-content,
+    .container,
+    .mobile-menu {
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .checkout-section,
+    .modal-footer {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* ============================================
+   23. PREVENT HORIZONTAL SCROLL
+   ============================================ */
+
+@media (max-width: 767px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* ============================================
+   24. IMPROVE TAP TARGETS
+   ============================================ */
+
+@media (max-width: 767px) {
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  .btn,
+  .tab,
+  .nav-link,
+  .mobile-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Increase padding for better tap targets */
+  .btn {
+    padding: 0.875rem 1.5rem;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   25. SMOOTH SCROLLING ON MOBILE
+   ============================================ */
+
+@media (max-width: 767px) {
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scrollable {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
+
+/* ============================================
+   26. LOYALTY PAGE VARIABLE FIXES
+   Loyalty.css uses non-standard var names
+   ============================================ */
+
+.loyalty-page {
+  --primary-color: var(--primary);
+  --secondary-color: var(--accent);
+  --text-primary: var(--text-primary);
+  --text-secondary: var(--text-secondary);
+  --bg-primary: var(--bg-darker);
+  --bg-secondary: rgba(31, 41, 55, 0.7);
+  --bg-tertiary: rgba(55, 65, 81, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --hover-bg: rgba(55, 65, 81, 0.6);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --success-color: var(--success);
+  --danger-color: var(--error);
+  --warning-color: var(--warning);
+  --primary-color-light: rgba(217, 119, 6, 0.15);
+  --font-heading: var(--font-display);
+}
+
+@media (max-width: 767px) {
+  .loyalty-page {
+    padding: 1rem 0;
+  }
+
+  .loyalty-header h1 {
+    font-size: 1.75rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tier-status-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tier-badge {
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  .points-value {
+    font-size: 2.5rem;
+  }
+
+  .loyalty-tabs {
+    gap: 0.5rem;
+    border-radius: 10px;
+    padding: 0.375rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .loyalty-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tab-content {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .tier-perks ul {
+    grid-template-columns: 1fr;
+  }
+
+  .rewards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reward-card {
+    padding: 1.25rem;
+  }
+
+  .history-item {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .referral-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .code {
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .referral-code-section {
+    gap: 1.5rem;
+  }
+}
+
+/* ============================================
+   27. PROFILE PAGE ENHANCED TAB STYLES
+   ============================================ */
+
+@media (max-width: 767px) {
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    flex-wrap: nowrap;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 0.875rem 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .order-status {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .profile-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ============================================
+   28. FOOTER MOBILE IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .footer {
+    margin-top: 1rem;
+    padding: 2rem 0 calc(1.5rem + 70px); /* extra bottom for bottom nav */
+  }
+
+  .footer-bottom {
+    padding-bottom: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .footer-contact li {
+    text-align: left;
+  }
+}
+
+/* ============================================
+   29. CART PAGE - STICKY CTA BUTTON POLISH
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Handled in section 4 above - removed duplicate */
+}
+
+/* ============================================
+   30. HOME PAGE SECTION IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .hero-content {
+    padding: 2.5rem 1rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .testimonial-card {
+    padding: 1.25rem;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* Section spacing */
+  .section {
+    padding: 2rem 0;
+  }
+
+  .features-section {
+    padding: 2rem 0;
+  }
+}
+
+/* ============================================
+   31. BOOKING PAGE IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .booking-steps {
+    padding: 0 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .step span {
+    font-size: 0.6875rem;
+  }
+
+  .step-line {
+    margin: 0 0.25rem;
+    margin-bottom: 28px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    min-height: 48px;
+  }
+
+  .time-slots {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ============================================
+   32. MENU PAGE MODAL IMPROVEMENTS ON MOBILE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .menu-detail-modal {
+    overflow-y: auto;
+    max-height: 88vh;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-image {
+    height: 240px;
+  }
+
+  .modal-footer-section {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-dark);
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0 -1.5rem -1.5rem;
+    border-radius: 0;
+  }
+
+  .modal-footer-section .btn {
+    max-width: 100%;
+    min-height: 48px;
+  }
+}
+
+/* ============================================
+   33. ORDER TRACKING PAGE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .tracking-steps {
+    padding: 0 0.5rem;
+  }
+
+  .tracking-step {
+    gap: 0.75rem;
+  }
+}
+
+/* ============================================
+   34. GLOBAL BUTTON SIZE ENFORCEMENT
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Ensure ALL buttons are at least 44px tall for accessibility */
+  .btn:not(.btn-sm) {
+    min-height: 48px;
+    font-size: 0.9375rem;
+  }
+
+  .btn-sm {
+    min-height: 40px;
+  }
+
+  /* Fix quantity buttons */
+  .quantity-btn {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  /* Fix icon action buttons */
+  .favorite-btn,
+  .quick-view-btn {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+/* ============================================
+   35. ADMIN MOBILE SIDEBAR TOGGLE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .admin-sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: rgba(217, 119, 6, 0.15);
+    border: 1px solid rgba(217, 119, 6, 0.3);
+    border-radius: var(--radius-md);
+    color: var(--primary-light);
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+
+  /* Admin on mobile: no bottom nav */
+  .admin-layout ~ .mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   36. SEARCH BAR IMPROVEMENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .search-bar {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .search-bar input,
+  .search-bar .form-control {
+    font-size: 16px !important; /* Prevent iOS zoom - critical */
+    height: 48px;
+    border-radius: var(--radius-md);
+    padding-right: 1rem;
+  }
+}
+
+/* ============================================
+   37. RESPONSIVE TABLE FOR ORDER HISTORY
+   ============================================ */
+
+@media (max-width: 767px) {
+  .orders-list .booking-item,
+  .orders-list .order-item {
+    padding: 1rem;
+  }
+
+  .order-item-row {
+    font-size: 0.8125rem;
+  }
+}
+

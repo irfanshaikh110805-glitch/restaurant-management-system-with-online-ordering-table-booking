@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Mobile Optimization -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Hotel Everest" />
+    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f4f6" media="(prefers-color-scheme: light)" />
+
+    <!-- Format Detection -->
+    <meta name="format-detection" content="telephone=yes" />
+    <meta name="format-detection" content="address=yes" />
+
+    <!-- SEO -->
+    <meta
+      name="description"
+      content="Hotel Everest Family Restaurant — Authentic Indian restaurant with online table booking, pre-ordering, and home delivery. Experience the finest flavors of India."
+    />
+    <meta
+      name="keywords"
+      content="Hotel Everest Family Restaurant, Indian restaurant, Vijayapura, MG Road, biryani, kebabs, table booking"
+    />
+
+    <!-- Open Graph -->
+    <meta
+      property="og:title"
+      content="Hotel Everest Family Restaurant — Authentic Indian Restaurant in Vijayapura"
+    />
+    <meta
+      property="og:description"
+      content="Experience authentic Indian cuisine at Hotel Everest Family Restaurant on MG Road, Vijayapura. Reserve a table, browse our menu, and order your favorites."
+    />
+    <meta property="og:type" content="restaurant" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:url" content="https://hoteleverestfamilyrestaurant.example.com" />
+    <meta property="og:site_name" content="Hotel Everest Family Restaurant" />
+    <meta
+      property="og:image"
+      content="https://hoteleverestfamilyrestaurant.example.com/og-image.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Hotel Everest Family Restaurant — Authentic Indian Restaurant"
+    />
+    <meta
+      name="twitter:description"
+      content="Experience authentic Indian cuisine with online ordering, table booking, and home delivery."
+    />
+    <meta
+      name="twitter:image"
+      content="https://hoteleverestfamilyrestaurant.example.com/og-image.jpg"
+    />
+
+    <!-- Performance: Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Resource hints for performance -->
+    <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+
+    <!-- Remove Google Tag Manager for performance - add only if needed -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_ID"></script> -->
+
+    <!-- Critical CSS inline - optimized and minimal -->
+    <style>
+      /* Critical CSS for instant render */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        background: #111827;
+        color: #f9fafb;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: 0;
+        background: none;
+      }
+      /* Prevent layout shift */
+      .hero {
+        min-height: 60vh;
+        position: relative;
+        background: #111827;
+      }
+      .navbar {
+        height: 80px;
+        background: rgba(17, 24, 39, 0.95);
+      }
+      /* Skeleton loader */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(55, 65, 81, 0.5) 25%,
+          rgba(75, 85, 99, 0.5) 50%,
+          rgba(55, 65, 81, 0.5) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      /* Prevent CLS */
+      .hero-title {
+        min-height: 120px;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+      .container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+    </style>
+
+    <!-- Optimized font loading - only essential weights with font-display swap -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      "
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Restaurant",
+        "name": "Hotel Everest Family Restaurant",
+        "description": "Family-friendly Indian restaurant on MG Road in Vijayapura with table booking, takeaway, and home delivery.",
+        "servesCuisine": "Indian",
+        "priceRange": "₹₹",
+        "telephone": "+91 98765 43210",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "MG Road",
+          "addressLocality": "Vijayapura",
+          "addressRegion": "Karnataka",
+          "postalCode": "586101",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 16.8251,
+          "longitude": 75.71
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "11:00",
+            "closes": "23:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Saturday", "Sunday"],
+            "opens": "10:00",
+            "closes": "23:59"
+          }
+        ],
+        "acceptsReservations": true,
+        "url": "https://hoteleverestfamilyrestaurant.example.com"
+      }
+    </script>
+    <title>Hotel Everest Family Restaurant — Authentic Indian Restaurant</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Razorpay Checkout SDK - Load on demand -->
+    <script>
+      // Load Razorpay only when needed
+      window.loadRazorpay = function () {
+        return new Promise((resolve, reject) => {
+          if (window.Razorpay) {
+            resolve(window.Razorpay)
+            return
+          }
+          const script = document.createElement('script')
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+          script.async = true
+          script.onload = () => resolve(window.Razorpay)
+          script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+    </script>
+  </body>
+</html>

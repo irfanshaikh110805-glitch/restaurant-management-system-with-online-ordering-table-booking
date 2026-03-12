@@ -1,0 +1,629 @@
+/* ============================================
+   MOBILE-FIRST RESPONSIVE SYSTEM
+   Hotel Everest Family Restaurant
+   ============================================ */
+
+/* ============================================
+   1. RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+/* Base (Mobile First - 320px+) */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Fluid Typography with clamp() */
+h1 {
+  font-size: clamp(1.75rem, 4vw + 1rem, 3.5rem);
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw + 0.75rem, 2.5rem);
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2.5vw + 0.5rem, 2rem);
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: clamp(1.125rem, 2vw + 0.5rem, 1.5rem);
+}
+
+p, li {
+  font-size: clamp(0.875rem, 1vw + 0.5rem, 1rem);
+  line-height: 1.6;
+}
+
+/* ============================================
+   2. TOUCH-FRIENDLY INTERACTIONS
+   ============================================ */
+
+/* Minimum 44px touch targets (WCAG 2.1 AA) */
+button,
+a,
+input,
+select,
+textarea,
+.btn,
+.nav-link,
+.mobile-link,
+.tab,
+.time-slot,
+.quantity-btn,
+.icon-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Increase tap area for small interactive elements */
+.cart-button,
+.social-link,
+.icon-btn {
+  position: relative;
+}
+
+.cart-button::before,
+.social-link::before,
+.icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover::before,
+  .card:hover,
+  .menu-card:hover .menu-image img,
+  .featured-card:hover .featured-image img {
+    transform: none;
+  }
+}
+
+/* ============================================
+   3. FLUID GRID SYSTEM
+   ============================================ */
+
+/* Container with fluid padding */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+  .container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+/* Responsive Grid */
+.grid {
+  display: grid;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+/* Mobile-first grid columns */
+.grid-2,
+.grid-3,
+.grid-4 {
+  grid-template-columns: 1fr;
+}
+
+/* ============================================
+   4. RESPONSIVE SPACING
+   ============================================ */
+
+.section {
+  padding: clamp(2rem, 6vw, 4rem) 0;
+}
+
+.section-title {
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* ============================================
+   5. RESPONSIVE IMAGES
+   ============================================ */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive image containers */
+.menu-image,
+.featured-image,
+.cart-item-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* ============================================
+   6. MOBILE NAVIGATION
+   ============================================ */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  flex-wrap: nowrap;
+}
+
+/* Hide desktop menu on mobile */
+.navbar-menu {
+  display: none;
+}
+
+/* Ensure navbar actions are always visible */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Mobile menu toggle */
+.mobile-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+/* Mobile menu */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu.open {
+  display: flex;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  min-height: 44px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-link:active {
+  background: rgba(55, 65, 81, 0.5);
+  color: var(--primary-light);
+}
+
+/* ============================================
+   7. RESPONSIVE FORMS
+   ============================================ */
+
+.form-control {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  min-height: 44px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Prevent zoom on iOS */
+@supports (-webkit-touch-callout: none) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* ============================================
+   8. RESPONSIVE BUTTONS
+   ============================================ */
+
+.btn {
+  width: auto;
+  padding: 0.875rem 1.5rem;
+  font-size: 0.9375rem;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* Full width buttons only in specific contexts */
+.form-group .btn,
+.hero-actions .btn,
+.modal-footer .btn,
+.checkout-section .btn,
+.auth-form .btn {
+  width: 100%;
+}
+
+/* ============================================
+   9. RESPONSIVE CARDS
+   ============================================ */
+
+.card {
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+/* ============================================
+   10. BREAKPOINT: 480px (Small Tablets)
+   ============================================ */
+
+@media (min-width: 480px) {
+  .container {
+    max-width: 100%;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .btn {
+    width: auto;
+    min-width: 120px;
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .time-slots {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+}
+
+/* ============================================
+   11. BREAKPOINT: 768px (Tablets)
+   ============================================ */
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+
+  /* Show desktop navigation */
+  .navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .mobile-toggle {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: none !important;
+  }
+
+  /* Grid layouts */
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  /* Two-column layouts */
+  .about-grid,
+  .contact-grid,
+  .booking-container,
+  .cart-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cart-layout {
+    grid-template-columns: 1.5fr 1fr;
+  }
+
+  /* Forms */
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Admin layout */
+  .admin-layout {
+    grid-template-columns: 250px 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================
+   12. BREAKPOINT: 1024px (Desktop)
+   ============================================ */
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Sticky elements */
+  .booking-info,
+  .checkout-section .card {
+    position: sticky;
+    top: 100px;
+  }
+}
+
+/* ============================================
+   13. BREAKPOINT: 1200px (Large Desktop)
+   ============================================ */
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+
+  .navbar-menu {
+    gap: 2.5rem;
+  }
+}
+
+/* ============================================
+   14. BREAKPOINT: 1440px+ (Extra Large)
+   ============================================ */
+
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* ============================================
+   15. LANDSCAPE ORIENTATION
+   ============================================ */
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .hero {
+    min-height: 400px;
+  }
+
+  .auth-page {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    max-height: 80vh;
+  }
+}
+
+/* ============================================
+   16. PRINT STYLES
+   ============================================ */
+
+@media print {
+  .navbar,
+  .footer,
+  .btn,
+  .mobile-toggle,
+  .admin-sidebar {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .card {
+    border: 1px solid #ccc;
+    page-break-inside: avoid;
+  }
+}
+
+/* ============================================
+   17. REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   18. HIGH CONTRAST MODE
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .btn,
+  .card,
+  .form-control {
+    border-width: 2px;
+  }
+
+  .nav-link::after {
+    height: 3px;
+  }
+}
+
+/* ============================================
+   19. DARK MODE SUPPORT
+   ============================================ */
+
+@media (prefers-color-scheme: light) {
+  /* Optional: Add light mode overrides if needed */
+}
+
+/* ============================================
+   20. NETWORK-AWARE LOADING
+   ============================================ */
+
+@media (prefers-reduced-data: reduce) {
+  /* Disable animations on slow connections */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Disable background images */
+  .hero::before,
+  .hero::after {
+    background-image: none !important;
+  }
+}
+
+/* ============================================
+   21. ORIENTATION-SPECIFIC LAYOUTS
+   ============================================ */
+
+@media (orientation: portrait) {
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+  .hero {
+    min-height: 60vh;
+  }
+  
+  .section {
+    padding: clamp(1.5rem, 4vw, 3rem) 0;
+  }
+}
+
+/* ============================================
+   22. FOLDABLE DEVICE SUPPORT
+   ============================================ */
+
+@media (horizontal-viewport-segments: 2) {
+  .container {
+    max-width: calc(100vw - env(viewport-segment-width 0 0) - env(viewport-segment-width 1 0));
+  }
+}
+
+/* ============================================
+   23. HOVER CAPABILITY DETECTION
+   ============================================ */
+
+@media (hover: hover) and (pointer: fine) {
+  /* Desktop-specific hover effects */
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device optimizations */
+  .btn:active {
+    transform: scale(0.98);
+  }
+  
+  .card:active {
+    transform: scale(0.99);
+  }
+}

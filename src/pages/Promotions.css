@@ -1,0 +1,476 @@
+/* ============================================
+   PROMOTIONS PAGE STYLES
+   ============================================ */
+
+.promotions-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+  background: var(--bg-primary);
+}
+
+.promotions-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.promotions-header h1 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Promo Code Input */
+.promo-code-section {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.promo-code-section h2 {
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.promo-input-group {
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.promo-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: none;
+  font-weight: normal;
+}
+
+/* Flash Sales */
+.flash-sales-section {
+  margin-bottom: 3rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.flash-badge {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.flash-sales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.flash-sale-card {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+.flash-sale-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.flash-timer {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.flash-item-image {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+.flash-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flash-discount-badge {
+  position: absolute;
+  top:1rem;
+  right: 1rem;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.flash-item-info {
+  padding: 1.5rem;
+}
+
+.flash-item-info h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.flash-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.flash-pricing {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.sale-price {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.flash-stock {
+  margin-bottom: 1.5rem;
+}
+
+.stock-bar {
+  height: 8px;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.stock-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  transition: width 0.3s ease;
+}
+
+.stock-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Tabs */
+.promotions-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: var(--bg-secondary);
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: var(--hover-bg);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* Promotions Grid */
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.promo-card {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.promo-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.promo-badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.promo-content h3 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  font-family: monospace;
+  margin-bottom: 1rem;
+  padding-right: 120px; /* Space for badge */
+}
+
+.promo-description {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.promo-details {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.promo-detail {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.promo-detail:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.promo-tiers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.tier-label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.tier-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tier-bronze { background: #CD7F32; color: white; }
+.tier-silver { background: #C0C0C0; color: #333; }
+.tier-gold { background: #FFD700; color: #333; }
+.tier-platinum { background: #E5E4E2; color: #333; }
+
+.promo-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.promo-actions button {
+  flex: 1;
+}
+
+/* Promo Tips */
+.promo-tips {
+  background: var(--bg-secondary);
+  padding: 2.5rem;
+  border-radius: 16px;
+  margin-top: 3rem;
+}
+
+.promo-tips h3 {
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.tip-card {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-4px);
+}
+
+.tip-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.tip-card h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tip-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .promo-input-group {
+    flex-direction: column;
+  }
+
+  .flash-sales-grid,
+  .promotions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tips-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .promotions-tabs {
+    flex-direction: column;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .promo-content h3 {
+    padding-right: 0;
+    margin-top: 4rem; /* Space for badge */
+  }
+
+  .promo-badge {
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .promo-actions {
+    flex-direction: column;
+  }
+
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+}

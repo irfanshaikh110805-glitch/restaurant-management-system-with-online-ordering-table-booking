@@ -1,0 +1,307 @@
+/* ============================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* ============================================
+   1. HARDWARE ACCELERATION
+   ============================================ */
+
+.navbar,
+.card,
+.btn,
+.modal-overlay,
+.mobile-menu {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* ============================================
+   2. SMOOTH SCROLLING
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent scroll chaining */
+.modal-content,
+.admin-sidebar {
+  overscroll-behavior: contain;
+}
+
+/* ============================================
+   3. TAP HIGHLIGHT REMOVAL
+   ============================================ */
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* ============================================
+   4. FONT RENDERING
+   ============================================ */
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================
+   5. IMAGE OPTIMIZATION
+   ============================================ */
+
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Lazy loading placeholder */
+img[loading="lazy"] {
+  background: var(--surface);
+  min-height: 200px;
+}
+
+/* ============================================
+   6. REDUCE ANIMATIONS ON MOBILE
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Only disable heavy background animations on mobile */
+  .hero::before,
+  .hero::after,
+  .features-section::before {
+    animation: none;
+  }
+}
+
+/* ============================================
+   7. PREVENT LAYOUT SHIFT
+   ============================================ */
+
+/* Reserve space for images */
+.menu-image,
+.featured-image {
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+}
+
+.cart-item-image {
+  aspect-ratio: 1 / 1;
+}
+
+/* ============================================
+   8. OPTIMIZE FORM INPUTS
+   ============================================ */
+
+/* Disable autocomplete styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-dark) inset;
+  -webkit-text-fill-color: var(--text-primary);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ============================================
+   9. SAFE AREA INSETS (iOS Notch)
+   ============================================ */
+
+@supports (padding: env(safe-area-inset-left)) {
+  .navbar-content,
+  .container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  .footer {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================
+   10. PREVENT OVERSCROLL
+   ============================================ */
+
+body {
+  overscroll-behavior-y: none;
+}
+
+/* ============================================
+   11. OPTIMIZE BACKDROP FILTERS
+   ============================================ */
+
+@media (max-width: 767px) {
+  /* Keep navbar blur for glass effect */
+  .card-glass {
+    backdrop-filter: blur(8px);
+    background: rgba(31, 41, 55, 0.85);
+  }
+}
+
+/* ============================================
+   12. REDUCE SHADOW COMPLEXITY
+   ============================================ */
+
+@media (max-width: 767px) {
+  .card,
+  .btn-primary {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card:hover,
+  .btn-primary:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* ============================================
+   13. OPTIMIZE GRADIENTS
+   ============================================ */
+
+@media (max-width: 767px) {
+  .hero::before {
+    background: rgba(217, 119, 6, 0.1);
+  }
+}
+
+/* ============================================
+   14. CONTENT VISIBILITY
+   ============================================ */
+
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* ============================================
+   15. PREVENT TEXT INFLATION
+   ============================================ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ============================================
+   16. OPTIMIZE TABLES FOR MOBILE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    min-width: 600px;
+  }
+
+  /* Card-based table view */
+  .data-table.mobile-cards {
+    min-width: 100%;
+  }
+
+  .data-table.mobile-cards thead {
+    display: none;
+  }
+
+  .data-table.mobile-cards tbody,
+  .data-table.mobile-cards tr,
+  .data-table.mobile-cards td {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table.mobile-cards tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(55, 65, 81, 0.5);
+    border-radius: var(--radius-md);
+  }
+
+  .data-table.mobile-cards td {
+    padding: 0.5rem 0;
+    border: none;
+    text-align: right;
+  }
+
+  .data-table.mobile-cards td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+/* ============================================
+   17. SWIPE GESTURES
+   ============================================ */
+
+.swipeable {
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* ============================================
+   18. LOADING STATES
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 0%,
+    var(--surface-light) 50%,
+    var(--surface) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ============================================
+   19. FOCUS VISIBLE (Keyboard Navigation)
+   ============================================ */
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   20. PREVENT DOUBLE-TAP ZOOM
+   ============================================ */
+
+button,
+a,
+input[type="button"],
+input[type="submit"] {
+  touch-action: manipulation;
+}

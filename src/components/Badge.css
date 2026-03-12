@@ -1,0 +1,87 @@
+/* Badge Styles */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Sizes */
+.badge-small {
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.badge-medium {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.badge-large {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+/* Variants */
+.badge-default {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.badge-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.badge-secondary {
+  background: var(--secondary-color);
+  color: white;
+}
+
+.badge-success {
+  background: #4CAF50;
+  color: white;
+}
+
+.badge-warning {
+  background: #FF9800;
+  color: white;
+}
+
+.badge-danger {
+  background: #F44336;
+  color: white;
+}
+
+.badge-info {
+  background: #2196F3;
+  color: white;
+}
+
+.badge-veg {
+  background: #4CAF50;
+  color: white;
+  border: 2px solid #2E7D32;
+}
+
+.badge-non-veg {
+  background: #F44336;
+  color: white;
+  border: 2px solid #C62828;
+}
+
+/* Dot badge */
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.badge-dot-primary { background: var(--primary-color); }
+.badge-dot-success { background: #4CAF50; }
+.badge-dot-warning { background: #FF9800; }
+.badge-dot-danger { background: #F44336; }

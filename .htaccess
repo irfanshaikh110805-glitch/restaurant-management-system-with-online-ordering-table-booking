@@ -1,0 +1,65 @@
+# Hotel Everest Family Restaurant - Apache Configuration
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Force HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Remove www
+  RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+  # Handle React Router - redirect all requests to index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType application/pdf "access plus 1 month"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+  # Prevent clickjacking
+  Header always set X-Frame-Options "SAMEORIGIN"
+  
+  # XSS Protection
+  Header always set X-XSS-Protection "1; mode=block"
+  
+  # Prevent MIME sniffing
+  Header always set X-Content-Type-Options "nosniff"
+  
+  # Referrer Policy
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  
+  # Permissions Policy
+  Header always set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+</IfModule>
+
+# Disable Directory Browsing
+Options -Indexes
+
+# Custom Error Pages
+ErrorDocument 404 /index.html
+ErrorDocument 500 /index.html

@@ -1,0 +1,135 @@
+/* ============================================
+   MOBILE BOTTOM NAVIGATION
+   ============================================ */
+
+.mobile-bottom-nav {
+  display: none; /* Hidden on desktop */
+}
+
+@media (max-width: 767px) {
+  .mobile-bottom-nav {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(17, 24, 39, 0.97);
+    backdrop-filter: blur(16px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: var(--z-fixed);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    padding: 6px 4px;
+    border-radius: 10px;
+    margin: 4px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+  }
+
+  .bottom-nav-item:active {
+    transform: scale(0.92);
+    background: rgba(217, 119, 6, 0.1);
+  }
+
+  .bottom-nav-item.active {
+    color: var(--primary-light);
+  }
+
+  .bottom-nav-item.active .bottom-nav-label {
+    color: var(--primary-light);
+    font-weight: 700;
+  }
+
+  /* Active indicator dot */
+  .bottom-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent-light));
+    border-radius: 0 0 4px 4px;
+  }
+
+  .bottom-nav-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Icon glow on active */
+  .bottom-nav-item.active .bottom-nav-icon svg {
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+  }
+
+  .bottom-nav-label {
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: inherit;
+    transition: color var(--transition-fast);
+  }
+
+  .bottom-nav-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    background: linear-gradient(135deg, var(--accent-light), #b91c1c);
+    color: white;
+    font-size: 0.625rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    border: 2px solid rgba(17, 24, 39, 0.97);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: badgePop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@keyframes badgePop {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+/* Add bottom padding to page content when bottom nav is shown */
+@media (max-width: 767px) {
+  main,
+  .cart-page,
+  .menu-page,
+  .booking-page,
+  .profile-page,
+  .loyalty-page,
+  .events-page,
+  .gallery-page,
+  .order-tracking-page,
+  .promotions-page,
+  .reviews-page {
+    padding-bottom: 80px !important;
+  }
+}

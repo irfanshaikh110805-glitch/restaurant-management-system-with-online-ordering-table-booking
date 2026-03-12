@@ -1,0 +1,57 @@
+/* Loading Spinner Styles */
+
+.spinner {
+  display: inline-block;
+  position: relative;
+}
+
+.spinner-circle {
+  border-radius: 50%;
+  border-style: solid;
+  border-color: transparent;
+  border-top-color: currentColor;
+  animation: spin 1s linear infinite;
+}
+
+/* Sizes */
+.spinner-small .spinner-circle {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner-medium .spinner-circle {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.spinner-large .spinner-circle {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+/* Colors */
+.spinner-primary { color: var(--primary-color); }
+.spinner-secondary { color: var(--secondary-color); }
+.spinner-white { color: white; }
+.spinner-gray { color: var(--text-secondary); }
+
+/* Full screen overlay */
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

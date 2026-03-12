@@ -1,0 +1,243 @@
+/* ============================================
+   GALLERY PAGE STYLES
+   Hotel Everest Family Restaurant
+   ============================================ */
+
+.gallery-page {
+  min-height: 100vh;
+  padding-bottom: var(--space-3xl);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+}
+
+.gallery-page .section-title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  text-align: center;
+}
+
+.gallery-page > .section > .container > .text-secondary {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+  font-size: 1.05rem;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+
+/* Gallery Card */
+.gallery-card {
+  position: relative;
+  padding: 0;
+  cursor: zoom-in;
+  text-align: left;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  transition: all var(--transition-base);
+  /* Reset button styles */
+  display: block;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.gallery-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(217, 119, 6, 0.4);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(217, 119, 6, 0.2);
+}
+
+.gallery-card .featured-image {
+  height: 240px;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-card .featured-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.gallery-card:hover .featured-image img {
+  transform: scale(1.08);
+}
+
+/* Overlay icon on hover */
+.gallery-card .featured-image::after {
+  content: '🔍';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.gallery-card:hover .featured-image::after {
+  opacity: 1;
+}
+
+.gallery-card p {
+  padding: var(--space-md) var(--space-lg);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  background: rgba(31, 41, 55, 0.6);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Lightbox */
+.gallery-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: var(--z-modal);
+  padding: var(--space-xl);
+  animation: fadeIn 0.2s ease;
+}
+
+.gallery-lightbox-content {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  background: var(--bg-dark);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  animation: scaleIn 0.2s ease;
+}
+
+.gallery-lightbox-content img {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+
+.gallery-lightbox-close {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: rgba(55, 65, 81, 0.9);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.gallery-lightbox-close:hover {
+  background: var(--accent-light);
+  transform: scale(1.1);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 1023px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 767px) {
+  .gallery-page {
+    padding-bottom: calc(var(--space-3xl) + 70px); /* Space for bottom nav */
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .gallery-card .featured-image {
+    height: 160px;
+  }
+
+  /* Always show zoom overlay on touch */
+  .gallery-card .featured-image::after {
+    opacity: 0.6;
+    font-size: 1.5rem;
+  }
+
+  .gallery-card p {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Lightbox full-screen on mobile */
+  .gallery-lightbox-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .gallery-lightbox-content {
+    max-width: 100%;
+    width: 100%;
+    max-height: 92vh;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: var(--space-lg);
+  }
+
+  .gallery-lightbox-content img {
+    max-height: 55vh;
+  }
+
+  .gallery-lightbox-close {
+    top: var(--space-sm);
+    right: var(--space-sm);
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .gallery-card .featured-image {
+    height: 220px;
+  }
+}
