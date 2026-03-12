@@ -88,8 +88,8 @@ A modern, full-featured restaurant management web application built with React, 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/spice-haven.git
-cd spice-haven
+git clone https://github.com/irfanshaikh110805-glitch/restaurant-management-system-with-online-ordering-table-booking.git
+cd restaurant-management-system-with-online-ordering-table-booking
 ```
 
 2. Install dependencies:
@@ -108,6 +108,18 @@ VITE_STRIPE_PUBLIC_KEY=your_stripe_public_key
    - Run the SQL scripts in the `supabase` folder in your Supabase project
    - Start with `schema.sql` for the base schema
    - Apply migrations from the `migrations` folder
+
+## GitHub Actions Setup
+
+To enable CI/CD pipeline, add these secrets to your GitHub repository:
+
+1. Go to your repository on GitHub
+2. Navigate to Settings → Secrets and variables → Actions
+3. Add the following secrets:
+   - `VITE_SUPABASE_URL` - Your Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY` - Your Supabase anonymous key
+   - `NETLIFY_AUTH_TOKEN` - Your Netlify personal access token (optional)
+   - `NETLIFY_SITE_ID` - Your Netlify site ID (optional)
 
 ## Development
 
