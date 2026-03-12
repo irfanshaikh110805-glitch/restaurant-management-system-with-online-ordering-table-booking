@@ -8,29 +8,6 @@ A modern, full-featured restaurant management web application built with React, 
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/hoteleverestfamilyrestaurant/deploys)
 
-## 📸 Screenshots
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Menu & Ordering
-![Menu Page](screenshots/menu.png)
-![Cart](screenshots/cart.png)
-
-### Table Booking
-![Booking Page](screenshots/booking.png)
-
-### Order Tracking
-![Order Tracking](screenshots/order-tracking.png)
-
-### Admin Dashboard
-![Admin Dashboard](screenshots/admin-dashboard.png)
-![Menu Management](screenshots/admin-menu.png)
-
-### Mobile View
-![Mobile Home](screenshots/mobile-home.png)
-![Mobile Menu](screenshots/mobile-menu.png)
-
 ## Features
 
 ### Customer Features
