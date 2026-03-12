@@ -2,6 +2,12 @@
 
 A modern, full-featured restaurant management web application built with React, Vite, and Supabase. This system provides comprehensive functionality for online food ordering, table booking, order tracking, and restaurant administration.
 
+## 🌐 Live Demo
+
+**[View Live Application](https://hoteleverestfamilyrestaurant.netlify.app/)**
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/hoteleverestfamilyrestaurant/deploys)
+
 ## Features
 
 ### Customer Features
