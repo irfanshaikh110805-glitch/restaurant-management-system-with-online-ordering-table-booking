@@ -345,3 +345,42 @@
 @media (prefers-reduced-motion: reduce) {
   .mobile-menu.open { animation: none; }
 }
+
+/* ============================================
+   MOBILE NAVBAR PERFORMANCE FIXES
+   Remove backdrop-filter which causes GPU layers
+   ============================================ */
+@media (max-width: 767px) {
+  .navbar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(5, 5, 5, 0.99) !important;
+    /* Use transform: translateZ(0) for paint containment */
+    transform: translateZ(0);
+    will-change: auto;
+  }
+
+  .navbar.scrolled {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(3, 3, 3, 1) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Don't animate logo on scroll on mobile */
+  .navbar.scrolled .navbar-logo {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Simplify the navbar transition on mobile */
+  .navbar {
+    transition: background 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  /* Mobile menu performance */
+  .mobile-menu.open {
+    animation-duration: 0.2s !important;
+  }
+}
+

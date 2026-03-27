@@ -949,3 +949,93 @@
   .testimonial-text { font-size: 1rem; }
   .testimonial-card { padding: var(--space-2xl); }
 }
+
+/* ============================================
+   MOBILE PERFORMANCE OVERRIDES
+   Disable expensive animations and effects on mobile
+   to achieve maximum Lighthouse performance score
+   ============================================ */
+@media (max-width: 767px) {
+  /* Kill Ken Burns animation - #1 mobile performance killer */
+  .hero-background {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto !important;
+    /* Use simpler background */
+    background-attachment: scroll !important;
+    /* Slightly smaller to avoid compositing */
+    background-size: cover !important;
+  }
+
+  /* Remove floating particles on mobile - wasted GPU cycles */
+  .hero-particles,
+  .particle {
+    display: none !important;
+    animation: none !important;
+  }
+
+  /* Simplify hero overlays */
+  .hero::before {
+    background: 
+      linear-gradient(180deg, rgba(5,5,5,0.5) 0%, rgba(5,5,5,0.75) 50%, rgba(5,5,5,0.92) 100%) !important;
+  }
+
+  /* Disable backdrop-filter on cards - causes compositing layers */
+  .feature-card,
+  .review-card,
+  .stat-card,
+  .testimonial-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: var(--surface) !important;
+    border: 1px solid rgba(212, 168, 83, 0.12) !important;
+  }
+
+  /* Disable costly box-shadow animations */
+  .feature-card:hover,
+  .stat-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Simplify gradient text on mobile (GPU heavy) */
+  .gradient-text {
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    /* Use simpler animation-free version */
+    animation: none !important;
+  }
+
+  /* Reduce hero height on mobile for faster LCP */
+  .hero {
+    min-height: 85vh !important;
+  }
+
+  /* Disable shimmer animations that aren't critical */
+  .shimmer-line,
+  .skeleton-shimmer {
+    animation: none !important;
+    background: var(--surface-light) !important;
+  }
+
+  /* Ensure tap targets are large enough (min 44x44px) */
+  .btn,
+  .bottom-nav-item,
+  .nav-link {
+    min-height: 44px !important;
+  }
+
+  /* Contain hero for better paint performance */
+  .hero {
+    contain: layout;
+  }
+
+  /* Reduce image load time with proper sizing */
+  .featured-image img,
+  .menu-card img,
+  .gallery-item img {
+    /* Use lower quality on mobile */
+    image-rendering: auto;
+  }
+}
+

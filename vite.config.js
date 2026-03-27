@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // Performance optimizations
-    target: 'es2020', // Modern browsers for smaller bundles
+    target: ['es2019', 'chrome87', 'firefox78', 'safari14'], // Broad mobile browser support
     minify: 'esbuild', // Use esbuild for fast minification
     esbuildOptions: {
       drop: ['console', 'debugger'],
@@ -84,9 +84,13 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('/pages/admin/')) {
             return 'admin';
           }
-          // Context providers
+          // Context providers - keep with main bundle for mobile hydration speed
           if (id.includes('/context/')) {
             return 'context';
+          }
+          // Utils - separate chunk
+          if (id.includes('/utils/')) {
+            return 'utils';
           }
         },
         // Optimize chunk naming with content hash
@@ -113,13 +117,13 @@ export default defineConfig(({ mode }) => ({
       }
     },
     // Chunk size warnings
-    chunkSizeWarningLimit: 300, // Stricter limit for better performance
+    chunkSizeWarningLimit: 250, // Strict limit for mobile performance
     // CSS code splitting
     cssCodeSplit: true,
     // Source maps disabled for production
     sourcemap: false,
-    // Asset inlining threshold (1kb - smaller for better caching)
-    assetsInlineLimit: 1024,
+    // Asset inlining threshold (4kb - inline small assets)
+    assetsInlineLimit: 4096,
     // Report compressed size
     reportCompressedSize: true,
     // Minify CSS

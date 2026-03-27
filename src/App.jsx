@@ -49,10 +49,13 @@ const registerServiceWorker = () => {
 };
 
 const initErrorMonitoring = () => {
-  import('./utils/errorMonitoring').then(m => {
-    m.initErrorMonitoring();
-    m.setupGlobalErrorHandlers();
-  });
+  // Defer to not block first paint on mobile
+  setTimeout(() => {
+    import('./utils/errorMonitoring').then(m => {
+      m.initErrorMonitoring();
+      m.setupGlobalErrorHandlers();
+    });
+  }, 1500);
 };
 
 // Lazy load pages for better performance
@@ -123,11 +126,21 @@ function App() {
                       <Suspense fallback={
                         <div style={{ 
                           display: 'flex', 
+                          flexDirection: 'column',
                           justifyContent: 'center', 
                           alignItems: 'center', 
-                          minHeight: '60vh' 
+                          minHeight: '60vh',
+                          gap: '1rem'
                         }}>
-                          <LoadingSpinner />
+                          <div style={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: '50%',
+                            border: '3px solid rgba(212,168,83,0.15)',
+                            borderTopColor: '#d4a853',
+                            animation: 'spin 0.8s linear infinite'
+                          }} />
+                          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
                         </div>
                       }>
                         <Routes>

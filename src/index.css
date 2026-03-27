@@ -3,11 +3,13 @@
   Luxury Restaurant Theme with Sophisticated Animations
   ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+/* Fonts are loaded via <link preload> in index.html for better performance */
+/* Fallback font-face declarations for offline support */
 
 @import './styles/responsive.css';
 @import './styles/mobile-optimizations.css';
 @import './styles/mobile-fixes.css';
+
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -684,3 +686,92 @@ img { max-width: 100%; height: auto; display: block; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================
+   MOBILE PERFORMANCE CRITICAL OPTIMIZATIONS
+   ============================================ */
+@media (max-width: 767px) {
+  /* Disable expensive blur effects on mobile */
+  .glass,
+  .glass-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(26, 26, 26, 0.97) !important;
+  }
+
+  /* Simplify navbar blur on mobile */
+  .navbar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 10, 10, 0.99) !important;
+  }
+
+  .navbar.scrolled {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(5, 5, 5, 1) !important;
+  }
+
+  /* Use GPU compositing for nav */
+  .mobile-bottom-nav {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 10, 10, 0.99) !important;
+    will-change: auto;
+  }
+
+  /* Reduce heavy box-shadows on mobile */
+  .btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(212, 168, 83, 0.25) !important;
+  }
+
+  /* Simplified hero on mobile — no background-attachment fixed */
+  .hero {
+    background-attachment: scroll !important;
+  }
+
+  /* Disable filter effects that cause compositing layers */
+  .bottom-nav-item.active .bottom-nav-icon svg {
+    filter: none !important;
+  }
+
+  /* Contain sections for paint performance */
+  section {
+    contain: layout style;
+  }
+
+  /* Reduce animation complexity */
+  .feature-card,
+  .menu-card,
+  .review-card {
+    transition: transform 200ms ease, opacity 200ms ease !important;
+    will-change: auto;
+  }
+
+  /* Disable hover transforms on touch devices */
+  @media (hover: none) {
+    .feature-card:hover,
+    .menu-card:hover,
+    .review-card:hover,
+    .social-link:hover,
+    .footer-links a:hover {
+      transform: none !important;
+    }
+  }
+}
+
+/* Optimize image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Content-visibility for below-fold sections */
+.features-section,
+.menu-preview,
+.testimonials,
+.cta-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 400px;
+}
+
