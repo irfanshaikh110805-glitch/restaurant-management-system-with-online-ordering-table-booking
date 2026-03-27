@@ -32,9 +32,9 @@ const galleryItems = [
   },
   {
     id: 5,
-    src: 'https://images.pexels.com/photos/247685/pexels-photo-247685.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    srcSmall: 'https://images.pexels.com/photos/247685/pexels-photo-247685.jpeg?auto=compress&cs=tinysrgb&w=600',
-    srcMedium: 'https://images.pexels.com/photos/247685/pexels-photo-247685.jpeg?auto=compress&cs=tinysrgb&w=900',
+    src: '/gallery_spicy_dishes.png',
+    srcSmall: '/gallery_spicy_dishes.png',
+    srcMedium: '/gallery_spicy_dishes.png',
     alt: 'Selection of spicy Indian dishes and naan bread',
   },
   {

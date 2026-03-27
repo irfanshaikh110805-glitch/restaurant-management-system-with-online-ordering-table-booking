@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiSearch, FiPlus, FiHeart, FiInfo, FiStar } from 'react-icons/fi'
+import { FiSearch, FiPlus, FiHeart, FiInfo, FiStar, FiX } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { supabase } from '../lib/supabase'
 import { useCart } from '../context/CartContext'
@@ -527,8 +527,11 @@ export default function Menu() {
 
       {/* Item Detail Modal */}
       {selectedItem && (
-        <Modal isOpen={!!selectedItem} onClose={() => setSelectedItem(null)}>
+        <Modal isOpen={!!selectedItem} onClose={() => setSelectedItem(null)} size="large" showCloseButton={false}>
           <div className="menu-detail-modal">
+            <button className="premium-close-btn" onClick={(e) => { e.stopPropagation(); setSelectedItem(null); }}>
+              <FiX size={24} />
+            </button>
             {selectedItem.image_url && (
               <div className="modal-image">
                 <img 
@@ -591,16 +594,25 @@ export default function Menu() {
               
               <div className="modal-footer-section">
                 <span className="price large">₹{selectedItem.price}</span>
-                <button
-                  onClick={() => {
-                    handleAddToCart(selectedItem)
-                    setSelectedItem(null)
-                  }}
-                  className="btn btn-primary"
-                >
-                  <FiPlus size={18} />
-                  Add to Cart
-                </button>
+                <div className="modal-actions-mobile">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedItem(null); }}
+                    className="btn btn-secondary modal-back-btn"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(selectedItem);
+                      setSelectedItem(null);
+                    }}
+                    className="btn btn-primary"
+                  >
+                    <FiPlus size={18} />
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -4,8 +4,11 @@
 }
 
 .menu-header {
-  background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(217, 119, 6, 0.05) 100%);
-  padding: var(--space-3xl) 0 var(--space-2xl);
+  background: url("/premium_hero_bg.png");
+  background-size: cover;
+  background-position: center 25%;
+  background-attachment: fixed;
+  padding: 8rem 0 6rem;
   text-align: center;
   border-bottom: 1px solid rgba(217, 119, 6, 0.2);
   position: relative;
@@ -19,7 +22,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(217, 119, 6, 0.1) 0%, transparent 70%);
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(5, 5, 5, 0.3) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(5, 5, 5, 0.5) 0%, rgba(5, 5, 5, 0.95) 100%);
   pointer-events: none;
 }
 
@@ -27,6 +32,21 @@
   margin-bottom: var(--space-sm);
   position: relative;
   z-index: 1;
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 168, 83, 0.3);
+  font-family: var(--font-display);
+}
+
+.menu-header p {
+  position: relative;
+  z-index: 1;
+  color: #fff !important;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  font-family: var(--font-elegant);
+  font-style: italic;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .search-bar {
@@ -409,16 +429,60 @@
 .menu-detail-modal {
   display: flex;
   flex-direction: column;
-  max-height: 85vh;
+  margin: -1.5rem; /* Cancel out .modal-body padding */
+  background: var(--bg-dark);
+  border-radius: 16px;
   overflow: hidden;
+  position: relative;
+}
+
+.premium-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-close-btn:hover {
+  background: var(--gold);
+  color: var(--bg-darker);
+  transform: rotate(90deg) scale(1.1);
+  border-color: var(--gold);
+}
+
+@media (min-width: 900px) {
+  .menu-detail-modal {
+    flex-direction: row;
+    height: 80vh;
+    max-height: 700px;
+  }
 }
 
 .modal-image {
   width: 100%;
-  height: 400px;
+  height: 300px;
   overflow: hidden;
   position: relative;
   background: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(31, 41, 55, 0.8) 100%);
+}
+
+@media (min-width: 900px) {
+  .modal-image {
+    width: 50%;
+    height: 100%;
+  }
 }
 
 .modal-image img {
@@ -430,7 +494,17 @@
 .modal-content-body {
   padding: var(--space-2xl);
   overflow-y: auto;
-  flex: 1;
+}
+
+@media (min-width: 900px) {
+  .modal-content-body {
+    width: 50%;
+    height: 100%;
+    flex: 1;
+    padding: var(--space-4xl);
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .modal-header-section {
@@ -519,29 +593,60 @@
 
 .modal-footer-section {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-lg);
   padding-top: var(--space-xl);
   border-top: 2px solid rgba(255, 255, 255, 0.1);
-  margin-top: var(--space-xl);
+  margin-top: auto;
+}
+
+.modal-actions-mobile {
+  display: flex;
+  width: 100%;
+  gap: var(--space-md);
+}
+
+.modal-actions-mobile .btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  font-size: 0.9375rem;
+}
+
+.modal-back-btn {
+  flex: 0.5 !important;
 }
 
 .modal-footer-section .price.large {
   font-size: 2rem;
   font-weight: 700;
   color: var(--primary);
+  text-align: center;
 }
 
-.modal-footer-section .btn {
-  flex: 1;
-  max-width: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl);
-  font-size: 1rem;
+@media (min-width: 900px) {
+  .modal-footer-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-footer-section .price.large {
+    text-align: left;
+  }
+  .modal-actions-mobile {
+    width: auto;
+    justify-content: flex-end;
+  }
+  .modal-actions-mobile .btn {
+    max-width: 250px;
+    font-size: 1rem;
+  }
+  .modal-back-btn {
+    flex: 0.4 !important;
+  }
 }
 
 @media (max-width: 768px) {

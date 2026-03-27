@@ -70,10 +70,10 @@ export default function HomeOptimized() {
         <div className="hero-background" />
         <div className="hero-content container">
           <h1 className="hero-title">
-            Experience Authentic <span className="text-primary gradient-text">Indian Flavors</span>
+            An Unforgettable <span className="text-primary gradient-text">Culinary Journey</span>
           </h1>
           <p className="hero-subtitle">
-            From traditional biryani to exotic kebabs, discover the rich culinary heritage of India
+            Immerse yourself in the opulent heritage of Indian fine dining, where timeless recipes meet modern elegance.
           </p>
           <div className="hero-actions">
             <Link to="/menu" className="btn btn-primary btn-lg">
@@ -109,6 +109,37 @@ export default function HomeOptimized() {
                 <p>{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Chef's Signature Section */}
+      <section className="section signature-section" style={{ background: 'var(--bg-dark)', paddingBottom: '0' }}>
+        <div className="container">
+          <div className="about-grid" style={{ alignItems: 'center' }}>
+            <div className="signature-image-wrapper" style={{ position: 'relative', borderRadius: 'var(--radius-2xl)', overflow: 'hidden', boxShadow: 'var(--shadow-xl), 0 0 50px rgba(212, 168, 83, 0.15)' }}>
+              <img src="/premium_chef_special.png" alt="Chef's Signature Dish" style={{ width: '100%', height: 'auto', display: 'block', transform: 'scale(1.02)' }} loading="lazy" />
+              <div className="badge badge-gold" style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', padding: '0.5rem 1rem', backdropFilter: 'blur(10px)', background: 'rgba(20,20,20,0.7)', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: 'var(--radius-full)' }}>
+                <FiAward size={18} /> Chef's Masterpiece
+              </div>
+            </div>
+            <div className="signature-content about-content">
+              <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1rem', marginTop: 0 }}>The Royal Tandoori Experience</h2>
+              <p className="section-subtitle" style={{ marginLeft: 0, marginTop: 0, marginBottom: '2rem' }}>A majestic symphony of spices and flavors</p>
+              <p>
+                Indulge in our exquisite tasting experience, curated by our Head Chef. We carefully prepare the finest ingredients using authentic clay ovens to capture the true essence of royal Indian banquets. Every morsel tells a story of culinary heritage and unbridled passion.
+              </p>
+              <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gap: '1rem', margin: '1.5rem 0 2.5rem 0' }}>
+                {['24-Hour Secret Marination', 'Premium Organic Spices', 'Authentic Clay Oven Cooking'].map((item, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--gold-light)' }}>
+                    <FiStar size={20} /> <span style={{ color: 'var(--text-primary)', fontSize: '1.05rem' }}>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to="/menu" className="btn btn-primary btn-lg" style={{ alignSelf: 'flex-start' }}>
+                <span>Taste The Magic</span>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

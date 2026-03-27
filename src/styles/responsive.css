@@ -164,11 +164,11 @@ img {
    6. MOBILE NAVIGATION
    ============================================ */
 
-.navbar {
+/* .navbar {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-}
+} */
 
 .navbar-content {
   display: flex;

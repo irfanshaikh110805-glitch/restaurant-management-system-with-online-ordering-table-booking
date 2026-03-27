@@ -30,13 +30,9 @@ export default function Navbar() {
 
   return (
     <motion.nav 
-      className="navbar"
+      className={`navbar ${isScrolled ? 'scrolled' : ''}`}
       initial={{ y: -100 }}
-      animate={{ 
-        y: 0,
-        background: isScrolled ? "rgba(17, 24, 39, 0.98)" : "rgba(17, 24, 39, 0.95)",
-        boxShadow: isScrolled ? "0 4px 6px -1px rgba(0, 0, 0, 0.3)" : "none"
-      }}
+      animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div className="container">
