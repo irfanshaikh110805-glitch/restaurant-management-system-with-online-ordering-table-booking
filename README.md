@@ -4,9 +4,13 @@ A modern, production-ready restaurant management web application built with Reac
 
 ## 🌐 Live Demo
 
-**[View Live Application](https://hoteleverestfamilyrestaurant.netlify.app/)**
+### 🚀 [**VIEW LIVE APPLICATION →**](https://hoteleverestfamilyrestaurant.netlify.app/)
+
+> **Live URL**: https://hoteleverestfamilyrestaurant.netlify.app/
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/hoteleverestfamilyrestaurant/deploys)
+
+**Try it now!** Experience the full-featured restaurant management system with real-time ordering, booking, and admin capabilities.
 
 ---
 
