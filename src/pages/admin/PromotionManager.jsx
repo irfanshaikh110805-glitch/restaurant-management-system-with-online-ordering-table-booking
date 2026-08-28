@@ -11,6 +11,8 @@ const PromotionManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingPromo, setEditingPromo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [promoError, setPromoError] = useState('');
 
   const [formData, setFormData] = useState({
     code: '',
@@ -50,11 +52,32 @@ const PromotionManager = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setPromoError('');
 
+    const cleanCode = formData.code.trim().toUpperCase();
+    if (!cleanCode) {
+      setPromoError('Promotion code is required');
+      toast.error('Promotion code is required');
+      return;
+    }
+
+    // Pre-validation duplicate check
+    const isDuplicate = promotions.some(
+      (p) => p.code.trim().toUpperCase() === cleanCode && (!editingPromo || p.id !== editingPromo.id)
+    );
+
+    if (isDuplicate) {
+      const errMsg = `A promotion with code "${cleanCode}" already exists.`;
+      setPromoError(errMsg);
+      toast.error(errMsg);
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const promoData = {
         ...formData,
-        code: formData.code.toUpperCase(),
+        code: cleanCode,
         discount_value: parseFloat(formData.discount_value),
         min_order_amount: parseFloat(formData.min_order_amount) || 0,
         max_discount: formData.max_discount ? parseFloat(formData.max_discount) : null,
@@ -80,11 +103,25 @@ const PromotionManager = () => {
 
       setShowModal(false);
       setEditingPromo(null);
+      setPromoError('');
       resetForm();
-      fetchPromotions();
+      await fetchPromotions();
     } catch (error) {
       console.error('Error saving promotion:', error?.message || error, error?.code || '');
-      toast.error('Failed to save promotion');
+      if (
+        error?.code === '23505' ||
+        error?.status === 409 ||
+        error?.message?.includes('unique constraint') ||
+        error?.message?.includes('duplicate key')
+      ) {
+        const errMsg = `A promotion with code "${cleanCode}" already exists.`;
+        setPromoError(errMsg);
+        toast.error(errMsg);
+      } else {
+        toast.error(error?.message || 'Failed to save promotion');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -147,17 +184,21 @@ const PromotionManager = () => {
 
   return (
     <div className="promotion-manager">
-      <div className="manager-header">
-        <h1>Promotion Manager</h1>
+      <div className="page-header">
+        <div className="page-title-wrap">
+          <h1>Promotion Manager</h1>
+          <p className="page-subtitle">Configure coupon codes, VIP tier perks, and promotional discounts</p>
+        </div>
         <button
           onClick={() => {
             resetForm();
             setEditingPromo(null);
             setShowModal(true);
           }}
-          className="btn-primary"
+          className="btn btn-primary"
+          type="button"
         >
-          <FiPlus /> Create Promotion
+          <FiPlus /> <span>Create Promotion</span>
         </button>
       </div>
 
@@ -256,45 +297,75 @@ const PromotionManager = () => {
       <Modal
         isOpen={showModal}
         onClose={() => {
-          setShowModal(false);
-          setEditingPromo(null);
-          resetForm();
+          if (!isSubmitting) {
+            setShowModal(false);
+            setEditingPromo(null);
+            setPromoError('');
+            resetForm();
+          }
         }}
         title={editingPromo ? 'Edit Promotion' : 'Create New Promotion'}
         size="large"
       >
+        {promoError && (
+          <div 
+            className="badge badge-error" 
+            style={{ 
+              width: '100%', 
+              padding: '0.65rem 1rem', 
+              marginBottom: '1rem', 
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.85rem'
+            }}
+          >
+            ⚠️ {promoError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="promo-form">
           <div className="form-row">
             <div className="form-group">
-              <label>Promo Code *</label>
+              <label className="form-label">Promo Code *</label>
               <input
                 type="text"
+                className="form-control"
                 value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, code: e.target.value });
+                  if (promoError) setPromoError('');
+                }}
                 placeholder="e.g., SAVE20"
                 required
+                disabled={isSubmitting}
                 style={{ textTransform: 'uppercase' }}
               />
             </div>
 
             <div className="form-group">
-              <label>Discount Type *</label>
+              <label className="form-label">Discount Type *</label>
               <select
+                className="form-control"
                 value={formData.discount_type}
                 onChange={(e) => setFormData({ ...formData, discount_type: e.target.value })}
+                disabled={isSubmitting}
                 required
               >
-                <option value="percentage">Percentage</option>
-                <option value="fixed">Fixed Amount</option>
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (₹)</option>
               </select>
             </div>
           </div>
 
           <div className="form-group">
-            <label>Description *</label>
+            <label className="form-label">Description *</label>
             <textarea
+              className="form-control"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              disabled={isSubmitting}
               placeholder="e.g., Get 20% off on your order"
               required
               rows={3}
@@ -303,12 +374,14 @@ const PromotionManager = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Discount Value *</label>
+              <label className="form-label">Discount Value *</label>
               <input
                 type="number"
+                className="form-control"
                 value={formData.discount_value}
                 onChange={(e) => setFormData({ ...formData, discount_value: e.target.value })}
                 placeholder={formData.discount_type === 'percentage' ? '20' : '100'}
+                disabled={isSubmitting}
                 required
                 step="0.01"
                 min="0"
@@ -316,69 +389,83 @@ const PromotionManager = () => {
             </div>
 
             <div className="form-group">
-              <label>Min Order Amount</label>
+              <label className="form-label">Min Order Amount</label>
               <input
                 type="number"
+                className="form-control"
                 value={formData.min_order_amount}
                 onChange={(e) => setFormData({ ...formData, min_order_amount: e.target.value })}
                 placeholder="0"
-                step="0.01"
+                disabled={isSubmitting}
                 min="0"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Max Discount</label>
-              <input
-                type="number"
-                value={formData.max_discount}
-                onChange={(e) => setFormData({ ...formData, max_discount: e.target.value })}
-                placeholder="Optional"
                 step="0.01"
-                min="0"
               />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label>Valid From *</label>
-              <input
-                type="date"
-                value={formData.valid_from}
-                onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Valid Until *</label>
-              <input
-                type="date"
-                value={formData.valid_until}
-                onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Usage Limit</label>
+              <label className="form-label">Max Discount Amount (₹)</label>
               <input
                 type="number"
+                className="form-control"
+                value={formData.max_discount}
+                onChange={(e) => setFormData({ ...formData, max_discount: e.target.value })}
+                placeholder="No limit"
+                disabled={isSubmitting}
+                min="0"
+                step="0.01"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Valid From *</label>
+              <input
+                type="date"
+                className="form-control"
+                value={formData.valid_from}
+                onChange={(e) => setFormData({ ...formData, valid_from: e.target.value })}
+                disabled={isSubmitting}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Valid Until *</label>
+              <input
+                type="date"
+                className="form-control"
+                value={formData.valid_until}
+                onChange={(e) => setFormData({ ...formData, valid_until: e.target.value })}
+                disabled={isSubmitting}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Usage Limit</label>
+              <input
+                type="number"
+                className="form-control"
                 value={formData.usage_limit}
                 onChange={(e) => setFormData({ ...formData, usage_limit: e.target.value })}
                 placeholder="Unlimited"
+                disabled={isSubmitting}
                 min="1"
               />
             </div>
           </div>
 
-          <div className="form-row">
+          <div className="form-row" style={{ alignItems: 'center' }}>
             <div className="form-group">
-              <label>Tier Required</label>
+              <label className="form-label">Tier Required</label>
               <select
+                className="form-control"
                 value={formData.tier_required || ''}
                 onChange={(e) => setFormData({ ...formData, tier_required: e.target.value || null })}
+                disabled={isSubmitting}
               >
                 <option value="">All Tiers</option>
                 <option value="silver">Silver+</option>
@@ -387,14 +474,15 @@ const PromotionManager = () => {
               </select>
             </div>
 
-            <div className="form-group checkbox-group">
-              <label>
+            <div className="form-group">
+              <label className="checkbox-label" style={{ marginTop: '1.75rem' }}>
                 <input
                   type="checkbox"
                   checked={formData.is_active}
+                  disabled={isSubmitting}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
                 />
-                Active
+                <span>Active Status</span>
               </label>
             </div>
           </div>
@@ -405,14 +493,16 @@ const PromotionManager = () => {
               onClick={() => {
                 setShowModal(false);
                 setEditingPromo(null);
+                setPromoError('');
                 resetForm();
               }}
-              className="btn-secondary"
+              className="btn btn-secondary"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button type="submit" className="btn-primary">
-              {editingPromo ? 'Update Promotion' : 'Create Promotion'}
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving...' : (editingPromo ? 'Update Promotion' : 'Create Promotion')}
             </button>
           </div>
         </form>

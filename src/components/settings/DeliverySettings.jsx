@@ -38,8 +38,9 @@ const DeliverySettings = () => {
 
       if (error) throw error;
       setAddresses(data || []);
-    } catch (_error) {
+    } catch (error) {
       // Error fetching delivery addresses
+      console.error('Address fetch error:', error);
     }
   };
 
@@ -83,8 +84,9 @@ const DeliverySettings = () => {
 
       fetchAddresses();
       resetForm();
-    } catch (_error) {
+    } catch (error) {
       // Error saving delivery address
+      console.error('Address save error:', error);
       toast.error('Failed to save address');
     } finally {
       setLoading(false);
@@ -121,8 +123,9 @@ const DeliverySettings = () => {
 
       toast.success('Address deleted successfully!');
       fetchAddresses();
-    } catch (_error) {
+    } catch (error) {
       // Error deleting delivery address
+      console.error('Address delete error:', error);
       toast.error('Failed to delete address');
     }
   };
@@ -145,8 +148,9 @@ const DeliverySettings = () => {
 
       toast.success('Default address updated!');
       fetchAddresses();
-    } catch (_error) {
+    } catch (error) {
       // Error setting default delivery address
+      console.error('Default address error:', error);
       toast.error('Failed to update default address');
     }
   };

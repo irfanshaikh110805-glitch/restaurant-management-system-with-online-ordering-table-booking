@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { format } from 'date-fns'
-import { FiUser, FiMail, FiPhone, FiCalendar, FiShoppingBag, FiX, FiRefreshCw, FiMapPin, FiCreditCard } from 'react-icons/fi'
+import { FiUser, FiMail, FiPhone, FiCalendar, FiShoppingBag, FiX, FiRefreshCw, FiMapPin, FiCreditCard, FiClock, FiUsers } from 'react-icons/fi'
 import toast from 'react-hot-toast'
+
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
@@ -220,67 +221,66 @@ export default function Profile() {
         <div className="profile-card card">
           <div className="profile-header">
             <div className="profile-avatar">
-              {profile?.full_name?.charAt(0).toUpperCase()}
+              {profile?.full_name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="profile-details">
-              <h2>{profile?.full_name}</h2>
+              <h2>{profile?.full_name || 'Guest User'}</h2>
+              <p className="profile-email-text">{user?.email}</p>
               {profile?.role === 'admin' && (
                 <span className="badge badge-info">Admin</span>
               )}
             </div>
           </div>
-          <div className="profile-info-grid">
-            <div className="info-item">
-              <FiMail className="info-icon" />
-              <div>
-                <span className="info-label">Email</span>
-                <span className="info-value">{user?.email}</span>
-              </div>
-            </div>
-            {profile?.phone && (
-              <div className="info-item">
-                <FiPhone className="info-icon" />
-                <div>
-                  <span className="info-label">Phone</span>
-                  <span className="info-value">{profile.phone}</span>
-                </div>
-              </div>
-            )}
-          </div>
+
           <form className="profile-edit-form" onSubmit={handleProfileSave}>
-            <div className="profile-info-grid">
-              <div className="info-item">
-                <FiUser className="info-icon" />
-                <div>
-                  <span className="info-label">Full Name</span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={profileForm.full_name}
-                    onChange={(e) =>
-                      setProfileForm((prev) => ({ ...prev, full_name: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
+            <div className="profile-form-grid">
+              <div className="form-group">
+                <label className="form-label">
+                  <FiUser className="label-icon" /> Full Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={profileForm.full_name}
+                  onChange={(e) =>
+                    setProfileForm((prev) => ({ ...prev, full_name: e.target.value }))
+                  }
+                  placeholder="Your full name"
+                  required
+                />
               </div>
-              <div className="info-item">
-                <FiPhone className="info-icon" />
-                <div>
-                  <span className="info-label">Phone</span>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    value={profileForm.phone}
-                    onChange={(e) =>
-                      setProfileForm((prev) => ({ ...prev, phone: e.target.value }))
-                    }
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  <FiPhone className="label-icon" /> Phone Number
+                </label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  value={profileForm.phone}
+                  onChange={(e) =>
+                    setProfileForm((prev) => ({ ...prev, phone: e.target.value }))
+                  }
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  <FiMail className="label-icon" /> Email Address
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={user?.email || ''}
+                  disabled
+                  readOnly
+                  style={{ opacity: 0.7, cursor: 'not-allowed' }}
+                />
               </div>
             </div>
-            <div style={{ marginTop: '1.5rem', textAlign: 'right' }}>
+
+            <div className="profile-form-actions">
               <button type="submit" className="btn btn-primary" disabled={savingProfile}>
                 {savingProfile ? 'Saving...' : 'Save Changes'}
               </button>
@@ -295,14 +295,14 @@ export default function Profile() {
             onClick={() => setActiveTab('bookings')}
             type="button"
           >
-            <FiCalendar /> Bookings ({bookings.length})
+            <FiCalendar size={16} /> BOOKINGS ({bookings.length})
           </button>
           <button
             className={`tab ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => setActiveTab('orders')}
             type="button"
           >
-            <FiShoppingBag /> Orders ({orders.length})
+            <FiShoppingBag size={16} /> ORDERS ({orders.length})
           </button>
         </div>
 
@@ -318,22 +318,29 @@ export default function Profile() {
                 {bookings.map(booking => (
                   <div key={booking.id} className="booking-item card">
                     <div className="booking-info">
-                      <div>
+                      <div className="booking-main-details">
                         <h4>{format(new Date(booking.booking_date), 'EEEE, MMMM d, yyyy')}</h4>
-                        <p className="text-secondary">{booking.booking_time} • {booking.guests} Guests</p>
+                        <p className="booking-meta-text">
+                          <span className="meta-pill"><FiClock size={13} /> {booking.booking_time}</span>
+                          <span className="bullet-sep">•</span>
+                          <span className="meta-pill"><FiUsers size={13} /> {booking.guests} Guests</span>
+                        </p>
                         {booking.special_requests && (
-                          <p className="text-muted">{booking.special_requests}</p>
+                          <p className="booking-request-note">"{booking.special_requests}"</p>
                         )}
                       </div>
-                      {getStatusBadge(booking.status)}
+                      <div className="booking-status-box">
+                        {getStatusBadge(booking.status)}
+                      </div>
                     </div>
                     {/* Cancel button — only show for cancellable statuses */}
                     {(booking.status === 'pending' || booking.status === 'confirmed') && (
-                      <div style={{ marginTop: '0.75rem', textAlign: 'right' }}>
+                      <div className="booking-footer-action">
                         <button
                           onClick={() => handleCancelBooking(booking.id)}
-                          className="btn btn-danger btn-sm"
+                          className="btn-cancel-booking"
                           type="button"
+                          aria-label="Cancel this booking"
                         >
                           <FiX size={14} /> Cancel Booking
                         </button>
@@ -341,6 +348,7 @@ export default function Profile() {
                     )}
                   </div>
                 ))}
+
               </div>
             )}
           </div>

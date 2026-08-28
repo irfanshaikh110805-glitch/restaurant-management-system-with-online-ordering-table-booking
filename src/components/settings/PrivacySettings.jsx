@@ -50,8 +50,9 @@ const PrivacySettings = () => {
       URL.revokeObjectURL(url);
 
       toast.success('Your data has been downloaded!');
-    } catch (_error) {
+    } catch (error) {
       // Error downloading data
+      console.error('Data download error:', error);
       toast.error('Failed to download data');
     } finally {
       setLoading(false);
@@ -86,8 +87,9 @@ const PrivacySettings = () => {
       
       // In a real implementation, you'd send an email to admins
       // and schedule the account for deletion after a grace period
-    } catch (_error) {
+    } catch (error) {
       // Error requesting deletion
+      console.error('Account deletion request error:', error);
       toast.error('Failed to submit deletion request');
     } finally {
       setLoading(false);

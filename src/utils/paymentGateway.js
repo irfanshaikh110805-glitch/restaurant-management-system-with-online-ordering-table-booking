@@ -6,13 +6,21 @@
  * @param {Object} orderData - Order details
  * @returns {Promise} Payment result
  */
-export const initiateRazorpayPayment = (orderData) => {
-  return new Promise((resolve, reject) => {
-    // Check if Razorpay is loaded
-    if (!window.Razorpay) {
-      reject(new Error('Razorpay SDK not loaded. Please add the script to index.html'))
-      return
+export const initiateRazorpayPayment = async (orderData) => {
+  // Load Razorpay SDK dynamically if not already loaded
+  if (!window.Razorpay) {
+    try {
+      if (window.loadRazorpay) {
+        await window.loadRazorpay();
+      } else {
+        throw new Error('Razorpay loader not available')
+      }
+    } catch {
+      return Promise.reject(new Error('Failed to load Razorpay SDK'))
     }
+  }
+
+  return new Promise((resolve, reject) => {
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Add to .env

@@ -36,6 +36,10 @@ export const NotificationProvider = ({ children }) => {
 
   const fetchNotifications = async () => {
     try {
+      if (!user?.id) return;
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session) return;
+
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -43,27 +47,45 @@ export const NotificationProvider = ({ children }) => {
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '401' || error.status === 401) {
+          // Token expired or invalid session; skip quietly
+          return;
+        }
+        throw error;
+      }
 
       setNotifications(data || []);
       setUnreadCount(data?.filter(n => !n.is_read).length || 0);
     } catch (error) {
-      console.error('Error fetching notifications:', error);
+      // Gracefully handle without crashing
+      if (error?.status !== 401 && error?.code !== '401') {
+        console.warn('Notifications unavailable:', error?.message || error);
+      }
     }
   };
 
   const fetchPreferences = async () => {
     try {
+      if (!user?.id) return;
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session) return;
+
       const { data, error } = await supabase
         .from('notification_preferences')
         .select('*')
         .eq('user_id', user.id)
         .limit(1);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '401' || error.status === 401) return;
+        throw error;
+      }
       setPreferences(data && data.length > 0 ? data[0] : null);
     } catch (error) {
-      console.error('Error fetching notification preferences:', error);
+      if (error?.status !== 401 && error?.code !== '401') {
+        console.warn('Notification preferences unavailable:', error?.message || error);
+      }
     }
   };
 

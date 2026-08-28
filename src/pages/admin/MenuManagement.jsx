@@ -26,6 +26,10 @@ export default function MenuManagement() {
     name: '',
     display_order: ''
   })
+  const [isSubmittingItem, setIsSubmittingItem] = useState(false)
+  const [isSubmittingCategory, setIsSubmittingCategory] = useState(false)
+  const [categoryError, setCategoryError] = useState('')
+  const [itemError, setItemError] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -49,7 +53,22 @@ export default function MenuManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setItemError('')
 
+    const trimmedName = formData.name.trim()
+    if (!trimmedName) {
+      setItemError('Item name is required')
+      toast.error('Item name is required')
+      return
+    }
+
+    if (!formData.category_id) {
+      setItemError('Please select a category')
+      toast.error('Please select a category')
+      return
+    }
+
+    setIsSubmittingItem(true)
     try {
       let imageUrl = formData.image_url
       let imageUrl2 = formData.image_url_2
@@ -92,9 +111,9 @@ export default function MenuManagement() {
       }
 
       const payload = {
-        name: formData.name,
-        description: formData.description,
-        price: formData.price,
+        name: trimmedName,
+        description: formData.description?.trim() || '',
+        price: parseFloat(formData.price),
         category_id: formData.category_id,
         image_url: imageUrl,
         image_url_2: imageUrl2,
@@ -121,11 +140,25 @@ export default function MenuManagement() {
 
       setShowModal(false)
       setEditingItem(null)
+      setItemError('')
       resetForm()
-      fetchData()
+      await fetchData()
     } catch (error) {
       console.error('Error saving menu item:', error?.message || error, error?.code || '')
-      toast.error('Failed to save menu item')
+      if (
+        error?.code === '23505' ||
+        error?.status === 409 ||
+        error?.message?.includes('unique constraint') ||
+        error?.message?.includes('duplicate key')
+      ) {
+        const msg = `A menu item named "${trimmedName}" already exists.`
+        setItemError(msg)
+        toast.error(msg)
+      } else {
+        toast.error(error?.message || 'Failed to save menu item')
+      }
+    } finally {
+      setIsSubmittingItem(false)
     }
   }
 
@@ -141,6 +174,7 @@ export default function MenuManagement() {
       is_available: item.is_available,
       is_featured: item.is_featured
     })
+    setItemError('')
     setImageFiles([])
     setShowModal(true)
   }
@@ -206,6 +240,7 @@ export default function MenuManagement() {
       name: '',
       display_order: ''
     })
+    setCategoryError('')
     setShowCategoryModal(true)
   }
 
@@ -215,17 +250,44 @@ export default function MenuManagement() {
       name: category.name,
       display_order: category.display_order ?? ''
     })
+    setCategoryError('')
     setShowCategoryModal(true)
   }
 
   const handleCategorySubmit = async (e) => {
     e.preventDefault()
-    const payload = {
-      name: categoryForm.name,
-      display_order:
-        categoryForm.display_order === '' ? null : Number(categoryForm.display_order)
+    setCategoryError('')
+
+    const trimmedName = categoryForm.name.trim()
+    if (!trimmedName) {
+      setCategoryError('Category name is required')
+      toast.error('Category name is required')
+      return
     }
 
+    // Pre-validation: check for duplicate category name (case-insensitive)
+    const isDuplicate = categories.some(
+      (cat) =>
+        cat.name.trim().toLowerCase() === trimmedName.toLowerCase() &&
+        (!editingCategory || cat.id !== editingCategory.id)
+    )
+
+    if (isDuplicate) {
+      const errMsg = `A category named "${trimmedName}" already exists.`
+      setCategoryError(errMsg)
+      toast.error(errMsg)
+      return
+    }
+
+    const payload = {
+      name: trimmedName,
+      display_order:
+        categoryForm.display_order === '' || categoryForm.display_order === null
+          ? null
+          : Number(categoryForm.display_order)
+    }
+
+    setIsSubmittingCategory(true)
     try {
       if (editingCategory) {
         const { error } = await supabase
@@ -244,15 +306,42 @@ export default function MenuManagement() {
 
       setShowCategoryModal(false)
       setEditingCategory(null)
+      setCategoryError('')
       await fetchData()
     } catch (error) {
       console.error('Error saving category:', error?.message || error, error?.code || '')
-      toast.error('Failed to save category')
+      if (
+        error?.code === '23505' ||
+        error?.status === 409 ||
+        error?.message?.includes('unique constraint') ||
+        error?.message?.includes('duplicate key')
+      ) {
+        const errMsg = `A category named "${trimmedName}" already exists.`
+        setCategoryError(errMsg)
+        toast.error(errMsg)
+      } else if (error?.code === '23503') {
+        toast.error('Cannot save: Foreign key constraint violation.')
+      } else {
+        toast.error(error?.message || 'Failed to save category')
+      }
+    } finally {
+      setIsSubmittingCategory(false)
     }
   }
 
   const handleCategoryDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this category?')) return
+    const affectedItems = menuItems.filter((item) => item.category_id === id)
+    if (affectedItems.length > 0) {
+      if (
+        !confirm(
+          `Warning: ${affectedItems.length} menu item(s) belong to this category. Deleting this category will affect those items. Do you want to proceed?`
+        )
+      ) {
+        return
+      }
+    } else {
+      if (!confirm('Are you sure you want to delete this category?')) return
+    }
 
     try {
       const { error } = await supabase
@@ -264,7 +353,11 @@ export default function MenuManagement() {
       await fetchData()
     } catch (error) {
       console.error('Error deleting category:', error?.message || error, error?.code || '')
-      toast.error('Failed to delete category')
+      if (error.code === '23503') {
+        toast.error('Cannot delete: This category is currently in use.')
+      } else {
+        toast.error(error?.message || 'Failed to delete category')
+      }
     }
   }
 
@@ -282,6 +375,8 @@ export default function MenuManagement() {
     setImageFiles([])
   }
 
+  const [activeTab, setActiveTab] = useState('items')
+
   if (loading) {
     return <div className="spinner"></div>
   }
@@ -289,79 +384,18 @@ export default function MenuManagement() {
   return (
     <div className="menu-management">
       <div className="page-header">
-        <h1>Menu Management</h1>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => { setShowModal(true); setEditingItem(null); resetForm(); }}
-          type="button"
-        >
-          <FiPlus /> <span>Add Item</span>
-        </button>
-      </div>
-
-      <div className="table-container card">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Available</th>
-              <th>Featured</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {menuItems.map(item => (
-              <tr key={item.id}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
-                    {item.image_url && <img src={item.image_url} alt={item.name} style={{ width: 40, height: 40, borderRadius: 'var(--radius-sm)', objectFit: 'cover' }} />}
-                    {item.name}
-                  </div>
-                </td>
-                <td>{item.menu_categories?.name}</td>
-                <td>₹{item.price}</td>
-                <td>
-                  <button 
-                    onClick={() => toggleAvailability(item)} 
-                    className="toggle-btn"
-                    type="button"
-                    aria-label={item.is_available ? 'Mark as unavailable' : 'Mark as available'}
-                  >
-                    {item.is_available ? <FiToggleRight size={24} color="var(--success)" /> : <FiToggleLeft size={24} color="var(--text-muted)" />}
-                  </button>
-                </td>
-                <td>{item.is_featured ? '⭐' : '-'}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button 
-                      onClick={() => handleEdit(item)} 
-                      className="icon-btn" 
-                      title="Edit item"
-                      type="button"
-                    >
-                      <FiEdit2 />
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(item.id)} 
-                      className="icon-btn danger"
-                      title={item.is_available ? "Delete item (or mark unavailable if used in orders)" : "Delete item"}
-                      type="button"
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="table-container card" style={{ marginTop: '2rem' }}>
-        <div className="page-header">
-          <h2>Categories</h2>
+        <div className="page-title-wrap">
+          <h1>Menu Management</h1>
+          <p className="page-subtitle">Organize culinary categories, dish pricing, photos, and live availability</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+          <button 
+            className="btn btn-primary" 
+            onClick={() => { setShowModal(true); setEditingItem(null); resetForm(); }}
+            type="button"
+          >
+            <FiPlus /> <span>Add Dish</span>
+          </button>
           <button 
             className="btn btn-secondary" 
             onClick={openNewCategoryModal}
@@ -370,64 +404,218 @@ export default function MenuManagement() {
             <FiPlus /> <span>Add Category</span>
           </button>
         </div>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Display Order</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.name}</td>
-                <td>{category.display_order}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button
-                      onClick={() => handleCategoryEdit(category)}
-                      className="icon-btn"
-                      type="button"
-                      aria-label="Edit category"
-                    >
-                      <FiEdit2 />
-                    </button>
-                    <button
-                      onClick={() => handleCategoryDelete(category.id)}
-                      className="icon-btn danger"
-                      type="button"
-                      aria-label="Delete category"
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
-              <tr>
-                <td colSpan={3} style={{ textAlign: 'center' }}>
-                  No categories found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
 
+      {/* Tabs Switcher for Menu Items and Categories */}
+      <div className="filter-buttons" style={{ marginBottom: '1.5rem' }}>
+        <button 
+          className={`filter-tab-btn ${activeTab === 'items' ? 'active' : ''}`}
+          onClick={() => setActiveTab('items')}
+          type="button"
+        >
+          <span>Menu Items</span>
+          <span className="filter-count-badge">{menuItems.length}</span>
+        </button>
+        <button 
+          className={`filter-tab-btn ${activeTab === 'categories' ? 'active' : ''}`}
+          onClick={() => setActiveTab('categories')}
+          type="button"
+        >
+          <span>Categories</span>
+          <span className="filter-count-badge">{categories.length}</span>
+        </button>
+      </div>
+
+      {activeTab === 'items' && (
+        <div className="table-container card">
+          <table className="data-table menu-data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Available</th>
+                <th>Featured</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {menuItems.map(item => (
+                <tr key={item.id} className="menu-item-row">
+                  <td className="cell-main">
+                    <div className="item-identity">
+                      {item.image_url && (
+                        <img src={item.image_url} alt={item.name} className="item-thumb" />
+                      )}
+                      <div className="item-meta">
+                        <span className="item-name-text">{item.name}</span>
+                        <span className="item-cat-badge">{item.menu_categories?.name || 'General'}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="cell-category desktop-only">
+                    {item.menu_categories?.name || 'General'}
+                  </td>
+                  <td className="cell-price">
+                    <span className="item-price-val">₹{item.price}</span>
+                  </td>
+                  <td className="cell-available">
+                    <div className="avail-wrap">
+                      <button 
+                        onClick={() => toggleAvailability(item)} 
+                        className="toggle-btn"
+                        type="button"
+                        aria-label={item.is_available ? 'Mark as unavailable' : 'Mark as available'}
+                      >
+                        {item.is_available ? <FiToggleRight size={22} color="#16A34A" /> : <FiToggleLeft size={22} color="#78716C" />}
+                      </button>
+                      <span className="avail-text">{item.is_available ? 'Available' : 'Out'}</span>
+                      {item.is_featured && <span className="featured-star" title="Featured Item">⭐</span>}
+                    </div>
+                  </td>
+                  <td className="cell-featured desktop-only">
+                    {item.is_featured ? '⭐ Featured' : '-'}
+                  </td>
+                  <td className="cell-actions">
+                    <div className="action-buttons">
+                      <button 
+                        onClick={() => handleEdit(item)} 
+                        className="icon-btn compact-btn" 
+                        title="Edit item"
+                        type="button"
+                      >
+                        <FiEdit2 size={14} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item.id)} 
+                        className="icon-btn danger compact-btn" 
+                        title={item.is_available ? "Delete item (or mark unavailable if used in orders)" : "Delete item"}
+                        type="button"
+                      >
+                        <FiTrash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === 'categories' && (
+        <div className="table-container card">
+          <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2>All Categories</h2>
+            <button 
+              className="btn btn-primary btn-sm" 
+              onClick={openNewCategoryModal}
+              type="button"
+            >
+              <FiPlus /> <span>Add Category</span>
+            </button>
+          </div>
+          <table className="data-table category-data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Display Order</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category.id} className="category-item-row">
+                  <td className="cell-cat-name">
+                    <strong className="item-name-text">{category.name}</strong>
+                  </td>
+                  <td className="cell-cat-order">
+                    <span className="cat-order-pill">Order #{category.display_order}</span>
+                  </td>
+                  <td className="cell-cat-actions">
+                    <div className="action-buttons">
+                      <button
+                        onClick={() => handleCategoryEdit(category)}
+                        className="icon-btn compact-btn"
+                        title="Edit category"
+                        type="button"
+                      >
+                        <FiEdit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleCategoryDelete(category.id)}
+                        className="icon-btn danger compact-btn"
+                        title="Delete category"
+                        type="button"
+                      >
+                        <FiTrash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {categories.length === 0 && (
+                <tr>
+                  <td colSpan={3} style={{ textAlign: 'center' }}>
+                    No categories found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+
+
+
+
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content card" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</h2>
-            <form onSubmit={handleSubmit}>
+        <div className="modal-overlay" onClick={() => !isSubmittingItem && setShowModal(false)}>
+          <div className="modal-content card" onClick={(e) => e.stopPropagation()} style={{ pointerEvents: 'auto' }}>
+            <div className="modal-header">
+              <h2>{editingItem ? 'Edit Menu Item' : 'Add Menu Item'}</h2>
+              <button 
+                type="button" 
+                className="icon-btn" 
+                onClick={() => setShowModal(false)}
+                disabled={isSubmittingItem}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {itemError && (
+              <div 
+                className="badge badge-error" 
+                style={{ 
+                  width: '100%', 
+                  padding: '0.65rem 1rem', 
+                  marginBottom: '1rem', 
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.85rem'
+                }}
+              >
+                ⚠️ {itemError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} style={{ pointerEvents: 'auto' }}>
               <div className="form-group">
-                <label className="form-label">Name</label>
+                <label className="form-label">Name *</label>
                 <input
                   type="text"
                   className="form-control"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) => {
+                    setFormData({...formData, name: e.target.value})
+                    if (itemError) setItemError('')
+                  }}
+                  disabled={isSubmittingItem}
                   required
                 />
               </div>
@@ -438,29 +626,32 @@ export default function MenuManagement() {
                   className="form-control"
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  disabled={isSubmittingItem}
                   rows="3"
                 />
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Price</label>
+                  <label className="form-label">Price *</label>
                   <input
                     type="number"
                     step="0.01"
                     className="form-control"
                     value={formData.price}
                     onChange={(e) => setFormData({...formData, price: e.target.value})}
+                    disabled={isSubmittingItem}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Category</label>
+                  <label className="form-label">Category *</label>
                   <select
                     className="form-control"
                     value={formData.category_id}
                     onChange={(e) => setFormData({...formData, category_id: e.target.value})}
+                    disabled={isSubmittingItem}
                     required
                   >
                     <option value="">Select Category</option>
@@ -478,6 +669,7 @@ export default function MenuManagement() {
                   className="form-control"
                   value={formData.image_url}
                   onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                  disabled={isSubmittingItem}
                   placeholder="https://example.com/image.jpg"
                 />
                 {formData.image_url && (
@@ -499,6 +691,7 @@ export default function MenuManagement() {
                   className="form-control"
                   value={formData.image_url_2}
                   onChange={(e) => setFormData({...formData, image_url_2: e.target.value})}
+                  disabled={isSubmittingItem}
                   placeholder="https://example.com/image2.jpg"
                 />
                 {formData.image_url_2 && (
@@ -520,6 +713,7 @@ export default function MenuManagement() {
                   className="form-control"
                   accept="image/*"
                   multiple
+                  disabled={isSubmittingItem}
                   onChange={(e) => setImageFiles(Array.from(e.target.files || []))}
                 />
                 <p className="text-secondary" style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
@@ -532,6 +726,7 @@ export default function MenuManagement() {
                   <input
                     type="checkbox"
                     checked={formData.is_available}
+                    disabled={isSubmittingItem}
                     onChange={(e) => setFormData({...formData, is_available: e.target.checked})}
                   />
                   <span>Available</span>
@@ -543,6 +738,7 @@ export default function MenuManagement() {
                   <input
                     type="checkbox"
                     checked={formData.is_featured}
+                    disabled={isSubmittingItem}
                     onChange={(e) => setFormData({...formData, is_featured: e.target.checked})}
                   />
                   <span>Featured</span>
@@ -550,11 +746,16 @@ export default function MenuManagement() {
               </div>
 
               <div className="modal-actions">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={() => setShowModal(false)}
+                  disabled={isSubmittingItem}
+                >
                   <span>Cancel</span>
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  <span>{editingItem ? 'Update' : 'Add'}</span>
+                <button type="submit" className="btn btn-primary" disabled={isSubmittingItem}>
+                  <span>{isSubmittingItem ? 'Saving...' : (editingItem ? 'Update Item' : 'Add Item')}</span>
                 </button>
               </div>
             </form>
@@ -562,35 +763,68 @@ export default function MenuManagement() {
         </div>
       )}
       {showCategoryModal && (
-        <div className="modal-overlay" onClick={() => setShowCategoryModal(false)}>
-          <div className="modal-content card" onClick={(e) => e.stopPropagation()}>
-            <h2>{editingCategory ? 'Edit Category' : 'Add Category'}</h2>
-            <form onSubmit={handleCategorySubmit}>
-              <div className="form-group">
-                <label className="form-label">Name</label>
+        <div className="modal-overlay" onClick={() => !isSubmittingCategory && setShowCategoryModal(false)}>
+          <div className="modal-content card" onClick={(e) => e.stopPropagation()} style={{ pointerEvents: 'auto' }}>
+            <div className="modal-header">
+              <h2>{editingCategory ? 'Edit Category' : 'Add Category'}</h2>
+              <button 
+                type="button" 
+                className="icon-btn" 
+                onClick={() => setShowCategoryModal(false)}
+                disabled={isSubmittingCategory}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {categoryError && (
+              <div 
+                className="badge badge-error" 
+                style={{ 
+                  width: '100%', 
+                  padding: '0.65rem 1rem', 
+                  marginBottom: '1rem', 
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.85rem'
+                }}
+              >
+                ⚠️ {categoryError}
+              </div>
+            )}
+
+            <form onSubmit={handleCategorySubmit} className="modal-form" onClick={(e) => e.stopPropagation()} style={{ pointerEvents: 'auto' }}>
+              <div className="form-group" style={{ pointerEvents: 'auto' }}>
+                <label className="form-label">Category Name *</label>
                 <input
                   type="text"
                   className="form-control"
                   value={categoryForm.name}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setCategoryForm((prev) => ({ ...prev, name: e.target.value }))
-                  }
+                    if (categoryError) setCategoryError('')
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  placeholder="e.g. Starters, Main Course, Desserts"
                   required
+                  disabled={isSubmittingCategory}
+                  autoFocus
                 />
               </div>
-              <div className="form-group">
+              <div className="form-group" style={{ pointerEvents: 'auto' }}>
                 <label className="form-label">Display Order</label>
                 <input
                   type="number"
                   className="form-control"
                   value={categoryForm.display_order}
-                  onChange={(e) =>
-                    setCategoryForm((prev) => ({
-                      ...prev,
-                      display_order: e.target.value
-                    }))
-                  }
+                  onChange={(e) => setCategoryForm((prev) => ({ ...prev, display_order: e.target.value }))}
+                  onClick={(e) => e.stopPropagation()}
                   placeholder="0"
+                  disabled={isSubmittingCategory}
+                  min="0"
                 />
               </div>
               <div className="modal-actions">
@@ -598,11 +832,12 @@ export default function MenuManagement() {
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => setShowCategoryModal(false)}
+                  disabled={isSubmittingCategory}
                 >
                   <span>Cancel</span>
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  <span>{editingCategory ? 'Update' : 'Add'}</span>
+                <button type="submit" className="btn btn-primary" disabled={isSubmittingCategory}>
+                  <span>{isSubmittingCategory ? 'Saving...' : (editingCategory ? 'Update Category' : 'Add Category')}</span>
                 </button>
               </div>
             </form>

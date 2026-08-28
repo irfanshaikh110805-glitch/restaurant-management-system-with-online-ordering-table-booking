@@ -48,20 +48,31 @@ const OrderTracking = () => {
       setLoading(true);
       
       // Fetch order with items
-      const { data: orderData, error: orderError } = await supabase
+      const { data: initialOrder, error: orderError } = await supabase
         .from('orders')
         .select(`
           *,
-          order_items(*,  menu_items(name, image_url)),
+          order_items(*, menu_items(name, image_url)),
           delivery_addresses(*)
         `)
         .eq('id', orderId)
         .single();
 
-      if (orderError) throw orderError;
+      let orderData = initialOrder;
 
-      // Guard: if not logged in or order belongs to another user, redirect safely
-      if (!user || orderData.user_id !== user.id) {
+      if (orderError) {
+        // Fallback query if nested join fails
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('orders')
+          .select('*, order_items(*)')
+          .eq('id', orderId)
+          .single();
+        if (fallbackError) throw fallbackError;
+        orderData = fallbackData;
+      }
+
+      // Guard: only redirect if order belongs to a different logged-in user
+      if (user && orderData.user_id && orderData.user_id !== user.id) {
         navigate('/profile');
         return;
       }
@@ -70,12 +81,13 @@ const OrderTracking = () => {
 
       // Fetch tracking info
       const { data: trackingData } = await supabase
+
         .from('delivery_tracking')
         .select('*')
         .eq('order_id', orderId)
         .order('updated_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       setTracking(trackingData);
 
@@ -85,10 +97,11 @@ const OrderTracking = () => {
           .from('profiles')
           .select('full_name, phone')
           .eq('id', trackingData.driver_id)
-          .single();
+          .maybeSingle();
 
         setDriver(driverData);
       }
+
     } catch (error) {
       console.error('Error fetching order:', error);
     } finally {
@@ -153,35 +166,48 @@ const OrderTracking = () => {
     );
   }
 
-  const steps = getStatusSteps();
+  const subtotalVal = Number(order.subtotal || order.total || 0);
+  const taxVal = Number(order.tax_amount || 0);
+  const deliveryVal = Number(order.delivery_fee || 0);
+  const discountVal = Number(order.discount_amount || 0);
+  const totalVal = Number(order.total ?? order.total_amount ?? (subtotalVal + taxVal + deliveryVal - discountVal));
 
   return (
     <div className="order-tracking-page">
       <div className="container">
+        {/* Header */}
         <div className="tracking-header">
-          <h1>Track Your Order</h1>
-          <div className="order-id">Order #{order.id.slice(0, 8).toUpperCase()}</div>
-        </div>
-
-        {/* ETA Banner */}
-        {tracking?.delivery_status !== 'delivered' && (
-          <div className="eta-banner">
-            <FiClock className="eta-icon" />
-            <div className="eta-content">
+          <div className="header-content">
+            <h1>Track Your Order</h1>
+            <p className="order-id">Order #{order.id?.slice(0, 8)}</p>
+            <div className="order-meta">
+              <span className="order-date">
+                <FiClock /> {new Date(order.created_at).toLocaleString()}
+              </span>
+              <span className={`status-badge ${order.status}`}>
+                {order.status?.toUpperCase()}
+              </span>
+            </div>
+          </div>
+          {tracking?.estimated_delivery_time && (
+            <div className="eta-card">
               <div className="eta-label">Estimated Delivery</div>
               <div className="eta-time">{getEstimatedTime()}</div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Tracking Progress */}
-        <div className="tracking-progress">
+        {/* Status Tracker */}
+        <div className="tracker-card">
           <div className="progress-steps">
-            {steps.map((step, index) => (
-              <div key={step.key} className={`progress-step ${step.completed ? 'completed' : ''} ${step.active ? 'active' : ''}`}>
+            {getStatusSteps().map((step, index) => (
+              <div 
+                key={step.key} 
+                className={`progress-step ${step.completed ? 'completed' : ''} ${step.active ? 'active' : ''}`}
+              >
                 <div className="step-marker">
                   <div className="step-icon">{step.icon}</div>
-                  {index < steps.length - 1 && (
+                  {index < getStatusSteps().length - 1 && (
                     <div className={`step-line ${step.completed ? 'completed' : ''}`} />
                   )}
                 </div>
@@ -207,7 +233,6 @@ const OrderTracking = () => {
               <a href={`tel:${driver.phone}`} className="btn-secondary">
                 <FiPhone /> Call
               </a>
-              {/* Bug fix: message button now opens SMS app on mobile */}
               <a
                 href={`sms:${driver.phone}`}
                 className="btn-secondary"
@@ -226,15 +251,15 @@ const OrderTracking = () => {
             {order.order_items?.map(item => (
               <div key={item.id} className="order-item">
                 <img 
-                  src={item.menu_items?.image_url || '/placeholder.jpg'} 
-                  alt={item.menu_items?.name}
+                  src={item.menu_items?.image_url || item.image_url || '/placeholder.jpg'} 
+                  alt={item.menu_items?.name || item.name || 'Dish'}
                   className="item-image"
                 />
                 <div className="item-info">
-                  <div className="item-name">{item.menu_items?.name}</div>
+                  <div className="item-name">{item.menu_items?.name || item.name || 'Dish Item'}</div>
                   <div className="item-quantity">Qty: {item.quantity}</div>
                 </div>
-                <div className="item-price">₹{item.price}</div>
+                <div className="item-price">₹{Number(item.price * (item.quantity || 1)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
               </div>
             ))}
           </div>
@@ -242,25 +267,29 @@ const OrderTracking = () => {
           <div className="order-summary">
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>₹{order.subtotal}</span>
+              <span>₹{subtotalVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
+            {deliveryVal > 0 && (
+              <div className="summary-row">
+                <span>Delivery Fee</span>
+                <span>₹{deliveryVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+            )}
             <div className="summary-row">
-              <span>Delivery Fee</span>
-              <span>₹{order.delivery_fee || 0}</span>
+              <span>Tax (5% GST)</span>
+              <span>₹{taxVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
-            <div className="summary-row">
-              <span>Tax</span>
-              <span>₹{order.tax_amount || 0}</span>
-            </div>
-            {order.discount_amount > 0 && (
+            {discountVal > 0 && (
               <div className="summary-row success">
                 <span>Discount</span>
-                <span>-₹{order.discount_amount}</span>
+                <span>-₹{discountVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             )}
             <div className="summary-row total">
-              <span>Total</span>
-              <span>₹{order.total_amount}</span>
+              <span>Total Amount</span>
+              <strong className="tracking-total-accent">
+                ₹{totalVal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </strong>
             </div>
           </div>
         </div>

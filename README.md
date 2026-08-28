@@ -207,6 +207,34 @@ The application will be available at `http://localhost:5173`
 
 ---
 
+## 👑 Admin Portal & Access
+
+The application includes a comprehensive back-office administrative panel to manage orders, bookings, menus, reviews, promotions, and inventory.
+
+### 🔐 Admin Login Details
+- **Admin Portal URL**: `http://localhost:5173/admin-login` (or `/admin`)
+- **Admin Email**: `irfanshaikh110805@gmail.com`
+- **Default Password**: `Admin@123456`
+
+### ⚙️ Granting Admin Role in Supabase
+To make any registered user an administrator, run the following SQL command in your Supabase SQL Editor:
+
+```sql
+-- 1. Update user profile to admin role
+UPDATE public.profiles
+SET role = 'admin', updated_at = NOW()
+WHERE id = (SELECT id FROM auth.users WHERE email = 'your-email@example.com');
+
+-- 2. Update user metadata
+UPDATE auth.users
+SET raw_user_meta_data = raw_user_meta_data || '{"role": "admin"}'::jsonb,
+    raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}'::jsonb,
+    updated_at = NOW()
+WHERE email = 'your-email@example.com';
+```
+
+---
+
 ## 📦 Available Scripts
 
 ### Development

@@ -199,8 +199,9 @@ export const SUSPICIOUS_PATTERNS = {
   sqlInjection: /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)|(-{2})|(\bOR\b.*=.*)|(\bAND\b.*=.*)/i,
   xss: /<script|javascript:|onerror=|onload=|<iframe/i,
   pathTraversal: /\.\.[/\\]/,
-  commandInjection: /[;&|`$()]/
+  commandInjection: /(?:;\s*(?:rm|ls|cat|wget|curl|sh|bash|powershell|cmd)\b)|(?:`[^`]+`)|(?:\$\([^)]+\))/i
 };
+
 
 // API endpoint classifications for monitoring
 export const ENDPOINT_CLASSIFICATIONS = {

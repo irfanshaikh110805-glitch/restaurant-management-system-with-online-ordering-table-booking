@@ -39,6 +39,45 @@ const LoyaltyProgram = () => {
     }
   }, [user]);
 
+const DEFAULT_MOCK_REWARDS = [
+  {
+    id: 'mock-1',
+    reward_name: '₹100 Off Dining Voucher',
+    title: '₹100 Off Dining Voucher',
+    description: 'Redeem on your next dine-in or online delivery order.',
+    points_required: 200,
+    reward_type: 'discount',
+    is_active: true
+  },
+  {
+    id: 'mock-2',
+    reward_name: 'Complimentary Royal Dessert',
+    title: 'Complimentary Royal Dessert',
+    description: 'Chef special Shahi Gulab Jamun or Kulfi Falooda.',
+    points_required: 350,
+    reward_type: 'free_item',
+    is_active: true
+  },
+  {
+    id: 'mock-3',
+    reward_name: '₹250 Grand Feast Voucher',
+    title: '₹250 Grand Feast Voucher',
+    description: 'Applicable on orders above ₹1,000.',
+    points_required: 500,
+    reward_type: 'discount',
+    is_active: true
+  },
+  {
+    id: 'mock-4',
+    reward_name: 'VIP Table Upgrade + Welcome Drink',
+    title: 'VIP Table Upgrade + Welcome Drink',
+    description: 'Priority seating and complimentary welcome drink.',
+    points_required: 800,
+    reward_type: 'experience',
+    is_active: true
+  }
+];
+
   const fetchReferrals = async () => {
     if (!user) return;
     try {
@@ -50,23 +89,25 @@ const LoyaltyProgram = () => {
 
       if (error) throw error;
       setReferrals(data || []);
-    } catch (error) {
-      console.error('Error fetching referrals:', error);
+    } catch {
+      setReferrals([]);
     }
   };
 
   const fetchRewards = async () => {
-    if (!user) return;
     try {
       const { data, error } = await supabase
         .from('loyalty_rewards')
         .select('*')
         .eq('is_active', true)
         .order('points_required', { ascending: true });
-      // Silently fall back to [] if table doesn't exist yet
-      if (!error) setRewards(data || []);
-    } catch (error) {
-      console.error('Error fetching rewards:', error);
+      if (error || !data || data.length === 0) {
+        setRewards(DEFAULT_MOCK_REWARDS);
+      } else {
+        setRewards(data);
+      }
+    } catch {
+      setRewards(DEFAULT_MOCK_REWARDS);
     }
   };
 
@@ -98,18 +139,18 @@ const LoyaltyProgram = () => {
       case 'bronze': return '🥉';
       case 'silver': return '🥈';
       case 'gold': return '🥇';
-      case 'platinum': return <RiVipCrownFill color="#E5E4E2" />;
+      case 'platinum': return <RiVipCrownFill color="#DFBF77" />;
       default: return '🥉';
     }
   };
 
   const getTierColor = (tier) => {
     switch (tier) {
-      case 'bronze': return '#CD7F32';
-      case 'silver': return '#C0C0C0';
-      case 'gold': return '#FFD700';
-      case 'platinum': return '#E5E4E2';
-      default: return '#CD7F32';
+      case 'bronze': return '#8C7A5B';
+      case 'silver': return '#78716C';
+      case 'gold': return '#B49346';
+      case 'platinum': return '#2C2925';
+      default: return '#8C7A5B';
     }
   };
 

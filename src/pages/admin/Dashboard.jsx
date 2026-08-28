@@ -91,7 +91,12 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <h1>Dashboard</h1>
+      <div className="page-header">
+        <div className="page-title-wrap">
+          <h1>Admin Dashboard</h1>
+          <p className="page-subtitle">Welcome back. Overview of today's restaurant performance, revenue, and active orders.</p>
+        </div>
+      </div>
 
       {/* Stats Grid */}
       <div className="stats-grid">
@@ -153,10 +158,20 @@ export default function Dashboard() {
             <tbody>
               {recentOrders.map(order => (
                 <tr key={order.id}>
-                  <td>#{order.id.substring(0, 8)}</td>
-                  <td>{order.profile?.full_name || 'Unknown'}</td>
-                  <td>₹{order.total}</td>
                   <td>
+                    <span className="mobile-cell-label">Order ID</span>
+                    <strong style={{ color: '#1C1917' }}>#{order.id.substring(0, 8)}</strong>
+                  </td>
+                  <td>
+                    <span className="mobile-cell-label">Customer</span>
+                    <span>{order.profile?.full_name || 'Unknown'}</span>
+                  </td>
+                  <td>
+                    <span className="mobile-cell-label">Amount</span>
+                    <strong style={{ color: '#1C1917' }}>₹{order.total}</strong>
+                  </td>
+                  <td>
+                    <span className="mobile-cell-label">Status</span>
                     <span className={`badge badge-${
                       order.status === 'completed' || order.status === 'delivered' ? 'success' :
                       order.status === 'pending' ? 'warning' :
@@ -165,7 +180,10 @@ export default function Dashboard() {
                       {order.status}
                     </span>
                   </td>
-                  <td>{format(new Date(order.created_at), 'MMM d, h:mm a')}</td>
+                  <td>
+                    <span className="mobile-cell-label">Date</span>
+                    <span style={{ fontSize: '0.82rem', color: '#78716C' }}>{format(new Date(order.created_at), 'MMM d, h:mm a')}</span>
+                  </td>
                 </tr>
               ))}
             </tbody>

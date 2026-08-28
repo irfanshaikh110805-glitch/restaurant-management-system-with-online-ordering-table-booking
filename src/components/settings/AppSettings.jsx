@@ -38,8 +38,9 @@ const AppSettings = () => {
         if (data.font_size) setFontSize(data.font_size);
         // Set other preferences if they exist
       }
-    } catch (_error) {
+    } catch (error) {
       // Error fetching app preferences
+      console.error('Preferences fetch error:', error);
     }
   };
 
@@ -58,8 +59,9 @@ const AppSettings = () => {
       if (error) throw error;
 
       toast.success('App preferences saved!');
-    } catch (_error) {
+    } catch (error) {
       // Error saving app preferences
+      console.error('Preferences save error:', error);
       toast.error('Failed to save preferences');
     } finally {
       setLoading(false);

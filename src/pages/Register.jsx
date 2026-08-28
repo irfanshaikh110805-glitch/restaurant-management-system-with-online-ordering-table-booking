@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
+import useSEO from '../hooks/useSEO'
 import './Auth.css'
 
 export default function Register() {
@@ -17,6 +18,12 @@ export default function Register() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
 
+  useSEO({
+    title: 'Sign Up',
+    description: 'Create an account at Hotel Everest Family Restaurant to book tables, order online, and manage your preferences.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/register'
+  })
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -27,34 +34,58 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Validation
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.password) {
+      toast.error('All fields are required')
+      return
+    }
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match')
       return
     }
 
-    // Bug fix: frontend now matches backend requirement of >= 8 characters
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters')
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters')
       return
     }
 
     setLoading(true)
 
-    const { data: _data, error } = await signUp({
-      email: formData.email,
-      password: formData.password,
-      fullName: formData.fullName,
-      phone: formData.phone
-    })
+    try {
+      const { data: _data, error } = await signUp({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        phone: formData.phone
+      })
 
-    if (error) {
-      toast.error(error)
-    } else {
-      toast.success('Account created! You can now sign in.')
-      navigate('/login')
+      if (error) {
+        toast.error(error, {
+          duration: 4000,
+          style: {
+            borderRadius: '10px',
+            background: '#374151',
+            color: '#F9FAFB',
+          },
+        })
+      } else {
+        toast.success('Account created! Please check your email to verify.', {
+          duration: 5000,
+          style: {
+            borderRadius: '10px',
+            background: '#374151',
+            color: '#F9FAFB',
+          },
+        })
+        navigate('/login')
+      }
+    } catch (err) {
+      console.error('Registration error:', err)
+      toast.error('An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -125,8 +156,8 @@ export default function Register() {
                   className="form-control"
                   value={formData.password}
                   onChange={handleChange}
-                  placeholder="Min. 8 characters"
-                  minLength={8}
+                  placeholder="Min. 6 characters"
+                  minLength={6}
                   required
                 />
               </div>
@@ -154,7 +185,7 @@ export default function Register() {
           </form>
 
           <div className="auth-footer">
-            <p>Already have an account? <Link to="/login">Sign in</Link></p>
+            <p>Already have an account? <Link to="/login" className="auth-link-text">Sign in</Link></p>
           </div>
         </div>
       </div>

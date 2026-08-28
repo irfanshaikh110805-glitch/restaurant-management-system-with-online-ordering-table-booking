@@ -22,23 +22,60 @@ const ReviewModeration = () => {
       setLoading(true);
       let query = supabase
         .from('reviews')
-        .select(`
-          *,
-          profiles:user_id (full_name),
-          menu_items:item_id (name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (filter !== 'all') {
         query = query.eq('status', filter);
       }
 
-      const { data, error } = await query;
+      const { data: reviewData, error } = await query;
       if (error) throw error;
 
-      setReviews(data || []);
+      const rawReviews = reviewData || [];
+      const userIds = [...new Set(rawReviews.map(r => r.user_id).filter(Boolean))];
+      const itemIds = [...new Set(rawReviews.map(r => r.item_id).filter(Boolean))];
+
+      const profileMap = {};
+      const itemMap = {};
+
+      if (userIds.length > 0) {
+        try {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, full_name')
+            .in('id', userIds);
+          if (profiles) {
+            profiles.forEach(p => { profileMap[p.id] = p; });
+          }
+        } catch {
+          // ignore lookup errors
+        }
+      }
+
+      if (itemIds.length > 0) {
+        try {
+          const { data: items } = await supabase
+            .from('menu_items')
+            .select('id, name')
+            .in('id', itemIds);
+          if (items) {
+            items.forEach(i => { itemMap[i.id] = i; });
+          }
+        } catch {
+          // ignore lookup errors
+        }
+      }
+
+      const enriched = rawReviews.map(r => ({
+        ...r,
+        profiles: profileMap[r.user_id] || { full_name: r.user_name || 'Guest Customer' },
+        menu_items: itemMap[r.item_id] || { name: r.item_name || 'Menu Item' }
+      }));
+
+      setReviews(enriched);
     } catch (error) {
-      console.error('Error fetching reviews:', error?.message || error, error?.code || '');
+      console.error('Error fetching reviews:', error?.message || error);
       toast.error('Failed to load reviews');
     } finally {
       setLoading(false);
@@ -99,16 +136,28 @@ const ReviewModeration = () => {
 
   return (
     <div className="review-moderation">
-      <div className="moderation-header">
-        <h1>Review Moderation</h1>
-        <div className="filter-tabs">
-          {['all', 'pending', 'approved', 'rejected'].map(status => (
+      <div className="page-header">
+        <div className="page-title-wrap">
+          <h1>Review Moderation</h1>
+          <p className="page-subtitle">Moderate guest feedback, inspect ratings, and post official restaurant responses</p>
+        </div>
+        <div className="filter-buttons">
+          {[
+            { id: 'all', label: 'All Reviews' },
+            { id: 'pending', label: 'Pending' },
+            { id: 'approved', label: 'Approved' },
+            { id: 'rejected', label: 'Rejected' },
+          ].map(({ id, label }) => (
             <button
-              key={status}
-              className={`filter-tab ${filter === status ? 'active' : ''}`}
-              onClick={() => setFilter(status)}
+              key={id}
+              className={`filter-tab-btn ${filter === id ? 'active' : ''}`}
+              onClick={() => setFilter(id)}
+              type="button"
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
+              <span>{label}</span>
+              <span className="filter-count-badge">
+                {id === 'all' ? reviews.length : reviews.filter(r => r.status === id).length}
+              </span>
             </button>
           ))}
         </div>

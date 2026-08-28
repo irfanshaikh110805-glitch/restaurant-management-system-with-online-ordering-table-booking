@@ -12,7 +12,6 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import MobileBottomNav from "./components/MobileBottomNav";
-import LoadingSpinner from "./components/LoadingSpinner";
 import ScrollToTop from "./components/ScrollToTop";
 import usePageTracking from "./hooks/usePageTracking";
 
@@ -37,14 +36,12 @@ const initAnalytics = () => {
 };
 
 const registerServiceWorker = () => {
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => {
+  // Register service worker earlier for better offline support
+  if ('serviceWorker' in navigator) {
+    // Use load event to ensure DOM is ready but don't delay too much
+    window.addEventListener('load', () => {
       import('./utils/registerServiceWorker').then(m => m.register());
-    }, { timeout: 3000 });
-  } else {
-    setTimeout(() => {
-      import('./utils/registerServiceWorker').then(m => m.register());
-    }, 2000);
+    });
   }
 };
 
@@ -136,8 +133,8 @@ function App() {
                             width: 48,
                             height: 48,
                             borderRadius: '50%',
-                            border: '3px solid rgba(212,168,83,0.15)',
-                            borderTopColor: '#d4a853',
+                            border: '3px solid rgba(28,25,23,0.15)',
+                            borderTopColor: '#1C1917',
                             animation: 'spin 0.8s linear infinite'
                           }} />
                           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
@@ -152,6 +149,7 @@ function App() {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/events" element={<EventsPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="/menu/:itemId/reviews" element={<ReviewsPage />} />
               <Route path="/loyalty" element={<LoyaltyProgram />} />
               <Route path="/promotions" element={<PromotionsPage />} />
@@ -162,16 +160,13 @@ function App() {
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/register" element={<Register />} />
 
-              {/* Protected Routes */}
-              <Route
-                path="/booking"
-                element={
-                  <ProtectedRoute>
-                    <Booking />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Public & Customer Experience Routes */}
+              <Route path="/booking" element={<Booking />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+              <Route path="/order-tracking/:orderId" element={<OrderTracking />} />
+
+              {/* User Account Protected Routes */}
               <Route
                 path="/profile"
                 element={
@@ -185,22 +180,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/order-confirmation/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <OrderConfirmation />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/order-tracking/:orderId"
-                element={
-                  <ProtectedRoute>
-                    <OrderTracking />
                   </ProtectedRoute>
                 }
               />
@@ -231,13 +210,43 @@ function App() {
           </main>
                   <Footer />
                   <Toaster
-                    position="top-right"
+                    position="top-center"
+                    containerStyle={{
+                      top: 72,
+                      zIndex: 99999,
+                    }}
                     toastOptions={{
-                      duration: 3000,
+                      duration: 3800,
                       style: {
-                        background: "#374151",
-                        color: "#F9FAFB",
-                        border: "1px solid rgba(217, 119, 6, 0.3)",
+                        background: '#1C1917',
+                        color: '#FAF7F2',
+                        border: '1px solid rgba(223, 191, 119, 0.35)',
+                        borderRadius: '16px',
+                        padding: '12px 18px',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        fontFamily: 'var(--font-body), "Plus Jakarta Sans", -apple-system, sans-serif',
+                        boxShadow: '0 16px 36px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(223, 191, 119, 0.15)',
+                        maxWidth: '460px',
+                        lineHeight: '1.45',
+                      },
+                      success: {
+                        iconTheme: {
+                          primary: '#DFBF77',
+                          secondary: '#1C1917',
+                        },
+                        style: {
+                          border: '1px solid rgba(223, 191, 119, 0.5)',
+                        },
+                      },
+                      error: {
+                        iconTheme: {
+                          primary: '#EF4444',
+                          secondary: '#FAF7F2',
+                        },
+                        style: {
+                          border: '1px solid rgba(239, 68, 68, 0.35)',
+                        },
                       },
                     }}
                   />

@@ -78,27 +78,54 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
+      // Enforce password policy
+      const { PASSWORD_POLICY } = await import('../utils/securityConfig');
+      if (password.length < PASSWORD_POLICY.minLength) {
+        return { 
+          data: null, 
+          error: `Password must be at least ${PASSWORD_POLICY.minLength} characters long` 
+        };
+      }
+      if (PASSWORD_POLICY.requireUppercase && !/[A-Z]/.test(password)) {
+        return { data: null, error: 'Password must contain at least one uppercase letter' };
+      }
+      if (PASSWORD_POLICY.requireLowercase && !/[a-z]/.test(password)) {
+        return { data: null, error: 'Password must contain at least one lowercase letter' };
+      }
+      if (PASSWORD_POLICY.requireNumbers && !/\d/.test(password)) {
+        return { data: null, error: 'Password must contain at least one number' };
+      }
+      if (PASSWORD_POLICY.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        return { data: null, error: 'Password must contain at least one special character' };
+      }
+
+      // Basic validation
+      if (!email || !password || !fullName || !phone) {
+        return { data: null, error: 'All fields are required' };
+      }
+
+      if (password.length < 6) {
+        return { data: null, error: 'Password must be at least 6 characters' };
+      }
+
       // Input sanitization
       const sanitizedEmail = sanitizeEmail(email);
       const sanitizedFullName = sanitizeString(fullName, { maxLength: 100 });
       const sanitizedPhone = sanitizePhone(phone);
 
       if (!sanitizedEmail) {
-        return { data: null, error: 'Invalid email address' };
+        return { data: null, error: 'Please enter a valid email address' };
       }
       if (!sanitizedFullName || sanitizedFullName.length < 2) {
         return { data: null, error: 'Full name must be at least 2 characters' };
       }
       if (!sanitizedPhone) {
-        return { data: null, error: 'Invalid phone number' };
-      }
-      if (password.length < 8) {
-        return { data: null, error: 'Password must be at least 8 characters' };
+        return { data: null, error: 'Please enter a valid phone number (10-15 digits)' };
       }
 
       const { data, error } = await supabase.auth.signUp({
         email: sanitizedEmail,
-        password,
+        password: password.trim(),
         options: {
           data: {
             full_name: sanitizedFullName,
@@ -107,10 +134,24 @@ export const AuthProvider = ({ children }) => {
         }
       })
 
-      if (error) throw error
+      if (error) {
+        // Provide user-friendly error messages
+        if (error.message.includes('already registered')) {
+          return { data: null, error: 'This email is already registered' };
+        }
+        if (error.message.includes('Password')) {
+          return { data: null, error: 'Password does not meet requirements' };
+        }
+        throw error;
+      }
+      
       return { data, error: null }
     } catch (error) {
-      return { data: null, error: error.message }
+      console.error('Sign up error:', error);
+      return { 
+        data: null, 
+        error: error.message || 'Failed to create account. Please try again.' 
+      }
     }
   }
 
@@ -125,21 +166,44 @@ export const AuthProvider = ({ children }) => {
         };
       }
 
+      // Basic validation before sanitization
+      if (!email || !password) {
+        return { data: null, error: 'Email and password are required' };
+      }
+
+      if (password.length < 6) {
+        return { data: null, error: 'Password must be at least 6 characters' };
+      }
+
       // Input sanitization
       const sanitizedEmail = sanitizeEmail(email);
       if (!sanitizedEmail) {
-        return { data: null, error: 'Invalid email address' };
+        return { data: null, error: 'Please enter a valid email address' };
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: sanitizedEmail,
-        password
+        password: password.trim()
       })
 
-      if (error) throw error
+      if (error) {
+        // Provide user-friendly error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return { data: null, error: 'Invalid email or password' };
+        }
+        if (error.message.includes('Email not confirmed')) {
+          return { data: null, error: 'Please verify your email address first' };
+        }
+        throw error;
+      }
+      
       return { data, error: null }
     } catch (error) {
-      return { data: null, error: error.message }
+      console.error('Sign in error:', error);
+      return { 
+        data: null, 
+        error: error.message || 'Failed to sign in. Please try again.' 
+      }
     }
   }
 

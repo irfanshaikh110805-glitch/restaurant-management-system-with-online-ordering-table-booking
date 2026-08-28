@@ -1,0 +1,21 @@
+{
+  "name": "Hotel Everest Family Restaurant",
+  "short_name": "Hotel Everest",
+  "description": "Authentic Indian cuisine with online ordering and table booking",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0d",
+  "theme_color": "#d4a853",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

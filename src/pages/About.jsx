@@ -1,9 +1,16 @@
 import { motion } from 'framer-motion'
 import { FiAward, FiUsers, FiStar } from 'react-icons/fi'
 import { staggerContainer, fadeInUp, slideInRight, slideInLeft, pageTransition } from '../utils/animations'
+import useSEO from '../hooks/useSEO'
 import './About.css'
 
 export default function About() {
+  useSEO({
+    title: 'About Us',
+    description: 'Learn about Hotel Everest Family Restaurant. Serving the finest Indian delicacies in Vijayapura since 2003 with a passion for authenticity.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/about'
+  })
+
   return (
     <motion.div 
       className="about-page"

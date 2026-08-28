@@ -33,10 +33,11 @@ export default defineConfig(({ mode }) => ({
     // Performance optimizations
     target: ['es2019', 'chrome87', 'firefox78', 'safari14'], // Broad mobile browser support
     minify: 'esbuild', // Use esbuild for fast minification
+    sourcemap: mode === 'production' ? false : true, // Enable source maps for debugging
     esbuildOptions: {
-      drop: ['console', 'debugger'],
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
       legalComments: 'none',
-      minifyIdentifiers: true,
+      minifyIdentifiers: mode === 'production', // Only minify in production for better debugging
       minifySyntax: true,
       minifyWhitespace: true,
       treeShaking: true
@@ -120,8 +121,6 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 250, // Strict limit for mobile performance
     // CSS code splitting
     cssCodeSplit: true,
-    // Source maps disabled for production
-    sourcemap: false,
     // Asset inlining threshold (4kb - inline small assets)
     assetsInlineLimit: 4096,
     // Report compressed size

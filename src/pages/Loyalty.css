@@ -1,64 +1,90 @@
-/* ============================================
-   LOYALTY PROGRAM PAGE STYLES
-   ============================================ */
+/* ==========================================================================
+   LUXURY WARM MINIMALIST LOYALTY PROGRAM STYLES
+   Main Palette: Warm Sand (#EBE7DF), Soft Taupe (#DFDACF), Deep Espresso (#1C1917)
+   ========================================================================== */
 
 .loyalty-page {
   min-height: 100vh;
-  padding: 2rem 0;
-  background: var(--bg-primary);
+  background-color: #EBE7DF;
+  color: #1C1917;
+  padding-top: 100px;
+  padding-bottom: 6rem;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+}
+
+.loyalty-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .loyalty-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 }
 
 .loyalty-header h1 {
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  color: var(--text-primary);
+  font-family: "Italiana", "Playfair Display", Georgia, serif;
+  font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+  font-weight: 400;
+  color: #1C1917;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
 }
 
 .loyalty-header p {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
+  color: #57534E;
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.6;
 }
 
-/* Tier Status Card */
+/* ==========================================================================
+   1. TIER STATUS HERO CARD
+   ========================================================================== */
 .tier-status-card {
-  background: var(--bg-secondary);
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-bottom: 3rem;
-  border: 3px solid;
-  box-shadow: var(--shadow-lg);
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem 3rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  box-shadow: 0 15px 45px -10px rgba(28, 25, 23, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
 .tier-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .tier-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  color: white;
-  font-weight: bold;
-  font-size: 1.2rem;
+  gap: 0.65rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 9999px;
+  background: #1C1917 !important;
+  color: #DFBF77 !important;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15);
 }
 
 .tier-icon {
-  font-size: 2rem;
+  font-size: 1.15rem;
 }
 
 .points-display {
@@ -66,212 +92,245 @@
 }
 
 .points-value {
-  font-size: 3.5rem;
-  font-weight: bold;
-  color: var(--text-primary);
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: #1C1917;
   line-height: 1;
-  margin-bottom: 0.5rem;
 }
 
 .points-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716C;
+  margin-top: 0.25rem;
 }
 
 .points-value-rupees {
-  font-size: 1.2rem;
-  color: var(--primary-color);
+  font-size: 0.875rem;
   font-weight: 600;
+  color: #8C7A5B;
+  margin-top: 0.2rem;
 }
 
-/* Tier Progress */
+/* Tier Progress Bar */
 .tier-progress {
-  margin: 2rem 0;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
 }
 
 .progress-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
-  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #57534E;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .progress-bar {
-  height: 12px;
-  background: var(--bg-tertiary);
-  border-radius: 10px;
+  width: 100%;
+  height: 8px;
+  background: rgba(28, 25, 23, 0.1);
+  border-radius: 9999px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
+  border-radius: 9999px;
+  background: #1C1917 !important;
   transition: width 0.5s ease;
-  border-radius: 10px;
 }
 
 /* Tier Perks */
-.tier-perks {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 2px solid var(--border-color);
-}
-
 .tier-perks h4 {
-  color: var(--text-primary);
-  margin-bottom: 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8C7A5B;
+  margin: 0 0 0.75rem 0;
 }
 
 .tier-perks ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
   list-style: none;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 0.75rem;
+  margin: 0;
 }
 
 .tier-perks li {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-primary);
-  padding: 0.75rem;
-  background: var(--bg-tertiary);
-  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1C1917;
 }
 
-/* Tabs */
+.tier-perks li svg {
+  color: #8C7A5B;
+}
+
+/* ==========================================================================
+   2. LOYALTY TABS
+   ========================================================================== */
 .loyalty-tabs {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  background: var(--bg-secondary);
-  padding: 0.5rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow-sm);
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
 }
 
-.tab-btn {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-weight: 600;
-  border-radius: 8px;
+.loyalty-tabs .tab-btn {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.65rem 1.5rem;
+  border-radius: 9999px;
+  background: #DFDACF;
+  color: #57534E;
+  border: 1px solid rgba(28, 25, 23, 0.08);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
-.tab-btn:hover {
-  background: var(--hover-bg);
-  color: var(--text-primary);
+.loyalty-tabs .tab-btn:hover {
+  background: #D4CDC0;
+  color: #1C1917;
 }
 
-.tab-btn.active {
-  background: var(--primary-color);
-  color: white;
+.loyalty-tabs .tab-btn.active {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
 }
 
-/* Tab Content */
-.tab-content {
-  background: var(--bg-secondary);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Stats Grid */
+/* ==========================================================================
+   3. OVERVIEW STATS GRID
+   ========================================================================== */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
   margin-bottom: 3rem;
 }
 
 .stat-card {
-  background: var(--bg-tertiary);
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  border: 2px solid var(--border-color);
-  transition: all 0.3s ease;
+  background: #DFDACF;
+  border-radius: 24px;
+  padding: 1.75rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 8px 24px -6px rgba(28, 25, 23, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.2s ease;
 }
 
 .stat-card:hover {
-  border-color: var(--primary-color);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
 .stat-icon {
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: #8C7A5B;
+  margin-bottom: 0.75rem;
 }
 
 .stat-value {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1C1917;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
 }
 
 .stat-label {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716C;
 }
 
-/* Info Section */
+/* ==========================================================================
+   4. INFO SECTIONS & HOW TO EARN
+   ========================================================================== */
 .info-section {
-  margin-bottom: 3rem;
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 8px 24px -6px rgba(28, 25, 23, 0.06);
 }
 
 .info-section h3 {
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-  font-size: 1.75rem;
+  font-family: "Italiana", "Playfair Display", Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: #1C1917;
+  margin: 0 0 1.75rem 0;
 }
 
-/* Earn Methods */
 .earn-methods {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
 }
 
 .earn-method {
-  display: flex;
-  gap: 1.5rem;
+  background: #FAF7F2;
+  border-radius: 20px;
   padding: 1.5rem;
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  border: 2px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-
-.earn-method:hover {
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
+  border: 1px solid rgba(28, 25, 23, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .method-icon {
-  font-size: 3rem;
-  flex-shrink: 0;
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #EBE7DF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .method-info h4 {
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1C1917;
+  margin: 0 0 0.35rem 0;
 }
 
 .method-info p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
+  color: #57534E;
+  margin: 0;
+  line-height: 1.5;
 }
 
-/* Tier Comparison */
+/* ==========================================================================
+   5. TIER COMPARISON CARDS
+   ========================================================================== */
 .tier-comparison {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -279,94 +338,232 @@
 }
 
 .tier-card {
-  border: 3px solid;
-  border-radius: 16px;
+  background: #FAF7F2;
+  border-radius: 22px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.04);
+  transition: transform 0.2s ease;
 }
 
 .tier-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
 }
 
 .tier-card.current {
-  box-shadow: 0 0 0 4px var(--primary-color-light);
+  border: 2px solid #1C1917;
+  box-shadow: 0 8px 24px rgba(28, 25, 23, 0.12);
 }
 
 .tier-card-header {
-  padding: 1.5rem;
-  text-align: center;
-  color: white;
-  font-weight: bold;
+  background: #1C1917 !important;
+  color: #FAF7F2;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tier-card-icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.tier-card-name {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #DFBF77;
 }
 
 .tier-card-body {
   padding: 1.5rem;
-  background: var(--bg-tertiary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .tier-requirement {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  color: #78716C;
+  font-weight: 700;
 }
 
 .tier-multiplier {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1C1917;
 }
 
 .tier-benefits {
   list-style: none;
   padding: 0;
+  margin: 0.5rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .tier-benefits li {
-  padding: 0.5rem 0;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.tier-benefits li:last-child {
-  border-bottom: none;
-}
-
-/* Points History */
-.points-history {
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-.history-item {
+  font-size: 0.875rem;
+  color: #57534E;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  margin-bottom: 1rem;
+  gap: 0.4rem;
 }
 
-.history-icon {
-  flex-shrink: 0;
+.tier-benefits li::before {
+  content: "✓";
+  color: #8C7A5B;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   6. REWARDS CATALOG TAB
+   ========================================================================== */
+.rewards-tab {
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(28, 25, 23, 0.08);
+}
+
+.rewards-tab h3 {
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #1C1917;
+  margin: 0 0 0.4rem 0;
+}
+
+.rewards-tab .text-secondary {
+  color: #57534E;
+  margin-bottom: 2rem;
+}
+
+.rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.reward-card {
+  background: #FAF7F2;
+  border-radius: 22px;
+  padding: 1.75rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 6px 20px -6px rgba(28, 25, 23, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+}
+
+.reward-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -8px rgba(28, 25, 23, 0.1);
+}
+
+.reward-image {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  background: var(--bg-primary);
+  border-radius: 14px;
+  background: #EBE7DF;
+  color: #8C7A5B;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.reward-info h4 {
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1C1917;
+  margin: 0 0 0.5rem 0;
+}
+
+.reward-info p {
+  font-size: 0.875rem;
+  color: #57534E;
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+}
+
+.reward-points {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #8C7A5B;
+  margin-bottom: 1.25rem;
+}
+
+.reward-card .btn-primary {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  background: #1C1917;
+  color: #FAF7F2;
+  border: 1px solid #1C1917;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reward-card .btn-primary:hover:not(:disabled) {
+  background: #3A3530;
+}
+
+.reward-card .btn-primary:disabled {
+  background: #E5E0D8;
+  color: #8C827A;
+  border-color: #D8D2C8;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   7. POINTS HISTORY TAB
+   ========================================================================== */
+.history-tab {
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.history-tab h3 {
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #1C1917;
+  margin: 0 0 1.5rem 0;
+}
+
+.points-history {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-item {
+  background: #FAF7F2;
+  border-radius: 18px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .history-info {
@@ -374,76 +571,83 @@
 }
 
 .history-description {
-  color: var(--text-primary);
-  font-weight: 500;
-  margin-bottom: 0.25rem;
+  font-weight: 700;
+  color: #1C1917;
+  font-size: 0.9375rem;
 }
 
 .history-date {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
+  color: #78716C;
+  margin-top: 0.2rem;
 }
 
 .history-points {
-  font-size: 1.5rem;
-  font-weight: bold;
-  flex-shrink: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #16A34A;
 }
 
-.history-points.earn {
-  color: var(--success-color);
+.history-points.redeemed {
+  color: #DC2626;
 }
 
-.history-points.redeem {
-  color: var(--danger-color);
+/* ==========================================================================
+   8. REFERRALS TAB
+   ========================================================================== */
+.referrals-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
 }
 
-/* Referral Card */
 .referral-card {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: white;
+  background: #DFDACF;
+  border-radius: 28px;
   padding: 2.5rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
   text-align: center;
 }
 
 .referral-card h3 {
-  color: white;
-  margin-bottom: 1rem;
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #1C1917;
+  margin-bottom: 0.5rem;
 }
 
 .referral-code-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
-  margin-top: 2rem;
+  gap: 2.5rem;
+  margin: 2rem 0 1rem;
+  flex-wrap: wrap;
 }
 
 .qr-code {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-}
-
-.referral-actions {
-  text-align: left;
+  background: #FAF7F2;
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  display: inline-block;
 }
 
 .code-display {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  text-align: center;
+  background: #FAF7F2;
+  padding: 0.75rem 2rem;
+  border-radius: 16px;
+  border: 1px dashed rgba(28, 25, 23, 0.25);
+  margin-bottom: 1.25rem;
 }
 
-.code {
-  font-size: 2rem;
-  font-weight: bold;
+.code-display .code {
   font-family: monospace;
-  letter-spacing: 0.2em;
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #1C1917;
 }
 
 .action-buttons {
@@ -451,172 +655,71 @@
   gap: 1rem;
 }
 
-/* Referral List */
+.action-buttons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-buttons .btn-secondary {
+  background: #FAF7F2;
+  color: #1C1917;
+  border: 1px solid rgba(28, 25, 23, 0.15);
+}
+
+.action-buttons .btn-primary {
+  background: #1C1917;
+  color: #FAF7F2;
+  border: 1px solid #1C1917;
+}
+
+.referral-list {
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+}
+
 .referral-list h3 {
-  color: var(--text-primary);
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: #1C1917;
   margin-bottom: 1.5rem;
 }
 
-.referral-items {
-  display: grid;
-  gap: 1rem;
-}
-
-.referral-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  border: 2px solid var(--border-color);
-}
-
-.referral-name {
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-}
-
-.referral-date {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.referral-status {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.referral-status.completed {
-  color: var(--success-color);
-}
-
-.referral-status.pending {
-  color: var(--warning-color);
-}
-
-/* Rewards Grid */
-.rewards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.reward-card {
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 16px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.reward-card:hover {
-  border-color: var(--primary-color);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-.reward-image {
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 1.5rem;
-  background: var(--bg-secondary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: var(--primary-color);
-}
-
-.reward-info h4 {
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-}
-
-.reward-info p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-
-.reward-points {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  margin-bottom: 1.5rem;
-}
-
-/* Empty State */
 .empty-state {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 2.5rem;
+  color: #78716C;
 }
 
 .empty-icon {
-  font-size: 5rem;
-  color: var(--text-secondary);
-  opacity: 0.5;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: #8C7A5B;
 }
 
-.empty-state p {
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-.empty-state .text-secondary {
-  font-size: 0.9rem;
-}
-
-/* Responsive */
-@media (max-width: 968px) {
+@media (max-width: 768px) {
+  .tier-status-card {
+    padding: 1.75rem;
+  }
   .tier-header {
     flex-direction: column;
-    text-align: center;
-    gap: 2rem;
+    align-items: flex-start;
   }
-
   .points-display {
-    text-align: center;
+    text-align: left;
   }
-
-  .referral-code-section {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .earn-methods {
-    grid-template-columns: 1fr;
-  }
-
-  .tier-comparison {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .loyalty-tabs {
-    flex-direction: column;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-  }
-
-  .action-buttons button {
-    width: 100%;
-  }
-
-  .referral-item {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+  .rewards-tab, .history-tab, .referral-card, .referral-list {
+    padding: 1.5rem;
   }
 }

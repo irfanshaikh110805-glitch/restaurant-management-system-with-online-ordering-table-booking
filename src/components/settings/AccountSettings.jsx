@@ -44,8 +44,9 @@ const AccountSettings = () => {
         anniversary_date: data.anniversary_date || '',
         profile_image_url: data.profile_image_url || ''
       });
-    } catch (_error) {
+    } catch (error) {
       // Error fetching user profile
+      console.error('Profile fetch error:', error);
     }
   };
 
@@ -91,8 +92,9 @@ const AccountSettings = () => {
 
       toast.success('Profile updated successfully!');
       setImageFile(null);
-    } catch (_error) {
+    } catch (error) {
       // Error updating user profile
+      console.error('Profile update error:', error);
       toast.error('Failed to update profile');
     } finally {
       setLoading(false);
@@ -123,9 +125,9 @@ const AccountSettings = () => {
 
       toast.success('Password changed successfully!');
       setPasswords({ current: '', newPassword: '', confirmPassword: '' });
-    } catch (_error) {
+    } catch (error) {
       // Error changing password
-      toast.error(_error.message || 'Failed to change password');
+      toast.error(error.message || 'Failed to change password');
     } finally {
       setLoading(false);
     }
@@ -152,8 +154,9 @@ const AccountSettings = () => {
 
       toast.success('Account deleted successfully');
       // User will be automatically logged out
-    } catch (_error) {
+    } catch (error) {
       // Error deleting user account
+      console.error('Account deletion error:', error);
       toast.error('Failed to delete account. Please contact support.');
     } finally {
       setLoading(false);

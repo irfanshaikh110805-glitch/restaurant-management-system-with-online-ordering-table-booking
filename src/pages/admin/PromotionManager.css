@@ -1,9 +1,11 @@
-/* Promotion Manager Styles */
+/* ==========================================================================
+   LUXURY WARM MINIMALIST PROMOTION MANAGER STYLES
+   Main Palette: Warm Sand (#EBE7DF), Soft Taupe (#DFDACF), Deep Espresso (#1C1917)
+   ========================================================================== */
 
 .promotion-manager {
-  padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0;
+  max-width: 100%;
 }
 
 .manager-header {
@@ -11,29 +13,36 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .manager-header h1 {
-  font-size: 2rem;
-  color: var(--text-primary);
+  font-family: "Italiana", "Playfair Display", Georgia, serif;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  color: #1C1917;
+  margin: 0;
+  font-weight: 500;
 }
 
 .promotions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.5rem;
 }
 
 .promo-card {
-  background: var(--bg-secondary);
+  background: #DFDACF;
   padding: 2rem;
-  border-radius: 16px;
-  border: 2px solid var(--border-color);
-  transition: all 0.3s ease;
+  border-radius: 24px;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 8px 24px -6px rgba(28, 25, 23, 0.06);
+  transition: all 0.25s ease;
 }
 
 .promo-card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 30px -8px rgba(28, 25, 23, 0.1);
+  transform: translateY(-2px);
 }
 
 .promo-card.inactive {
@@ -44,7 +53,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .promo-code-display {
@@ -55,159 +64,278 @@
 
 .promo-code-display h3 {
   font-family: monospace;
-  color: var(--primary-color);
+  color: #1C1917;
+  font-size: 1.25rem;
+  font-weight: 700;
   margin: 0;
+  background: #FAF7F2;
+  padding: 0.35rem 0.75rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(28, 25, 23, 0.25);
+  letter-spacing: 0.05em;
 }
 
 .copy-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 0.25rem;
+  background: #FAF7F2;
+  border: 1px solid rgba(28, 25, 23, 0.12);
+  color: #1C1917;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  border-radius: 4px;
+  justify-content: center;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
-  background: var(--hover-bg);
-  color: var(--primary-color);
+  background: #1C1917;
+  color: #DFBF77;
 }
 
 .promo-description {
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
+  color: #57534E;
+  margin-bottom: 1.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
 
 .promo-details {
-  background: var(--bg-tertiary);
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(28, 25, 23, 0.08);
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
 }
 
 .detail-item {
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.detail-item:last-child {
-  border-bottom: none;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .detail-item .label {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8C7A5B;
 }
 
 .detail-item .value {
-  color: var(--text-primary);
+  font-size: 0.9375rem;
   font-weight: 600;
+  color: #1C1917;
 }
 
 .tier-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+  display: inline-block;
   font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: capitalize;
 }
 
-.tier-bronze { background: #CD7F32; color: white; }
-.tier-silver { background: #C0C0C0; color: #333; }
-.tier-gold { background: #FFD700; color: #333; }
-.tier-platinum { background: #E5E4E2; color: #333; }
+.tier-silver { background: #E2E8F0; color: #475569; }
+.tier-gold { background: #FEF08A; color: #854D0E; }
+.tier-platinum { background: #E0E7FF; color: #3730A3; }
 
 .promo-actions {
   display: flex;
-  gap: 0.5rem;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
-.btn-edit,
-.btn-delete {
-  flex: 1;
-  display: flex;
+.btn-edit, .btn-delete {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 8px;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-edit {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
+  background: #FAF7F2;
+  color: #1C1917;
+  border: 1px solid rgba(28, 25, 23, 0.15);
 }
 
 .btn-edit:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  background: #1C1917;
+  color: #FAF7F2;
 }
 
 .btn-delete {
-  background: #F44336;
-  color: white;
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
 .btn-delete:hover {
-  background: #E53935;
+  background: #DC2626;
+  color: #FFFFFF;
 }
 
-/* Promo Form */
+/* ==========================================================================
+   PROMOTION MODAL FORM STYLES
+   ========================================================================== */
 .promo-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.checkbox-group {
-  display: flex;
-  align-items: center;
-  padding-top: 2rem;
+.promo-form .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
 }
 
-.checkbox-group label {
+.promo-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+}
+
+.promo-form .form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1C1917;
+  margin: 0;
+}
+
+.promo-form .form-control {
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  background: #FAF7F2;
+  border: 1px solid rgba(28, 25, 23, 0.15);
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: #1C1917;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.promo-form .form-control:focus {
+  border-color: #1C1917;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(28, 25, 23, 0.08);
+}
+
+.promo-form textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.promo-form .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1C1917;
   cursor: pointer;
+  user-select: none;
 }
 
-.checkbox-group input[type="checkbox"] {
+.promo-form .checkbox-label input[type="checkbox"] {
   width: 20px;
   height: 20px;
+  border-radius: 6px;
+  accent-color: #1C1917;
   cursor: pointer;
+}
+
+.promo-form .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.promo-form .form-actions .btn {
+  padding: 0.85rem 1.75rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.promo-form .form-actions .btn-secondary {
+  background: transparent;
+  color: #1C1917;
+  border: 1px solid rgba(28, 25, 23, 0.2);
+}
+
+.promo-form .form-actions .btn-secondary:hover {
+  background: rgba(28, 25, 23, 0.06);
+}
+
+.promo-form .form-actions .btn-primary {
+  background: #1C1917;
+  color: #FAF7F2;
+  border: 1px solid #1C1917;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
+}
+
+.promo-form .form-actions .btn-primary:hover {
+  background: #3A3530;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
-  .promotion-manager {
-    padding: 1rem;
-  }
-
-  .manager-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .manager-header button {
-    width: 100%;
+  .manager-header h1 {
+    font-size: 1.75rem;
   }
 
   .promotions-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .promo-actions {
-    flex-direction: column;
+  .promo-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+  }
+
+  .promo-details {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .promo-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .promo-form .form-actions {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .promo-form .form-actions .btn {
+    width: 100%;
+    text-align: center;
   }
 }
+

@@ -1,27 +1,32 @@
 import { Link, useLocation } from 'react-router-dom'
-import { FiHome, FiShoppingCart, FiCalendar, FiUser, FiGrid } from 'react-icons/fi'
+import { FiHome, FiShoppingCart, FiCalendar, FiUser, FiGrid, FiShield } from 'react-icons/fi'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import './MobileBottomNav.css'
 
-const navItems = [
-  { icon: FiHome, label: 'Home', path: '/' },
-  { icon: FiGrid, label: 'Menu', path: '/menu' },
-  { icon: FiShoppingCart, label: 'Cart', path: '/cart', showBadge: true },
-  { icon: FiCalendar, label: 'Book', path: '/booking' },
-  { icon: FiUser, label: 'Profile', path: '/profile', requiresAuth: true, loginPath: '/login' },
-]
-
 export default function MobileBottomNav() {
   const location = useLocation()
   const { itemCount } = useCart()
-  const { user } = useAuth()
+  const { user, isAdmin } = useAuth()
+
+  const navItems = [
+    { icon: FiHome, label: 'Home', path: '/' },
+    { icon: FiGrid, label: 'Menu', path: '/menu' },
+    { icon: FiShoppingCart, label: 'Cart', path: '/cart', showBadge: true },
+    ...(isAdmin
+      ? [{ icon: FiShield, label: 'Admin', path: '/admin', matchPrefix: true }]
+      : [{ icon: FiCalendar, label: 'Book', path: '/booking' }]
+    ),
+    { icon: FiUser, label: 'Profile', path: '/profile', requiresAuth: true, loginPath: '/login' },
+  ]
 
   return (
     <nav className="mobile-bottom-nav" role="navigation" aria-label="Mobile navigation">
-      {navItems.map(({ icon: Icon, label, path, showBadge, requiresAuth, loginPath }) => {
+      {navItems.map(({ icon: Icon, label, path, showBadge, requiresAuth, loginPath, matchPrefix }) => {
         const href = requiresAuth && !user ? loginPath : path
-        const isActive = location.pathname === href || location.pathname === path
+        const isActive = matchPrefix
+          ? location.pathname.startsWith(path)
+          : location.pathname === href || location.pathname === path
         return (
           <Link
             key={label}
@@ -31,7 +36,7 @@ export default function MobileBottomNav() {
             aria-current={isActive ? 'page' : undefined}
           >
             <span className="bottom-nav-icon">
-              <Icon size={22} />
+              <Icon size={20} />
               {showBadge && itemCount > 0 && (
                 <span className="bottom-nav-badge" aria-label={`${itemCount} items in cart`}>
                   {itemCount > 9 ? '9+' : itemCount}
@@ -45,3 +50,4 @@ export default function MobileBottomNav() {
     </nav>
   )
 }
+

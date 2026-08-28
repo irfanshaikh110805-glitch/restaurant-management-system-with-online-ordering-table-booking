@@ -1,232 +1,435 @@
+/* ==========================================================================
+   LUXURY WARM MINIMALIST PROFILE PAGE STYLES
+   Main Palette: Warm Sand (#EBE7DF) & Soft Taupe (#DFDACF) & Deep Espresso (#1C1917)
+   ========================================================================== */
+
 .profile-page {
   min-height: 100vh;
-  padding: var(--space-3xl) 0;
+  background-color: #EBE7DF;
+  color: #1C1917;
+  padding-top: 100px;
+  padding-bottom: 6rem;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
 }
 
 .profile-page h1 {
-  margin-bottom: var(--space-2xl);
+  text-align: center;
+  font-family: "Playfair Display", "Cinzel", Georgia, serif;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: #1C1917;
+  letter-spacing: -0.01em;
+  margin-top: 1rem;
+  margin-bottom: 2.5rem;
 }
 
+.profile-page .container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ==========================================================================
+   1. USER PROFILE CARD
+   ========================================================================== */
 .profile-card {
-  margin-bottom: var(--space-2xl);
-  padding: var(--space-2xl);
+  background: #DFDACF;
+  border-radius: 28px;
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 12px 35px -10px rgba(28, 25, 23, 0.08);
+}
+
+@media (max-width: 640px) {
+  .profile-card {
+    padding: 1.75rem 1.25rem;
+  }
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
-  margin-bottom: var(--space-2xl);
-  padding-bottom: var(--space-2xl);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
 }
 
 .profile-avatar {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #1C1917;
+  color: #DFBF77;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border-radius: 50%;
+  font-family: "Playfair Display", "Cinzel", serif;
+  box-shadow: 0 6px 18px rgba(28, 25, 23, 0.2);
+  flex-shrink: 0;
 }
 
 .profile-details h2 {
-  margin-bottom: var(--space-xs);
+  font-family: "Playfair Display", "Cinzel", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1C1917;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
 }
 
-.profile-info-grid {
+.profile-email-text {
+  color: #57534E;
+  font-size: 0.9375rem;
+  margin: 0;
+}
+
+/* Profile Form Grid */
+.profile-form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-xl);
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
 }
 
-.info-item {
-  display: flex;
-  gap: var(--space-md);
-  align-items: flex-start;
+@media (min-width: 640px) {
+  .profile-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-.info-icon {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+.profile-form-grid .form-group:last-child {
+  grid-column: 1 / -1;
+}
+
+.form-label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: rgba(217, 119, 6, 0.2);
-  border: 1px solid var(--primary);
-  border-radius: var(--radius-md);
-  color: var(--primary);
-  padding: 8px;
-}
-
-.info-item > div {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.info-label {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: #1C1917;
+  margin-bottom: 0.6rem;
 }
 
-.info-value {
-  font-size: 1rem;
-  color: var(--text-primary);
+.label-icon {
+  color: #8C7A5B;
+  font-size: 0.9rem;
 }
 
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(28, 25, 23, 0.06);
+}
+
+/* ==========================================================================
+   2. TABS & CONTENT
+   ========================================================================== */
 .tabs {
-display: flex;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xl);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  border-bottom: none;
 }
 
 .tab {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  background: transparent;
-  color: var(--text-secondary);
-  border: none;
-  border-bottom: 3px solid transparent;
-  font-weight: 600;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 9999px;
+  background: #DFDACF;
+  color: #1C1917;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all var(--transition-base);
-  min-height: 44px;
+  transition: all 0.25s ease;
 }
 
 .tab:hover {
-  color: var(--primary-light);
+  background: #D4CDC0;
 }
 
 .tab.active {
-  color: var(--primary-light);
-  border-bottom-color: var(--primary);
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.2);
 }
 
 .tab-content {
-  animation: fadeIn var(--transition-base);
-}
-
-.bookings-list,
-.orders-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 1.25rem;
 }
 
-.booking-item,
-.order-item {
-  padding: var(--space-xl);
+/* Booking & Order Items */
+.booking-item, .order-item {
+  background: #DFDACF;
+  border-radius: 20px;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  box-shadow: 0 8px 24px -6px rgba(28, 25, 23, 0.06);
+  margin-bottom: 1rem;
 }
 
-.booking-info {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--space-md);
-  align-items: center;
-}
-
-.booking-info h4 {
-  margin-bottom: var(--space-xs);
-}
-
-.order-header {
+.booking-info, .order-header {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-lg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: space-between;
+  gap: 1rem;
 }
 
-.order-status {
-  display: flex;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
+.booking-main-details h4, .order-header h4 {
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1C1917;
+  margin: 0 0 0.35rem 0;
 }
+
+.booking-meta-text {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #57534E;
+  margin: 0;
+}
+
+.booking-meta-text .meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #44403C;
+}
+
+.booking-meta-text .bullet-sep {
+  color: #A8A29E;
+}
+
+.booking-request-note {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: #78716C;
+  margin: 0.4rem 0 0 0;
+}
+
+.booking-footer-action {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.btn-cancel-booking {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(185, 28, 28, 0.08);
+  color: #B91C1C;
+  border: 1px solid rgba(185, 28, 28, 0.25);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-cancel-booking:hover {
+  background: #B91C1C;
+  color: #FAF7F2;
+  border-color: #B91C1C;
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-cancel-booking:active {
+  transform: scale(0.97);
+}
+
 
 .order-items {
+  margin: 1.25rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(28, 25, 23, 0.08);
+  border-bottom: 1px solid rgba(28, 25, 23, 0.08);
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
+  gap: 0.5rem;
 }
 
 .order-item-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  color: var(--text-secondary);
+  gap: 1rem;
   font-size: 0.875rem;
+  color: #44403C;
 }
 
-.order-total {
-  padding-top: var(--space-lg);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: right;
-  font-size: 1.125rem;
-  color: var(--primary-light);
-}
-
-@media (max-width: 768px) {
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .profile-info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tabs {
-    overflow-x: auto;
-  }
-
-  .booking-info {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Order Footer */
 .order-footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-top: var(--space-md);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-color);
+  gap: 1rem;
 }
 
-.order-total-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+.order-total-info strong {
+  font-size: 1.15rem;
+  color: #1C1917;
+  display: block;
 }
 
 .payment-method-label {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  color: #78716C;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .order-actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
-.order-actions .btn {
-  display: flex;
+/* Badges */
+.badge {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
+
+.badge-success {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+}
+
+.badge-warning {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+}
+
+.badge-error {
+  background: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
+}
+
+.badge-info {
+  background: rgba(140, 122, 91, 0.15);
+  color: #8C7A5B;
+  border: 1px solid rgba(140, 122, 91, 0.3);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: #DFDACF;
+  border-radius: 24px;
+  color: #78716C;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding-top: 76px;
+  }
+
+  .profile-page h1 {
+    font-size: 2.25rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-page .container {
+    padding: 0 0.85rem;
+  }
+
+  .profile-card {
+    padding: 1.35rem 1rem;
+    border-radius: 22px;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .profile-details h2 {
+    font-size: 1.4rem;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: 0.45rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    padding: 0.5rem 1rem;
+    font-size: 0.72rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .order-card, .booking-card {
+    padding: 1.25rem 1rem;
+    border-radius: 20px;
+  }
+
+  .order-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .order-actions {
+    width: 100%;
+  }
+
+  .order-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+

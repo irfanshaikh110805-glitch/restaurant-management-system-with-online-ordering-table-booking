@@ -86,8 +86,11 @@ const InventoryManager = () => {
 
   return (
     <div className="inventory-manager">
-      <div className="inventory-header">
-        <h1>Inventory Management</h1>
+      <div className="page-header">
+        <div className="page-title-wrap">
+          <h1>Inventory Management</h1>
+          <p className="page-subtitle">Track kitchen stock, threshold alerts, and dish availability levels</p>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -147,15 +150,23 @@ const InventoryManager = () => {
                 const stock = getStockStatus(item);
                 return (
                   <tr key={item.id} className={`stock-${stock.status}`}>
-                    <td className="item-name">{item.name}</td>
-                    <td className="item-price">₹{item.price.toFixed(2)}</td>
+                    <td className="item-name">
+                      <span className="mobile-cell-label">Item</span>
+                      <strong style={{ color: '#1C1917' }}>{item.name}</strong>
+                    </td>
+                    <td className="item-price">
+                      <span className="mobile-cell-label">Price</span>
+                      <span style={{ fontWeight: 600 }}>₹{item.price.toFixed(2)}</span>
+                    </td>
                     <td className="stock-quantity">
+                      <span className="mobile-cell-label">Current Stock</span>
                       <div className="quantity-display">
                         <span className="quantity">{item.stock_quantity || 0}</span>
                         <span className="threshold">/ {item.low_stock_threshold || 10}</span>
                       </div>
                     </td>
                     <td>
+                      <span className="mobile-cell-label">Status</span>
                       <span 
                         className="stock-badge" 
                         style={{ backgroundColor: stock.color }}
@@ -164,6 +175,7 @@ const InventoryManager = () => {
                       </span>
                     </td>
                     <td>
+                      <span className="mobile-cell-label">Actions</span>
                       <button
                         onClick={() => {
                           setSelectedItem(item);
@@ -171,8 +183,9 @@ const InventoryManager = () => {
                           setShowModal(true);
                         }}
                         className="btn-update"
+                        type="button"
                       >
-                        <FiEdit /> Update
+                        <FiEdit /> Update Stock
                       </button>
                     </td>
                   </tr>

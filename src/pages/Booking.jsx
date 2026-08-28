@@ -4,11 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiCalendar, FiClock, FiUsers, FiMessageSquare, FiCheckCircle, FiAlertCircle, FiMapPin, FiPhone, FiMail } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { format, addDays } from 'date-fns'
-import { supabase } from '../lib/supabase'
 import { createBooking } from '../utils/backendHelpers'
 import { sanitizeString, sanitizeEmail, sanitizePhone } from '../utils/inputSanitizer'
 import { useAuth } from '../context/AuthContext'
 import { pageTransition, fadeInUp, staggerContainer } from '../utils/animations'
+import useSEO from '../hooks/useSEO'
 import './Booking.css'
 
 const TIME_SLOTS = [
@@ -35,9 +35,23 @@ const TABLE_PREFERENCES = [
   { value: 'booth', label: '🛋️ Booth' }
 ]
 
+const formatTimeSlot = (time24) => {
+  if (!time24) return ''
+  const [hours, minutes] = time24.split(':').map(Number)
+  const period = hours >= 12 ? 'PM' : 'AM'
+  const hour12 = hours % 12 || 12
+  return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`
+}
+
 export default function Booking() {
   const { user } = useAuth()
   const navigate = useNavigate()
+
+  useSEO({
+    title: 'Book a Table',
+    description: 'Reserve your table at Hotel Everest Family Restaurant online. Experience fine Indian dining in Vijayapura without the wait.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/booking'
+  })
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedTime, setSelectedTime] = useState('')
   const [guests, setGuests] = useState(2)
@@ -48,7 +62,7 @@ export default function Booking() {
   const [customerPhone, setCustomerPhone] = useState('')
   const [customerEmail, setCustomerEmail] = useState('')
   const [loading, setLoading] = useState(false)
-  const [checkingAvailability, setCheckingAvailability] = useState(false)
+  const [checkingAvailability] = useState(false)
   const [availableSlots, setAvailableSlots] = useState(TIME_SLOTS)
   const [step, setStep] = useState(1)
 
@@ -61,67 +75,32 @@ export default function Booking() {
   const minDate = format(new Date(), 'yyyy-MM-dd')
   const maxDate = format(addDays(new Date(), 30), 'yyyy-MM-dd')
 
-  const handleDateChange = async (date) => {
-    setSelectedDate(date)
-    setSelectedTime('')
-    setCheckingAvailability(true)
-
-    try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('booking_time')
-        .eq('booking_date', date)
-        .neq('status', 'cancelled')
-
-      if (error) throw error
-
-      if (data) {
-        const bookedTimes = data.map(b => b.booking_time.substring(0, 5))
-        setAvailableSlots(TIME_SLOTS.filter(slot => !bookedTimes.includes(slot)))
-      }
-    } catch (error) {
-      console.error('Error checking availability:', error)
-      toast.error('Failed to check availability')
-      setAvailableSlots(TIME_SLOTS)
-    } finally {
-      setCheckingAvailability(false)
-    }
-  }
-
   const validateStep1 = () => {
     if (!selectedDate) {
       toast.error('Please select a date')
       return false
     }
     if (!selectedTime) {
-      toast.error('Please select a time slot')
+      toast.error('Please select a time')
       return false
     }
-    if (!guests || guests < 1) {
-      toast.error('Please select number of guests')
+    if (!guests || guests < 1 || guests > 20) {
+      toast.error('Please select between 1 and 20 guests')
       return false
     }
     return true
   }
 
   const validateStep2 = () => {
-    if (!customerName.trim()) {
-      toast.error('Please enter your name')
+    if (!customerName.trim() || customerName.trim().length < 2) {
+      toast.error('Please enter a valid name (at least 2 characters)')
       return false
     }
-    if (!customerPhone.trim()) {
-      toast.error('Please enter your phone number')
+    if (!customerPhone || !/^\d{10,15}$/.test(customerPhone.replace(/\D/g, ''))) {
+      toast.error('Please enter a valid phone number (10-15 digits)')
       return false
     }
-    if (!/^\d{10}$/.test(customerPhone.replace(/\D/g, ''))) {
-      toast.error('Please enter a valid 10-digit phone number')
-      return false
-    }
-    if (!customerEmail.trim()) {
-      toast.error('Please enter your email')
-      return false
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+    if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
       toast.error('Please enter a valid email address')
       return false
     }
@@ -284,7 +263,7 @@ export default function Booking() {
                         type="date"
                         className="form-control"
                         value={selectedDate}
-                        onChange={(e) => handleDateChange(e.target.value)}
+                        onChange={(e) => setSelectedDate(e.target.value)}
                         min={minDate}
                         max={maxDate}
                       />
@@ -325,20 +304,21 @@ export default function Booking() {
                         </div>
                       ) : (
                         <>
-                          <div className="time-slots">
+                          <div className="time-slots-grid">
                             {availableSlots.map((slot, index) => (
                               <motion.button
                                 key={slot}
                                 type="button"
-                                className={`time-slot ${selectedTime === slot ? 'selected' : ''}`}
+                                className={`time-slot-btn ${selectedTime === slot ? 'selected active' : ''}`}
                                 onClick={() => setSelectedTime(slot)}
-                                initial={{ opacity: 0, scale: 0.8 }}
+                                initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.02 }}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                transition={{ delay: Math.min(index * 0.015, 0.25) }}
+                                whileHover={{ scale: 1.04 }}
+                                whileTap={{ scale: 0.96 }}
+                                aria-label={`Select ${formatTimeSlot(slot)}`}
                               >
-                                {slot}
+                                <span className="slot-time-text">{formatTimeSlot(slot)}</span>
                               </motion.button>
                             ))}
                           </div>

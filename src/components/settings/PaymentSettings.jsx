@@ -34,8 +34,9 @@ const PaymentSettings = () => {
 
       if (error) throw error;
       setPaymentMethods(data || []);
-    } catch (_error) {
+    } catch (error) {
       // Error fetching payment methods
+      console.error('Payment methods fetch error:', error);
     }
   };
 
@@ -63,8 +64,9 @@ const PaymentSettings = () => {
       toast.success('Payment method added successfully!');
       fetchPaymentMethods();
       resetForm();
-    } catch (_error) {
+    } catch (error) {
       // Error saving payment method
+      console.error('Payment method save error:', error);
       toast.error('Failed to save payment method');
     } finally {
       setLoading(false);
@@ -86,8 +88,9 @@ const PaymentSettings = () => {
 
       toast.success('Payment method removed!');
       fetchPaymentMethods();
-    } catch (_error) {
+    } catch (error) {
       // Error deleting payment method
+      console.error('Payment method delete error:', error);
       toast.error('Failed to remove payment method');
     }
   };
@@ -108,8 +111,9 @@ const PaymentSettings = () => {
 
       toast.success('Default payment method updated!');
       fetchPaymentMethods();
-    } catch (_error) {
+    } catch (error) {
       // Error setting default payment method
+      console.error('Default payment method error:', error);
       toast.error('Failed to update default payment method');
     }
   };
@@ -126,7 +130,7 @@ const PaymentSettings = () => {
     setShowForm(false);
   };
 
-  const getPaymentIcon = (method) => {
+  const getPaymentIcon = (_method) => {
     return <FiCreditCard />;
   };
 

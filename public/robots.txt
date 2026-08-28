@@ -1,0 +1,16 @@
+# Hotel Everest Family Restaurant - Robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /cart
+Disallow: /profile
+Disallow: /settings
+Disallow: /order-confirmation/
+Disallow: /order-tracking/
+
+# Sitemap
+Sitemap: https://hoteleverestfamilyrestaurant.example.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

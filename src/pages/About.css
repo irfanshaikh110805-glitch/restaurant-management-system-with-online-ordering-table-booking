@@ -1,162 +1,123 @@
-/* About.css */
+/* ==========================================================================
+   LUXURY WARM MINIMALIST ABOUT PAGE STYLES
+   ========================================================================== */
+
 .about-page {
   min-height: 100vh;
-  background: 
-    linear-gradient(180deg, rgba(5, 5, 5, 0.8) 0%, rgba(5, 5, 5, 0.98) 100%),
-    url('/premium_hero_bg.png') center/cover fixed;
-  padding-bottom: var(--space-5xl);
-  color: #fff;
+  background-color: #EBE7DF;
+  color: #1C1917;
+  padding-top: 88px;
+  padding-bottom: 6rem;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
 }
 
 .about-hero {
-  padding: 10rem 0 6rem;
-  text-align: center;
-  background: 
-    radial-gradient(circle at 50% 50%, rgba(5, 5, 5, 0.2) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(5, 5, 5, 0.6) 0%, rgba(5, 5, 5, 0.95) 100%);
   position: relative;
+  max-width: 1240px;
+  margin: 1rem auto 3rem auto;
+  padding: 4.5rem 2rem 4rem;
+  background-color: #231F1D;
+  background-image: url("/luxury_chef_portrait.jpg");
+  background-size: cover;
+  background-position: center 25%;
+  border-radius: 32px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 20px 50px -15px rgba(28, 25, 23, 0.2);
+}
+
+.about-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(28, 25, 23, 0.4) 0%, rgba(28, 25, 23, 0.85) 100%);
+  z-index: 1;
 }
 
 .about-hero h1 {
-  font-size: clamp(3rem, 7vw, 5rem);
-  font-family: var(--font-display);
-  background: var(--gold-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 4px 15px rgba(212, 168, 83, 0.2));
-  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 2;
+  font-family: "Italiana", "Playfair Display", Georgia, serif;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 400;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.75rem;
 }
 
 .about-hero p {
-  font-family: var(--font-elegant);
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-style: italic;
-  max-width: 800px;
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-body);
+  font-size: clamp(0.9375rem, 1.8vw, 1.125rem);
+  color: rgba(250, 247, 242, 0.9);
+  max-width: 600px;
   margin: 0 auto;
-  color: #fff;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
 }
 
 .about-content-section {
-  padding: var(--space-4xl) var(--space-xl);
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
 .about-split {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4xl);
+  grid-template-columns: 1fr;
+  gap: 3rem;
   align-items: center;
-  margin-bottom: var(--space-5xl);
+  margin-bottom: 4rem;
 }
 
-.about-text {
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.85);
+@media (min-width: 900px) {
+  .about-split {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
 }
 
 .about-text h2 {
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  color: var(--gold);
-  font-family: var(--font-display);
-  margin-bottom: var(--space-lg);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 500;
+  color: #1C1917;
+  margin-bottom: 1.25rem;
 }
 
 .about-text p {
-  margin-bottom: var(--space-lg);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: #57534E;
+  margin-bottom: 1.25rem;
 }
 
 .about-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
 }
 
 .stat-card {
-  padding: var(--space-xl) var(--space-lg);
-  background: rgba(10, 10, 10, 0.4);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(212, 168, 83, 0.2);
-  border-radius: var(--radius-2xl);
+  padding: 1.5rem;
+  background: #DFDACF;
+  border-radius: 20px;
+  border: 1px solid rgba(28, 25, 23, 0.08);
   text-align: center;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--gold);
-  background: rgba(212, 168, 83, 0.08);
 }
 
 .stat-number {
-  color: var(--gold);
-  margin-bottom: var(--space-md);
-  filter: drop-shadow(0 2px 4px rgba(212, 168, 83, 0.4));
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1C1917;
+  font-family: var(--font-body);
 }
 
 .stat-label {
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-size: 0.8125rem;
-  color: #fff;
-}
-
-.chef-card {
-  background: rgba(10, 10, 10, 0.5);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(212, 168, 83, 0.3);
-  padding: var(--space-3xl);
-  border-radius: var(--radius-2xl);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-}
-
-.chef-card h3 {
-  color: var(--gold);
-  font-family: var(--font-display);
-  font-size: 2rem;
-  margin-bottom: var(--space-xl);
-  border-bottom: 1px solid rgba(212, 168, 83, 0.2);
-  padding-bottom: var(--space-md);
-}
-
-.chef-card ul {
-  list-style: none;
-  padding: 0;
-}
-
-.chef-card li {
-  position: relative;
-  padding-left: 2rem;
-  margin-bottom: var(--space-md);
-  line-height: 1.6;
-  color: rgba(255,255,255,0.9);
-  font-size: 1.05rem;
-}
-
-.chef-card li::before {
-  content: '✦';
-  position: absolute;
-  left: 0;
-  color: var(--gold);
-  font-size: 1rem;
-  top: 2px;
-}
-
-@media (max-width: 900px) {
-  .about-split {
-    grid-template-columns: 1fr;
-    gap: var(--space-3xl);
-  }
-  
-  .about-hero {
-    padding: 8rem 1rem 4rem;
-  }
+  color: #8C7A5B;
+  margin-top: 0.25rem;
 }

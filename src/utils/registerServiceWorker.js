@@ -5,47 +5,64 @@
  */
 
 export function register() {
-  if ('serviceWorker' in navigator && import.meta.env.PROD) {
-    window.addEventListener('load', () => {
-      const swUrl = '/sw.js';
+  if ('serviceWorker' in navigator) {
+    if (import.meta.env.PROD) {
+      window.addEventListener('load', () => {
+        const swUrl = '/sw.js';
 
-      navigator.serviceWorker
-        .register(swUrl)
-        .then((registration) => {
-          console.log('✅ Service Worker registered:', registration);
+        navigator.serviceWorker
+          .register(swUrl)
+          .then((registration) => {
+            console.log('✅ Service Worker registered:', registration);
 
-          // Check for updates periodically
-          setInterval(() => {
-            registration.update();
-          }, 60 * 60 * 1000); // Check every hour
+            // Check for updates periodically
+            setInterval(() => {
+              registration.update();
+            }, 60 * 60 * 1000); // Check every hour
 
-          // Handle updates
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New service worker available
-                console.log('🔄 New content available, please refresh');
-                
-                // Optionally show update notification
-                if (window.confirm('New version available! Reload to update?')) {
-                  window.location.reload();
+            // Handle updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New service worker available
+                  console.log('🔄 New content available, please refresh');
+                  
+                  // Optionally show update notification
+                  if (window.confirm('New version available! Reload to update?')) {
+                    window.location.reload();
+                  }
                 }
-              }
+              });
             });
+          })
+          .catch((error) => {
+            console.error('❌ Service Worker registration failed:', error);
           });
-        })
-        .catch((error) => {
-          console.error('❌ Service Worker registration failed:', error);
-        });
 
-      // Handle controller change
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('🔄 Service Worker controller changed');
-        window.location.reload();
+        // Handle controller change
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log('🔄 Service Worker controller changed');
+          window.location.reload();
+        });
       });
-    });
+    } else {
+      // In dev mode, unregister any existing service workers to avoid stale caches
+      navigator.serviceWorker.getRegistrations().then(registrations => {
+        for (const registration of registrations) {
+          registration.unregister();
+          console.log('🗑️ Unregistered stale Service Worker in dev mode');
+        }
+      });
+      
+      // Also clear existing caches
+      caches.keys().then(cacheNames => {
+        cacheNames.forEach(cacheName => {
+          caches.delete(cacheName);
+        });
+      });
+    }
   }
 }
 

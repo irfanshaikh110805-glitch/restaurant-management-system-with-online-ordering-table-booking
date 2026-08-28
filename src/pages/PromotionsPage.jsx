@@ -71,10 +71,13 @@ const PromotionsPage = () => {
         .lte('start_time', new Date().toISOString())
         .order('end_time', { ascending: true });
 
-      if (error) throw error;
-      setFlashSales(data || []);
-    } catch (_error) {
-      console.error('Error fetching flash sales:', _error);
+      if (!error && data) {
+        setFlashSales(data);
+      } else {
+        setFlashSales([]);
+      }
+    } catch {
+      setFlashSales([]);
     }
   };
 
@@ -108,7 +111,8 @@ const PromotionsPage = () => {
       } else {
         toast.error('Invalid or expired promo code');
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Promo code application error:', error);
       toast.error('Failed to apply promo code');
     }
   };

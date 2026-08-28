@@ -67,33 +67,43 @@ export default function BookingManagement() {
     ? bookings 
     : bookings.filter(b => b.status === filter)
 
+  const counts = {
+    all: bookings.length,
+    pending: bookings.filter(b => b.status === 'pending').length,
+    confirmed: bookings.filter(b => b.status === 'confirmed').length,
+  }
+
   if (loading) {
-    return <div className="spinner"></div>
+    return (
+      <div className="admin-loading-container">
+        <div className="spinner"></div>
+      </div>
+    )
   }
 
   return (
     <div className="booking-management">
       <div className="page-header">
-        <h1>Booking Management</h1>
+        <div className="page-title-wrap">
+          <h1>Booking Management</h1>
+          <p className="page-subtitle">Review, confirm, and manage table reservations in real-time</p>
+        </div>
         <div className="filter-buttons">
-          <button 
-            className={`btn btn-sm ${filter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('all')}
-          >
-            <span>All</span>
-          </button>
-          <button 
-            className={`btn btn-sm ${filter === 'pending' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('pending')}
-          >
-            <span>Pending</span>
-          </button>
-          <button 
-            className={`btn btn-sm ${filter === 'confirmed' ? 'btn-primary' : 'btn-secondary'}`}
-            onClick={() => setFilter('confirmed')}
-          >
-            <span>Confirmed</span>
-          </button>
+          {[
+            { id: 'all', label: 'All Reservations' },
+            { id: 'pending', label: 'Pending' },
+            { id: 'confirmed', label: 'Confirmed' },
+          ].map(({ id, label }) => (
+            <button 
+              key={id}
+              className={`filter-tab-btn ${filter === id ? 'active' : ''}`}
+              onClick={() => setFilter(id)}
+              type="button"
+            >
+              <span>{label}</span>
+              <span className="filter-count-badge">{counts[id] || 0}</span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -114,17 +124,28 @@ export default function BookingManagement() {
             {filteredBookings.map(booking => (
               <tr key={booking.id}>
                 <td>
-                  <div>
-                    <div>{booking.profile?.full_name || 'Unknown'}</div>
-                    <div className="text-muted" style={{ fontSize: '0.875rem' }}>
+                  <span className="mobile-cell-label">Customer</span>
+                  <div style={{ textAlign: 'right' }}>
+                    <strong style={{ color: '#1C1917' }}>{booking.profile?.full_name || 'Unknown'}</strong>
+                    <div className="text-muted" style={{ fontSize: '0.8rem' }}>
                       {booking.profile?.phone}
                     </div>
                   </div>
                 </td>
-                <td>{format(new Date(booking.booking_date), 'MMM d, yyyy')}</td>
-                <td>{booking.booking_time.substring(0, 5)}</td>
-                <td>{booking.guests}</td>
                 <td>
+                  <span className="mobile-cell-label">Booking Date</span>
+                  <span>{format(new Date(booking.booking_date), 'MMM d, yyyy')}</span>
+                </td>
+                <td>
+                  <span className="mobile-cell-label">Time</span>
+                  <strong>{booking.booking_time?.substring(0, 5)}</strong>
+                </td>
+                <td>
+                  <span className="mobile-cell-label">Guests</span>
+                  <span>{booking.guests} Guests</span>
+                </td>
+                <td>
+                  <span className="mobile-cell-label">Status</span>
                   <span className={`badge badge-${
                     booking.status === 'confirmed' ? 'success' :
                     booking.status === 'pending' ? 'warning' : 'error'
@@ -132,25 +153,33 @@ export default function BookingManagement() {
                     {booking.status}
                   </span>
                 </td>
-                <td>{booking.special_requests || '-'}</td>
                 <td>
-                  {booking.status === 'pending' && (
+                  <span className="mobile-cell-label">Requests</span>
+                  <span>{booking.special_requests || 'None'}</span>
+                </td>
+                <td>
+                  <span className="mobile-cell-label">Actions</span>
+                  {booking.status === 'pending' ? (
                     <div className="action-buttons">
                       <button 
-                        onClick={() => updateBookingStatus(booking.id, 'confirmed')}
-                        className="icon-btn success"
+                        onClick={() => updateBookingStatus(booking.id, 'confirmed')} 
+                        className="icon-btn success" 
                         title="Confirm"
+                        type="button"
                       >
                         <FiCheck />
                       </button>
                       <button 
-                        onClick={() => updateBookingStatus(booking.id, 'cancelled')}
-                        className="icon-btn danger"
+                        onClick={() => updateBookingStatus(booking.id, 'cancelled')} 
+                        className="icon-btn danger" 
                         title="Cancel"
+                        type="button"
                       >
                         <FiX />
                       </button>
                     </div>
+                  ) : (
+                    <span style={{ fontSize: '0.8rem', color: '#78716C' }}>Processed</span>
                   )}
                 </td>
               </tr>

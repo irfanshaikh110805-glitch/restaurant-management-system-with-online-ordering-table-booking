@@ -36,8 +36,9 @@ const NotificationSettings = () => {
       if (data && data.length > 0) {
         setPreferences(data[0]);
       }
-    } catch (_error) {
+    } catch (error) {
       // Error fetching notification preferences
+      console.error('Notification preferences fetch error:', error);
     }
   };
 
@@ -57,8 +58,9 @@ const NotificationSettings = () => {
       if (error) throw error;
 
       toast.success('Notification preferences updated!');
-    } catch (_error) {
+    } catch (error) {
       // Error updating notification preferences
+      console.error('Notification preferences update error:', error);
       toast.error('Failed to update preferences');
     } finally {
       setLoading(false);

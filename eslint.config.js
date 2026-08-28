@@ -25,22 +25,26 @@ export default [
       }
     },
     rules: {
-      // General
-      'no-unused-vars': ['warn', { 
+      // General - stricter rules
+      'no-unused-vars': ['error', { 
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }],
       'no-console': ['warn', { 
         allow: ['warn', 'error'] 
       }],
-      'no-debugger': 'warn',
+      'no-debugger': 'error',
       
       // Best practices
       'eqeqeq': ['error', 'always'],
       'no-var': 'error',
-      'prefer-const': 'warn',
+      'prefer-const': 'error',
       'no-eval': 'error',
-      'no-implied-eval': 'error'
+      'no-implied-eval': 'error',
+      
+      // Security
+      'no-new-func': 'error',
+      'no-script-url': 'error'
     }
   },
   // Allow console in utility/test files

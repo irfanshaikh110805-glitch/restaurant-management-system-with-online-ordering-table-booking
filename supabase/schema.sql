@@ -91,6 +91,25 @@ CREATE TABLE reviews (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Promo codes
+CREATE TABLE promo_codes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code VARCHAR(50) UNIQUE NOT NULL,
+  description TEXT NOT NULL,
+  discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value DECIMAL(10,2) NOT NULL,
+  min_order_amount DECIMAL(10,2) DEFAULT 0,
+  max_discount DECIMAL(10,2),
+  usage_limit INTEGER,
+  times_used INTEGER DEFAULT 0,
+  valid_from TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  valid_until TIMESTAMP WITH TIME ZONE NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  tier_required VARCHAR(20) CHECK (tier_required IN ('bronze', 'silver', 'gold', 'platinum')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- RLS Policies
 
 -- Profiles
@@ -169,6 +188,55 @@ CREATE POLICY "Admins can update reviews" ON reviews FOR UPDATE USING (
   EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
 );
 
+-- Promo codes
+ALTER TABLE promo_codes ENABLE ROW LEVEL SECURITY;
+
+-- SELECT - Admins see all, others see only active
+CREATE POLICY "select_promos" 
+  ON promo_codes FOR SELECT 
+  USING (
+    is_active = true 
+    OR 
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = (SELECT auth.uid()) 
+      AND role = 'admin'
+    )
+  );
+
+-- INSERT - Only admins
+CREATE POLICY "insert_promos" 
+  ON promo_codes FOR INSERT 
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = (SELECT auth.uid()) 
+      AND role = 'admin'
+    )
+  );
+
+-- UPDATE - Only admins
+CREATE POLICY "update_promos" 
+  ON promo_codes FOR UPDATE 
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = (SELECT auth.uid()) 
+      AND role = 'admin'
+    )
+  );
+
+-- DELETE - Only admins
+CREATE POLICY "delete_promos" 
+  ON promo_codes FOR DELETE 
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles 
+      WHERE id = (SELECT auth.uid()) 
+      AND role = 'admin'
+    )
+  );
+
 -- Triggers for updated_at
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER
@@ -191,6 +259,9 @@ CREATE TRIGGER update_bookings_updated_at BEFORE UPDATE ON bookings
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_promo_codes_updated_at BEFORE UPDATE ON promo_codes
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Function to create profile on signup

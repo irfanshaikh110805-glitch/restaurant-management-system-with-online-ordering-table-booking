@@ -59,8 +59,9 @@ const DietarySettings = () => {
           spice_tolerance: data.spice_tolerance || 'medium'
         });
       }
-    } catch (_error) {
+    } catch (error) {
       // Error fetching dietary preferences
+      console.error('Dietary preferences fetch error:', error);
     }
   };
 
@@ -80,8 +81,9 @@ const DietarySettings = () => {
       if (error) throw error;
 
       toast.success('Dietary preferences updated!');
-    } catch (_error) {
+    } catch (error) {
       // Error updating dietary preferences
+      console.error('Dietary preferences update error:', error);
       toast.error('Failed to update preferences');
     } finally {
       setLoading(false);

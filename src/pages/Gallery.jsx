@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi'
+import useSEO from '../hooks/useSEO'
 import './Gallery.css'
 
 const galleryItems = [
@@ -8,6 +10,7 @@ const galleryItems = [
     srcSmall: 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=600',
     srcMedium: 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=900',
     alt: 'Elegant restaurant interior with warm lighting',
+    category: 'Ambiance'
   },
   {
     id: 2,
@@ -15,6 +18,7 @@ const galleryItems = [
     srcSmall: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=600',
     srcMedium: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=900',
     alt: 'Indian curry served in traditional copper bowls',
+    category: 'Curries'
   },
   {
     id: 3,
@@ -22,6 +26,7 @@ const galleryItems = [
     srcSmall: 'https://images.pexels.com/photos/1117862/pexels-photo-1117862.jpeg?auto=compress&cs=tinysrgb&w=600',
     srcMedium: 'https://images.pexels.com/photos/1117862/pexels-photo-1117862.jpeg?auto=compress&cs=tinysrgb&w=900',
     alt: 'Tandoori platter with assorted grilled kebabs',
+    category: 'Tandoor'
   },
   {
     id: 4,
@@ -29,13 +34,15 @@ const galleryItems = [
     srcSmall: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=600',
     srcMedium: 'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=900',
     alt: 'Rich Indian curries arranged on a wooden table',
+    category: 'Signature'
   },
   {
     id: 5,
-    src: '/gallery_spicy_dishes.png',
-    srcSmall: '/gallery_spicy_dishes.png',
-    srcMedium: '/gallery_spicy_dishes.png',
+    src: '/gallery_spicy_dishes.webp',
+    srcSmall: '/gallery_spicy_dishes.webp',
+    srcMedium: '/gallery_spicy_dishes.webp',
     alt: 'Selection of spicy Indian dishes and naan bread',
+    category: 'Specialties'
   },
   {
     id: 6,
@@ -43,26 +50,39 @@ const galleryItems = [
     srcSmall: 'https://images.pexels.com/photos/6419720/pexels-photo-6419720.jpeg?auto=compress&cs=tinysrgb&w=600',
     srcMedium: 'https://images.pexels.com/photos/6419720/pexels-photo-6419720.jpeg?auto=compress&cs=tinysrgb&w=900',
     alt: 'Freshly baked bread and snacks platter',
+    category: 'Breads & Starters'
   },
 ]
 
 export default function Gallery() {
   const [activeItem, setActiveItem] = useState(null)
 
+  useSEO({
+    title: 'Gallery',
+    description: 'View photos of Hotel Everest Family Restaurant. Experience the premium ambiance and authentic Indian dishes we offer in Vijayapura.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/gallery'
+  })
+
+  const handleNext = (e) => {
+    if (e) e.stopPropagation()
+    const curr = galleryItems.findIndex(i => i.id === activeItem.id)
+    const next = galleryItems[(curr + 1) % galleryItems.length]
+    setActiveItem(next)
+  }
+
+  const handlePrev = (e) => {
+    if (e) e.stopPropagation()
+    const curr = galleryItems.findIndex(i => i.id === activeItem.id)
+    const prev = galleryItems[(curr - 1 + galleryItems.length) % galleryItems.length]
+    setActiveItem(prev)
+  }
+
   useEffect(() => {
     if (!activeItem) return
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') setActiveItem(null)
-      if (event.key === 'ArrowRight') {
-        const curr = galleryItems.findIndex(i => i.id === activeItem.id)
-        const next = galleryItems[(curr + 1) % galleryItems.length]
-        setActiveItem(next)
-      }
-      if (event.key === 'ArrowLeft') {
-        const curr = galleryItems.findIndex(i => i.id === activeItem.id)
-        const prev = galleryItems[(curr - 1 + galleryItems.length) % galleryItems.length]
-        setActiveItem(prev)
-      }
+      if (event.key === 'ArrowRight') handleNext()
+      if (event.key === 'ArrowLeft') handlePrev()
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
@@ -79,7 +99,7 @@ export default function Gallery() {
       <section className="section">
         <div className="container">
           <h1 className="section-title">Photo Gallery</h1>
-          <p className="text-secondary" style={{ textAlign: 'center', marginBottom: 'var(--space-2xl)' }}>
+          <p className="text-secondary section-subtitle">
             Take a visual tour of Hotel Everest Family Restaurant&apos;s warm interiors and signature
             dishes before you visit us in person.
           </p>
@@ -102,7 +122,9 @@ export default function Gallery() {
                     loading={item.id <= 3 ? 'eager' : 'lazy'}
                   />
                 </div>
-                <p>{item.alt}</p>
+                <div className="gallery-card-caption">
+                  <p>{item.alt}</p>
+                </div>
               </button>
             ))}
           </div>
@@ -115,6 +137,17 @@ export default function Gallery() {
               aria-modal="true"
               aria-label="Image viewer"
             >
+              {/* Previous Button */}
+              <button
+                type="button"
+                className="gallery-lightbox-nav prev"
+                onClick={handlePrev}
+                aria-label="Previous image"
+              >
+                <FiChevronLeft size={28} />
+              </button>
+
+              {/* Lightbox Content Container */}
               <div
                 className="gallery-lightbox-content"
                 onClick={(e) => e.stopPropagation()}
@@ -125,17 +158,34 @@ export default function Gallery() {
                   onClick={() => setActiveItem(null)}
                   aria-label="Close image"
                 >
-                  ×
+                  <FiX size={22} />
                 </button>
-                <img
-                  src={activeItem.src}
-                  alt={activeItem.alt}
-                  loading="eager"
-                />
-                <p className="text-secondary" style={{ textAlign: 'center', marginBottom: 0 }}>
-                  {activeItem.alt}
-                </p>
+
+                <div className="gallery-lightbox-image-wrap">
+                  <img
+                    src={activeItem.src}
+                    alt={activeItem.alt}
+                    loading="eager"
+                  />
+                </div>
+
+                <div className="gallery-lightbox-caption">
+                  {activeItem.category && (
+                    <span className="gallery-lightbox-badge">{activeItem.category}</span>
+                  )}
+                  <h3>{activeItem.alt}</h3>
+                </div>
               </div>
+
+              {/* Next Button */}
+              <button
+                type="button"
+                className="gallery-lightbox-nav next"
+                onClick={handleNext}
+                aria-label="Next image"
+              >
+                <FiChevronRight size={28} />
+              </button>
             </div>
           )}
         </div>

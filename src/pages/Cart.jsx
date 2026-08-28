@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FiTrash2, FiMinus, FiPlus, FiShoppingBag, FiMapPin } from 'react-icons/fi'
+import { FiTrash2, FiMinus, FiPlus, FiShoppingBag, FiMapPin, FiCreditCard } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
@@ -22,6 +22,7 @@ export default function Cart() {
   const [tableNumber, setTableNumber] = useState('')
   const [instructions, setInstructions] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('pay-at-restaurant')
+  const [checkoutExpanded, setCheckoutExpanded] = useState(true) // Start expanded on mobile
 
   const subtotal = total
   const taxAmount = subtotal * 0.05 // 5% tax
@@ -144,7 +145,7 @@ export default function Cart() {
       } else if (error.code === 'VALIDATION_FAILED') {
         toast.error('Please check your order details')
       } else {
-        toast.error('Failed to place order. Please try again.')
+        toast.error(error.message || 'Failed to place order. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -279,84 +280,136 @@ export default function Cart() {
           </motion.div>
 
           {/* Checkout Form */}
-          <motion.div 
-            className="checkout-section"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+          <div 
+            className={`checkout-section ${checkoutExpanded ? '' : 'collapsed'}`}
+            style={{ opacity: 1, transform: 'translateX(0)' }}
           >
             <div className="card">
-              <h2>Order Details</h2>
-              <form onSubmit={handleCheckout}>
-                <div className="form-group">
-                  <label className="form-label">Your Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Enter your name"
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label className="form-label">Phone Number</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 98765 43210"
-                    required
-                  />
-                </div>
+              <h2 onClick={(e) => {
+                // Only toggle if clicking the header itself, not form elements
+                if (e.target === e.currentTarget || e.target.tagName === 'SPAN') {
+                  setCheckoutExpanded(!checkoutExpanded)
+                }
+              }}>
+                <span>
+                  {checkoutExpanded ? 'Order Details' : `Tap to checkout • Total: ₹${finalTotal.toFixed(2)}`}
+                </span>
+              </h2>
+              <form onSubmit={handleCheckout} onClick={(e) => e.stopPropagation()} style={{ pointerEvents: 'auto' }}>
+                <div className="form-fields-grid">
+                  <div className="form-group" style={{ pointerEvents: 'auto' }}>
+                    <label className="form-label" style={{ pointerEvents: 'none' }}>Your Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      placeholder="Enter your name"
+                      required
+                      aria-label="Your name"
+                      autoComplete="name"
+                    />
+                  </div>
+                  
+                  <div className="form-group" style={{ pointerEvents: 'auto' }}>
+                    <label className="form-label" style={{ pointerEvents: 'none' }}>Phone Number</label>
+                    <input
+                      type="tel"
+                      className="form-control"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      placeholder="+91 98765 43210"
+                      required
+                      aria-label="Phone number"
+                      autoComplete="tel"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <label className="form-label">Table Number (Optional)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={tableNumber}
-                    onChange={(e) => setTableNumber(e.target.value)}
-                    placeholder="e.g., Table 5"
-                  />
-                </div>
+                  <div className="form-group" style={{ pointerEvents: 'auto' }}>
+                    <label className="form-label" style={{ pointerEvents: 'none' }}>Table Number (Optional)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={tableNumber}
+                      onChange={(e) => setTableNumber(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      placeholder="e.g., Table 5"
+                      aria-label="Table number"
+                      autoComplete="off"
+                    />
+                  </div>
 
-                <div className="form-group">
-                  <label className="form-label">Special Instructions (Optional)</label>
-                  <textarea
-                    className="form-control"
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
-                    placeholder="Any special requests?"
-                    rows="2"
-                  />
+                  <div className="form-group" style={{ pointerEvents: 'auto' }}>
+                    <label className="form-label" style={{ pointerEvents: 'none' }}>Special Requests (Optional)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={instructions}
+                      onChange={(e) => setInstructions(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      placeholder="e.g., Less spicy"
+                      aria-label="Special instructions"
+                      autoComplete="off"
+                    />
+                  </div>
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">Payment Method</label>
-                  <div className="payment-methods">
-                    <label className="payment-option">
+
+                  <div className="payment-methods-grid">
+                    <label className="payment-method-card active">
                       <input
                         type="radio"
                         name="paymentMethod"
                         value="pay-at-restaurant"
-                        checked={paymentMethod === 'pay-at-restaurant'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        checked={true}
+                        onChange={() => setPaymentMethod('pay-at-restaurant')}
+                        className="payment-radio-input"
+                        aria-label="Pay at restaurant"
                       />
-                      <span>Pay at Restaurant</span>
+                      <div className="payment-method-body">
+                        <FiMapPin size={18} className="payment-icon" />
+                        <div className="payment-text-wrap">
+                          <div className="payment-header-row">
+                            <span className="payment-title">Pay at Restaurant</span>
+                            <span className="payment-active-badge">Active</span>
+                          </div>
+                          <span className="payment-desc">Pay cash or UPI upon dining / collection</span>
+                        </div>
+                      </div>
                     </label>
-                    <label className="payment-option">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="online"
-                        checked={paymentMethod === 'online'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <span>Pay Online (Razorpay)</span>
-                    </label>
+
+                    <div 
+                      className="payment-method-card disabled-card"
+                      onClick={() => toast('Online payment gateway is temporarily under maintenance. Please use Pay at Restaurant.', {
+                        icon: '💳',
+                        duration: 4000,
+                        style: {
+                          borderRadius: '16px',
+                          background: '#1C1917',
+                          color: '#FAF7F2',
+                          border: '1px solid rgba(223, 191, 119, 0.4)',
+                          boxShadow: '0 16px 36px rgba(0, 0, 0, 0.4)'
+                        }
+                      })}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Pay online not available"
+                    >
+                      <div className="payment-method-body">
+                        <FiCreditCard size={18} className="payment-icon text-muted" />
+                        <div className="payment-text-wrap">
+                          <div className="payment-header-row">
+                            <span className="payment-title text-muted">Pay Online</span>
+                            <span className="payment-unavailable-badge">Not Available Still</span>
+                          </div>
+                          <span className="payment-desc">Online gateway currently unavailable</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -366,25 +419,27 @@ export default function Cart() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <h3>Order Summary</h3>
+                  <h3 className="summary-title">Order Summary</h3>
                   <div className="summary-row">
-                    <span>Subtotal</span>
+                    <span className="summary-label">Subtotal</span>
                     <motion.span
                       key={subtotal}
-                      initial={{ scale: 1.2, color: 'var(--primary)' }}
-                      animate={{ scale: 1, color: 'var(--text-primary)' }}
+                      className="summary-value"
+                      initial={{ scale: 1.2 }}
+                      animate={{ scale: 1 }}
                     >
                       ₹{subtotal.toFixed(2)}
                     </motion.span>
                   </div>
                   <div className="summary-row">
-                    <span>Tax (5%)</span>
-                    <span>₹{taxAmount.toFixed(2)}</span>
+                    <span className="summary-label">Tax (5% GST)</span>
+                    <span className="summary-value">₹{taxAmount.toFixed(2)}</span>
                   </div>
                   <div className="summary-row total">
-                    <span>Total</span>
+                    <span className="summary-label">Grand Total</span>
                     <motion.span
                       key={finalTotal}
+                      className="summary-value total-val"
                       initial={{ scale: 1.2 }}
                       animate={{ scale: 1 }}
                     >
@@ -392,14 +447,15 @@ export default function Cart() {
                     </motion.span>
                   </div>
                   {paymentMethod === 'pay-at-restaurant' ? (
-                    <p className="payment-note">
-                      <FiMapPin size={16} style={{ marginRight: '8px' }} />
-                      Pay at restaurant when you visit
-                    </p>
+                    <div className="payment-note-pill">
+                      <FiMapPin size={14} className="note-icon" />
+                      <span>Pay at restaurant when you visit</span>
+                    </div>
                   ) : (
-                    <p className="payment-note">
-                      You will be redirected to secure payment gateway
-                    </p>
+                    <div className="payment-note-pill">
+                      <FiCreditCard size={14} className="note-icon" />
+                      <span>Instant confirmation via Razorpay</span>
+                    </div>
                   )}
                 </motion.div>
 
@@ -409,12 +465,13 @@ export default function Cart() {
                   disabled={loading}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  aria-label={loading ? 'Placing order...' : 'Place order'}
                 >
-                  {loading ? <div className="spinner" style={{ width: 20, height: 20 }}></div> : <span>Place Order</span>}
+                  {loading ? <div className="spinner" style={{ width: 20, height: 20 }}></div> : <span>Place Order • ₹{finalTotal.toFixed(2)}</span>}
                 </motion.button>
               </form>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>

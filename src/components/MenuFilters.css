@@ -1,4 +1,4 @@
-/* Menu Filters Styles */
+/* Menu Filters Luxury Warm Minimalist Styles */
 
 .menu-filters {
   position: relative;
@@ -8,29 +8,36 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
-  color: var(--text-primary);
-  font-weight: 600;
+  padding: 0.65rem 1.4rem;
+  background: #DFDACF;
+  border: 1px solid rgba(28, 25, 23, 0.12);
+  border-radius: 9999px;
+  color: #1C1917;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
 }
 
 .filter-toggle-btn:hover {
-  border-color: var(--primary-color);
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
 }
 
 .filter-count {
-  background: var(--primary-color);
-  color: white;
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 10px;
-  min-width: 20px;
+  background: #1C1917;
+  color: #FAF7F2;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 9999px;
+  min-width: 18px;
   text-align: center;
+  font-weight: 700;
 }
 
 .filters-overlay {
@@ -39,22 +46,27 @@
   left: 0;
   right: 0;
   bottom: 0;
+  background: rgba(28, 25, 23, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   z-index: 998;
 }
 
 .filters-panel {
   position: fixed;
   top: auto;
-  right: 1rem;
-  width: 350px;
+  right: 1.5rem;
+  width: 360px;
   max-height: 80vh;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  box-shadow: var(--shadow-lg);
+  background: #EBE7DF;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
   z-index: 999;
   display: none;
   flex-direction: column;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.25s ease;
+  overflow: hidden;
 }
 
 .filters-panel.open {
@@ -65,55 +77,63 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.1);
+  background: #DFDACF;
 }
 
 .filters-header h3 {
   margin: 0;
-  color: var(--text-primary);
+  font-family: "Italiana", "Playfair Display", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1C1917;
 }
 
 .filters-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .clear-filters {
   background: transparent;
   border: none;
-  color: var(--primary-color);
-  font-size: 0.875rem;
+  color: #8C7A5B;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 9999px;
   transition: all 0.2s ease;
 }
 
 .clear-filters:hover {
-  background: var(--primary-color-light);
+  color: #1C1917;
+  background: rgba(28, 25, 23, 0.05);
 }
 
 .close-filters {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
+  color: #1C1917;
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.25rem;
   display: flex;
   align-items: center;
-  border-radius: 4px;
+  border-radius: 50%;
   transition: all 0.2s ease;
 }
 
 .close-filters:hover {
-  background: var(--hover-bg);
+  background: rgba(28, 25, 23, 0.1);
 }
 
 .filters-content {
-  padding: 1rem;
+  padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
 }
@@ -128,8 +148,11 @@
 
 .filter-label {
   display: block;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1C1917;
   margin-bottom: 0.75rem;
 }
 
@@ -140,54 +163,53 @@
 }
 
 .filter-option {
-  padding: 0.75rem 1rem;
-  background: var(--bg-tertiary);
-  border: 2px solid transparent;
-  border-radius: 8px;
-  color: var(--text-primary);
+  padding: 0.75rem 1.15rem;
+  background: #DFDACF;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  border-radius: 12px;
+  color: #1C1917;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 0.84rem;
   font-weight: 500;
 }
 
 .filter-option:hover {
-  background: var(--hover-bg);
+  background: #D4CDC0;
 }
 
 .filter-option.active {
-  background: var(--primary-color-light);
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  background: #1C1917;
+  border-color: #1C1917;
+  color: #FAF7F2;
   font-weight: 600;
 }
 
 .filter-select {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--bg-tertiary);
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-primary);
-  font-weight: 500;
+  padding: 0.75rem 1.15rem;
+  background: #DFDACF;
+  border: 1px solid rgba(28, 25, 23, 0.12);
+  border-radius: 12px;
+  color: #1C1917;
+  font-size: 0.84rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  outline: none;
 }
 
 .filter-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
+  border-color: #1C1917;
 }
 
 @media (max-width: 640px) {
   .filters-panel {
-    position: fixed;
-    top: auto;
     right: 0;
     bottom: 0;
     left: 0;
     width: 100%;
-    max-height: 90vh;
-    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
+    border-radius: 28px 28px 0 0;
   }
 }

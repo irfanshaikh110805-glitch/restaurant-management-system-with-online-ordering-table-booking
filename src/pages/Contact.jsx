@@ -1,7 +1,14 @@
 import { FiMapPin, FiPhone, FiMail, FiClock } from 'react-icons/fi'
+import useSEO from '../hooks/useSEO'
 import './Home.css'
 
 export default function Contact() {
+  useSEO({
+    title: 'Contact Us',
+    description: 'Get in touch with Hotel Everest Family Restaurant in Vijayapura. Call us for reservations, catering, or any inquiries.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/contact'
+  })
+
   return (
     <div className="contact-page">
       <section className="section">

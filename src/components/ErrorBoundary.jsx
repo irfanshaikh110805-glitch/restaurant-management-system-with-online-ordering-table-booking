@@ -17,6 +17,14 @@ class ErrorBoundary extends Component {
     if (import.meta.env.DEV) {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
+    
+    // In production, send errors to monitoring service
+    if (import.meta.env.PROD) {
+      // TODO: Integrate with error monitoring service (e.g., Sentry)
+      // Example: Sentry.captureException(error, { extra: errorInfo });
+      console.error('Production error:', error.message);
+    }
+    
     this.setState({
       error,
       errorInfo

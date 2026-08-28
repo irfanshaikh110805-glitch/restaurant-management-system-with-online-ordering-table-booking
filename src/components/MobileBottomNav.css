@@ -1,27 +1,29 @@
 /* ============================================
-   MOBILE BOTTOM NAVIGATION
+   LUXURY MOBILE BOTTOM NAVIGATION
+   Main Palette: Deep Espresso (#1C1917), Champagne Gold (#DFBF77), Soft Taupe (#DFDACF)
    ============================================ */
 
 .mobile-bottom-nav {
   display: none; /* Hidden on desktop */
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .mobile-bottom-nav {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: space-around;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
-    background: rgba(17, 24, 39, 0.97);
-    backdrop-filter: blur(16px) saturate(180%);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: var(--z-fixed);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(28, 25, 23, 0.98);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid rgba(223, 191, 119, 0.25);
+    z-index: 998;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.4);
   }
 
   .bottom-nav-item {
@@ -31,42 +33,41 @@
     align-items: center;
     justify-content: center;
     gap: 3px;
-    color: var(--text-muted);
+    color: #A8A29E;
     text-decoration: none;
-    transition: all var(--transition-fast);
-    padding: 6px 4px;
-    border-radius: 10px;
-    margin: 4px;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 6px 2px;
     position: relative;
     -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
+    min-height: 48px;
   }
 
   .bottom-nav-item:active {
-    transform: scale(0.92);
-    background: rgba(217, 119, 6, 0.1);
+    transform: scale(0.94);
   }
 
   .bottom-nav-item.active {
-    color: var(--primary-light);
+    color: #FAF7F2;
   }
 
   .bottom-nav-item.active .bottom-nav-label {
-    color: var(--primary-light);
-    font-weight: 700;
+    color: #FAF7F2;
+    font-weight: 800;
+    letter-spacing: 0.06em;
   }
 
-  /* Active indicator dot */
+  /* Active Top Indicator Bar */
   .bottom-nav-item.active::before {
     content: '';
     position: absolute;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 32px;
+    width: 24px;
     height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--accent-light));
-    border-radius: 0 0 4px 4px;
+    background: #FAF7F2;
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 2px 8px rgba(250, 247, 242, 0.3);
   }
 
   .bottom-nav-icon {
@@ -74,51 +75,54 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
   }
 
-  /* Icon glow on active */
+  .bottom-nav-icon svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  /* Icon on active */
   .bottom-nav-item.active .bottom-nav-icon svg {
-    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+    color: #FAF7F2;
+    transform: scale(1.08);
   }
 
   .bottom-nav-label {
-    font-size: 0.625rem;
-    font-weight: 500;
-    letter-spacing: 0.02em;
+    font-family: var(--font-body), sans-serif;
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: inherit;
-    transition: color var(--transition-fast);
+    color: #D6D3D1;
+    transition: color 0.2s ease;
   }
 
   .bottom-nav-badge {
     position: absolute;
     top: -4px;
     right: -8px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 4px;
-    background: linear-gradient(135deg, var(--accent-light), #b91c1c);
-    color: white;
-    font-size: 0.625rem;
-    font-weight: 700;
-    border-radius: var(--radius-full);
-    border: 2px solid rgba(17, 24, 39, 0.97);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    background: linear-gradient(135deg, #DFBF77, #C59A45);
+    color: #1C1917;
+    font-size: 0.58rem;
+    font-weight: 800;
+    border-radius: 9999px;
+    border: 2px solid #1C1917;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: badgePop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   }
 }
 
-@keyframes badgePop {
-  from { transform: scale(0); }
-  to { transform: scale(1); }
-}
-
-/* Add bottom padding to page content when bottom nav is shown */
-@media (max-width: 767px) {
+/* Add bottom padding to page containers when bottom nav is shown */
+@media (max-width: 768px) {
   main,
   .cart-page,
   .menu-page,
@@ -129,7 +133,13 @@
   .gallery-page,
   .order-tracking-page,
   .promotions-page,
-  .reviews-page {
-    padding-bottom: 80px !important;
+  .reviews-page,
+  .about-page,
+  .contact-page,
+  .auth-page,
+  .legal-page,
+  .admin-main {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+

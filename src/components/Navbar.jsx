@@ -1,239 +1,146 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { FiShoppingCart, FiMenu, FiX, FiUser, FiLogOut } from 'react-icons/fi'
+import { FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
 import { useCart } from '../context/CartContext'
+import NotificationBell from './NotificationBell'
 import './Navbar.css'
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const { user, isAdmin, signOut } = useAuth()
   const { itemCount } = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
   const { scrollY } = useScroll({ layoutEffect: false })
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50)
+    setIsScrolled(latest > 20)
   })
 
   const handleSignOut = async () => {
     try {
       await signOut()
       navigate('/')
-      setIsOpen(false)
     } catch (error) {
       console.error('Error signing out:', error)
     }
   }
 
+  const navLinks = [
+    { name: 'HOME', path: '/' },
+    { name: 'MENU', path: '/menu' },
+    { name: 'ABOUT', path: '/about' },
+    { name: 'RESERVATION', path: '/booking' },
+    { name: 'GALLERY', path: '/gallery' },
+    { name: 'CONTACT', path: '/contact' }
+  ]
+
   return (
-    <motion.nav 
-      className={`navbar ${isScrolled ? 'scrolled' : ''}`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="container">
-        <div className="navbar-content">
-          {/* Logo */}
-          <Link to="/" className="navbar-logo" onClick={() => setIsOpen(false)}>
-            <motion.span 
-              className="logo-icon"
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            >
-              🌶️
-            </motion.span>
-            <span className="logo-text">Hotel Everest Family Restaurant</span>
+    <header className={`navbar-wrapper ${isScrolled ? 'scrolled' : ''}`}>
+      <nav
+        className="navbar"
+        aria-label="Main navigation"
+      >
+        <div className="container navbar-container">
+          {/* Luxury Monogram Crest Logo */}
+          <Link to="/" className="navbar-logo" aria-label="Hotel Everest — Fine Dining Homepage">
+            <div className="logo-crest">
+              <svg width="40" height="40" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="crest-svg">
+                <circle cx="22" cy="22" r="20" stroke="url(#goldGrad)" strokeWidth="1.5" />
+                <circle cx="22" cy="22" r="17" stroke="url(#goldGrad)" strokeWidth="0.75" strokeDasharray="2 2" />
+                <path d="M15 15V29M15 22H24M24 15V29" stroke="url(#goldGrad)" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M28 15H35M28 22H33M28 29H35" stroke="url(#goldGrad)" strokeWidth="1.75" strokeLinecap="round" />
+                <defs>
+                  <linearGradient id="goldGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#DFBF77" />
+                    <stop offset="50%" stopColor="#C59A45" />
+                    <stop offset="100%" stopColor="#8E6A23" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div className="logo-text-group">
+              <span className="logo-text-title">HOTEL EVEREST</span>
+              <span className="logo-text-sub">FINE DINING &bull; EST. 2003</span>
+            </div>
           </Link>
 
-          <div className="navbar-menu">
-            {['Home', 'Menu', 'About', 'Gallery', 'Contact', 'Book Table'].map((item, index) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link 
-                  to={item === 'Book Table' ? '/booking' : item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
-                  className="nav-link"
+          {/* Center Navigation Links */}
+          <div className="navbar-menu" aria-label="Site pages">
+            {navLinks.map((item) => {
+              const isActive = location.pathname === item.path
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path}
+                  className={`nav-link ${isActive ? 'active' : ''}`}
                 >
-                  {item}
+                  {item.name}
+                  {isActive && <span className="nav-link-dot" />}
                 </Link>
-              </motion.div>
-            ))}
+              )
+            })}
             {isAdmin && (
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <Link to="/admin" className="nav-link">Admin</Link>
-              </motion.div>
+              <Link to="/admin" className={`nav-link ${location.pathname.startsWith('/admin') ? 'active' : ''}`}>
+                ADMIN
+              </Link>
             )}
           </div>
 
+          {/* Right Action Buttons */}
           <div className="navbar-actions">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Link to="/cart" className="cart-button" aria-label={`Shopping cart with ${itemCount} items`}>
-                <FiShoppingCart size={20} />
-                <AnimatePresence>
-                  {itemCount > 0 && (
-                    <motion.span 
-                      className="cart-badge"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      key={itemCount}
-                      aria-label={`${itemCount} items in cart`}
-                    >
-                      {itemCount}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+            {user && <NotificationBell />}
+
+            <Link to="/cart" className="cart-button" aria-label={`Shopping cart with ${itemCount} items`}>
+              <FiShoppingCart size={18} />
+              <AnimatePresence>
+                {itemCount > 0 && (
+                  <motion.span 
+                    className="cart-badge"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    key={itemCount}
+                    aria-label={`${itemCount} items in cart`}
+                  >
+                    {itemCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Link>
+
+            {/* Desktop Book Table Pill Button (Only shown in customer views, not in Admin) */}
+            {!location.pathname.startsWith('/admin') && (
+              <Link to="/booking" className="navbar-reserve-pill">
+                <span>BOOK A TABLE</span>
               </Link>
-            </motion.div>
+            )}
 
             {user ? (
               <div className="user-menu">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Link to="/profile" className="btn btn-secondary btn-sm">
-                    <FiUser size={16} />
-                    <span>Profile</span>
-                  </Link>
-                </motion.div>
-                <motion.button 
+                <Link to="/profile" className="btn-profile-pill" title="My Profile">
+                  <FiUser size={14} />
+                  <span>PROFILE</span>
+                </Link>
+                <button 
                   onClick={handleSignOut} 
-                  className="btn btn-secondary btn-sm"
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }}
+                  className="btn-icon-logout"
+                  aria-label="Sign out of your account"
+                  title="Sign Out"
                 >
-                  <FiLogOut size={16} />
-                </motion.button>
+                  <FiLogOut size={15} aria-hidden="true" />
+                </button>
               </div>
             ) : (
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link to="/login" className="btn btn-primary btn-sm">
-                  Login
-                </Link>
-              </motion.div>
+              <Link to="/login" className="navbar-login-link">
+                LOGIN
+              </Link>
             )}
-
-            {/* Mobile Toggle */}
-            <motion.button 
-              className="mobile-toggle" 
-              onClick={() => setIsOpen(!isOpen)}
-              whileTap={{ scale: 0.9 }}
-              aria-label="Toggle mobile menu"
-              aria-expanded={isOpen}
-            >
-              <AnimatePresence mode="wait">
-                {isOpen ? (
-                  <motion.div
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <FiX size={24} />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <FiMenu size={24} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div 
-              className="mobile-menu"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              {['Home', 'Menu', 'About', 'Gallery', 'Contact', 'Book Table'].map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link 
-                    to={item === 'Book Table' ? '/booking' : item === 'Home' ? '/' : `/${item.toLowerCase()}`} 
-                    className="mobile-link" 
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item}
-                  </Link>
-                </motion.div>
-              ))}
-              {isAdmin && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <Link to="/admin" className="mobile-link" onClick={() => setIsOpen(false)}>
-                    Admin
-                  </Link>
-                </motion.div>
-              )}
-              {user && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.35 }}
-                >
-                  <Link to="/profile" className="mobile-link" onClick={() => setIsOpen(false)}>
-                    Profile
-                  </Link>
-                </motion.div>
-              )}
-              {user && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.40 }}
-                >
-                  <button
-                    className="mobile-link mobile-sign-out"
-                    onClick={handleSignOut}
-                    style={{ width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: 'var(--error)' }}
-                  >
-                    Sign Out
-                  </button>
-                </motion.div>
-              )}
-              {!user && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.35 }}
-                >
-                  <Link to="/login" className="mobile-link mobile-login-link" onClick={() => setIsOpen(false)}>
-                    🔐 Login / Register
-                  </Link>
-                </motion.div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.nav>
+      </nav>
+    </header>
   )
 }

@@ -9,6 +9,8 @@ import { useAuth } from '../context/AuthContext'
 import { pageTransition, staggerContainer, fadeInUp } from '../utils/animations'
 
 import Modal from '../components/Modal'
+import MenuFilters from '../components/MenuFilters'
+import useSEO from '../hooks/useSEO'
 import './Menu.css'
 
 export default function Menu() {
@@ -18,7 +20,7 @@ export default function Menu() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
-  const [filters] = useState({
+  const [filters, setFilters] = useState({
     category: 'all',
     dietary: 'all',
     priceRange: 'all',
@@ -29,6 +31,12 @@ export default function Menu() {
   const { addItem } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
+
+  useSEO({
+    title: 'Menu',
+    description: 'Explore our authentic Indian cuisine menu featuring spicy curries, fragrant biryanis, and traditional Indian sweets. Order online for delivery.',
+    canonical: 'https://hoteleverestfamilyrestaurant.netlify.app/menu'
+  })
 
   useEffect(() => {
     fetchData()
@@ -54,6 +62,24 @@ export default function Menu() {
     // Category filter
     if (selectedCategory !== 'all') {
       items = items.filter(item => item.menu_categories?.name === selectedCategory)
+      
+      // Jain category should only show vegetarian items
+      if (selectedCategory.toLowerCase() === 'jain') {
+        items = items.filter(item => {
+          const dietaryInfo = item.dietary_info?.toLowerCase() || ''
+          const name = item.name?.toLowerCase() || ''
+          const description = item.description?.toLowerCase() || ''
+          
+          // Exclude items with non-veg keywords
+          const nonVegKeywords = ['non-veg', 'chicken', 'fish', 'mutton', 'egg', 'meat', 'prawn', 'shrimp', 'lamb', 'beef', 'pork']
+          const hasNonVegKeyword = nonVegKeywords.some(keyword => 
+            dietaryInfo.includes(keyword) || name.includes(keyword) || description.includes(keyword)
+          )
+          
+          // Only include items that don't have non-veg keywords
+          return !hasNonVegKeyword
+        })
+      }
     }
 
     // Advanced filters
@@ -349,7 +375,11 @@ export default function Menu() {
             ))}
           </motion.div>
 
-
+          <MenuFilters 
+            categories={categories} 
+            onFilterChange={(newFilters) => setFilters(newFilters)} 
+            activeFilters={filters} 
+          />
         </div>
 
         {/* Results count */}

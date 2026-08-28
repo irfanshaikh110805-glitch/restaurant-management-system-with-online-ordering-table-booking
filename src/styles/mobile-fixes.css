@@ -9,80 +9,9 @@
    ============================================ */
 
 @media (max-width: 767px) {
-  /* Ensure navbar content doesn't overflow */
-  .navbar-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-  }
-
-  /* Compact logo for mobile */
-  .navbar-logo {
-    max-width: 140px;
-    padding: 0.375rem 0.5rem;
-  }
-
-  .navbar-logo .logo-text {
-    font-size: 0.75rem;
-    max-width: 100px;
-  }
-
-  .logo-icon {
-    font-size: 1.25rem;
-  }
-
-  /* Ensure navbar actions are visible and properly sized */
-  .navbar-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 0.375rem;
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-  }
-
-  /* Cart button mobile styling */
-  .cart-button {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-  }
-
-  /* User menu mobile styling */
-  .navbar-actions .user-menu {
-    display: flex !important;
-    gap: 0.25rem;
-    flex-shrink: 0;
-  }
-
-  .navbar-actions .user-menu .btn {
-    padding: 0.375rem;
-    min-width: 36px;
-    height: 36px;
-    width: auto;
-  }
-
-  .navbar-actions .user-menu .btn span {
-    display: none;
-  }
-
-  /* Login button mobile styling */
-  .navbar-actions > .btn,
-  .navbar-actions > div > .btn {
-    padding: 0.375rem 0.75rem;
-    min-height: 36px;
-    height: 36px;
-    font-size: 0.8125rem;
-    width: auto;
-    white-space: nowrap;
-  }
-
   /* Mobile toggle button */
   .mobile-toggle {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
+    display: none !important;
   }
 }
 
@@ -254,68 +183,33 @@
 
 @media (max-width: 767px) {
   .cart-page {
-    padding-bottom: 180px !important; /* Space for fixed checkout */
+    padding-bottom: 1rem !important; /* Adjusted for normal flow */
   }
 
-  .cart-layout {
-    grid-template-columns: 1fr;
+  /* Ensure cart items are properly spaced */
+  .cart-items {
+    padding-bottom: 1rem;
   }
 
+  /* Override any conflicting styles */
   .cart-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
   }
 
   .cart-item-image {
-    width: 100%;
-    height: 200px;
+    width: 100px !important;
+    height: 100px !important;
+    flex-shrink: 0 !important;
   }
 
-  .cart-item-details {
-    width: 100%;
-  }
-
-  .cart-item-actions {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .quantity-controls {
-    flex-direction: row;
-  }
-
-  .quantity-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 1.25rem;
-  }
-
-  .quantity-value {
-    min-width: 44px;
-    font-size: 1.125rem;
-  }
-
+  /* Ensure checkout section flows naturally */
   .checkout-section {
-    position: fixed !important;
-    bottom: 64px !important; /* Above mobile bottom nav */
-    left: 0;
-    right: 0;
-    background: rgba(17, 24, 39, 0.98) !important;
-    backdrop-filter: blur(16px);
-    padding: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-    z-index: 900 !important;
-    max-height: 50vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .checkout-section .btn {
-    width: 100%;
+    position: relative !important;
+    z-index: 50 !important;
+    margin: 1.5rem 1rem !important;
+    pointer-events: auto !important;
   }
 }
 

@@ -1,10 +1,10 @@
 // Service Worker for Hotel Everest Family Restaurant
 // Provides offline support and aggressive caching strategies
 
-const CACHE_NAME = 'hotel-everest-v3';
-const RUNTIME_CACHE = 'hotel-everest-runtime-v3';
-const IMAGE_CACHE = 'hotel-everest-images-v3';
-const STATIC_CACHE = 'hotel-everest-static-v3';
+const CACHE_NAME = 'hotel-everest-v4';
+const RUNTIME_CACHE = 'hotel-everest-runtime-v4';
+const IMAGE_CACHE = 'hotel-everest-images-v4';
+const STATIC_CACHE = 'hotel-everest-static-v4';
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
@@ -45,49 +45,64 @@ self.addEventListener('activate', (event) => {
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
-
-  // Skip cross-origin requests except for fonts and images
-  if (url.origin !== location.origin && !request.destination.match(/image|font/)) {
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
     return;
   }
 
-  // API requests - network first, cache fallback
-  if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase')) {
-    event.respondWith(networkFirst(request, RUNTIME_CACHE));
+  // Skip non-HTTP(S) requests (like chrome-extension://)
+  if (!request.url.startsWith('http')) {
     return;
   }
 
-  // Images - cache first with long expiry
-  if (request.destination === 'image') {
-    event.respondWith(cacheFirst(request, IMAGE_CACHE, 30 * 24 * 60 * 60 * 1000)); // 30 days
-    return;
-  }
+  try {
+    const url = new URL(request.url);
 
-  // Fonts - cache first with very long expiry
-  if (request.destination === 'font') {
-    event.respondWith(cacheFirst(request, STATIC_CACHE, 365 * 24 * 60 * 60 * 1000)); // 1 year
-    return;
-  }
+    // Skip cross-origin requests except for fonts and images
+    if (url.origin !== location.origin && !request.destination.match(/image|font/)) {
+      return;
+    }
 
-  // Static assets (JS, CSS) - cache first
-  if (request.destination === 'script' || request.destination === 'style') {
-    event.respondWith(cacheFirst(request, STATIC_CACHE, 7 * 24 * 60 * 60 * 1000)); // 7 days
-    return;
-  }
+    // API requests - network first, cache fallback
+    if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase')) {
+      event.respondWith(networkFirst(request, RUNTIME_CACHE));
+      return;
+    }
 
-  // HTML pages - always serve index.html for SPA routing
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .catch(() => caches.match('/'))
-        .then(response => response || caches.match('/offline.html'))
-    );
-    return;
-  }
+    // Images - cache first with long expiry
+    if (request.destination === 'image' || url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
+      event.respondWith(cacheFirst(request, IMAGE_CACHE, 30 * 24 * 60 * 60 * 1000)); // 30 days
+      return;
+    }
 
-  // Default - cache first
-  event.respondWith(cacheFirst(request, RUNTIME_CACHE));
+    // Fonts - cache first with very long expiry
+    if (request.destination === 'font' || url.pathname.match(/\.(woff|woff2|ttf|otf|eot)$/i)) {
+      event.respondWith(cacheFirst(request, STATIC_CACHE, 365 * 24 * 60 * 60 * 1000)); // 1 year
+      return;
+    }
+
+    // Static assets (JS, CSS) - cache first
+    if (request.destination === 'script' || request.destination === 'style') {
+      event.respondWith(cacheFirst(request, STATIC_CACHE, 7 * 24 * 60 * 60 * 1000)); // 7 days
+      return;
+    }
+
+    // HTML pages - always serve index.html for SPA routing
+    if (request.mode === 'navigate') {
+      event.respondWith(
+        fetch(request)
+          .catch(() => caches.match('/'))
+          .then(response => response || caches.match('/offline.html'))
+      );
+      return;
+    }
+
+    // Default - cache first
+    event.respondWith(cacheFirst(request, RUNTIME_CACHE));
+  } catch (error) {
+    console.error('Error in fetch handler:', error);
+  }
 });
 
 // Cache first strategy with expiry
@@ -135,11 +150,19 @@ async function cacheFirst(request, cacheName, maxAge = 24 * 60 * 60 * 1000) {
     }
     return response;
   } catch (error) {
+    // Return cached version if available
     if (cached) {
       return cached;
     }
-    console.error('Fetch failed:', error);
-    return new Response('Offline', { status: 503 });
+    // For images, return a transparent pixel instead of error
+    if (request.destination === 'image' || request.url.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
+      return new Response(
+        '<svg width="1" height="1" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="transparent"/></svg>',
+        { headers: { 'Content-Type': 'image/svg+xml' } }
+      );
+    }
+    // Silent fail for other resources
+    return new Response('', { status: 200 });
   }
 }
 
