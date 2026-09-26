@@ -111,26 +111,48 @@ const DEFAULT_MOCK_REWARDS = [
     }
   };
 
+  const activeReferralCode = referralCode || (user?.id ? 'HE' + user.id.replace(/-/g, '').substring(0, 6).toUpperCase() : '');
+  const referralLink = `${window.location.origin}/signup?ref=${activeReferralCode}`;
+
   const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode);
-    toast.success('Referral code copied!');
+    if (!activeReferralCode) {
+      toast.error('Loading referral code...');
+      return;
+    }
+    navigator.clipboard.writeText(activeReferralCode);
+    toast.success(`Referral code ${activeReferralCode} copied!`);
+  };
+
+  const copyReferralLink = () => {
+    if (!activeReferralCode) {
+      toast.error('Loading referral link...');
+      return;
+    }
+    navigator.clipboard.writeText(referralLink);
+    toast.success('Referral link copied to clipboard!');
   };
 
   const shareReferral = async () => {
+    if (!activeReferralCode) {
+      toast.error('Loading referral code...');
+      return;
+    }
     const shareData = {
-      title: 'Join Hotel Everest!',
-      text: `Use my referral code ${referralCode} and get 100 bonus points when you sign up!`,
-      url: `${window.location.origin}/signup?ref=${referralCode}`
+      title: 'Join Hotel Everest & Get 100 Reward Points!',
+      text: `Use my referral code ${activeReferralCode} to get 100 bonus loyalty points when you join Hotel Everest!`,
+      url: referralLink
     };
 
     try {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        copyReferralCode();
+        copyReferralLink();
       }
     } catch (error) {
-      console.error('Error sharing:', error);
+      if (error.name !== 'AbortError') {
+        copyReferralLink();
+      }
     }
   };
 
@@ -404,19 +426,19 @@ const DEFAULT_MOCK_REWARDS = [
                 
                 <div className="referral-code-section">
                   <div className="qr-code">
-                    <QRCode value={`${window.location.origin}/signup?ref=${referralCode}`} size={150} />
+                    <QRCode value={referralLink} size={150} />
                   </div>
                   
                   <div className="referral-actions">
                     <div className="code-display">
-                      <span className="code">{referralCode}</span>
+                      <span className="code">{activeReferralCode || 'Generating...'}</span>
                     </div>
                     <div className="action-buttons">
                       <button onClick={copyReferralCode} className="btn-secondary">
                         <FiCopy /> Copy Code
                       </button>
                       <button onClick={shareReferral} className="btn-primary">
-                        <FiShare2 /> Share
+                        <FiShare2 /> Share Invite
                       </button>
                     </div>
                   </div>

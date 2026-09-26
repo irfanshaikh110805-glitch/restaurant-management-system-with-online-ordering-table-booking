@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => ({
     // Gzip compression for production
     compression({
       algorithm: 'gzip',
+      include: /\.(js|mjs|json|css|html|svg)$/,
       exclude: [/\.(br)$/, /\.(gz)$/],
       threshold: 512, // Compress files > 512 bytes
       deleteOriginalAssets: false
@@ -20,6 +21,7 @@ export default defineConfig(({ mode }) => ({
     // Brotli compression for production (better compression)
     compression({
       algorithm: 'brotliCompress',
+      include: /\.(js|mjs|json|css|html|svg)$/,
       exclude: [/\.(br)$/, /\.(gz)$/],
       threshold: 512,
       deleteOriginalAssets: false
@@ -34,14 +36,6 @@ export default defineConfig(({ mode }) => ({
     target: ['es2019', 'chrome87', 'firefox78', 'safari14'], // Broad mobile browser support
     minify: 'esbuild', // Use esbuild for fast minification
     sourcemap: mode === 'production' ? false : true, // Enable source maps for debugging
-    esbuildOptions: {
-      drop: mode === 'production' ? ['console', 'debugger'] : [],
-      legalComments: 'none',
-      minifyIdentifiers: mode === 'production', // Only minify in production for better debugging
-      minifySyntax: true,
-      minifyWhitespace: true,
-      treeShaking: true
-    },
     // Code splitting - more granular chunks
     rollupOptions: {
       output: {
@@ -85,14 +79,6 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('/pages/admin/')) {
             return 'admin';
           }
-          // Context providers - keep with main bundle for mobile hydration speed
-          if (id.includes('/context/')) {
-            return 'context';
-          }
-          // Utils - separate chunk
-          if (id.includes('/utils/')) {
-            return 'utils';
-          }
         },
         // Optimize chunk naming with content hash
         chunkFileNames: 'assets/js/[name].[hash].js',
@@ -109,12 +95,6 @@ export default defineConfig(({ mode }) => ({
           }
           return `assets/[name].[hash][extname]`;
         },
-      },
-      // Tree shaking optimizations
-      treeshake: {
-        moduleSideEffects: 'no-external',
-        propertyReadSideEffects: false,
-        unknownGlobalSideEffects: false
       }
     },
     // Chunk size warnings

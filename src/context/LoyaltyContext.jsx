@@ -61,14 +61,42 @@ export const LoyaltyProvider = ({ children }) => {
       }
 
       // Fetch referral code from profiles
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('referral_code')
-        .eq('id', user.id)
-        .single();
-      
-      if (profile?.referral_code) {
-        setReferralCode(profile.referral_code);
+      let userRefCode = null;
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('referral_code')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profile?.referral_code) {
+          userRefCode = profile.referral_code;
+        } else {
+          // Generate deterministic and clean referral code
+          userRefCode = 'HE' + user.id.replace(/-/g, '').substring(0, 6).toUpperCase();
+          await supabase
+            .from('profiles')
+            .update({ referral_code: userRefCode })
+            .eq('id', user.id);
+        }
+      } catch (err) {
+        console.warn('Profile referral code fetch error:', err);
+        userRefCode = 'HE' + user.id.replace(/-/g, '').substring(0, 6).toUpperCase();
+      }
+
+      setReferralCode(userRefCode);
+
+      // Auto-apply pending referral code if user signed up via a referral link
+      const pendingRef = localStorage.getItem('pending_referral_code');
+      if (pendingRef && pendingRef !== 'null' && pendingRef.trim().length > 0) {
+        setTimeout(async () => {
+          try {
+            await applyReferralCode(pendingRef.trim());
+            localStorage.removeItem('pending_referral_code');
+          } catch (e) {
+            console.warn('Auto-referral apply error:', e);
+          }
+        }, 800);
       }
     } catch (error) {
       console.error('Error fetching loyalty data:', error);
@@ -213,19 +241,26 @@ export const LoyaltyProvider = ({ children }) => {
   };
 
   const applyReferralCode = async (code) => {
-    if (!user) {
-      toast.error('Please login to apply referral code');
+    if (!code || typeof code !== 'string' || code.trim() === '' || code.trim().toLowerCase() === 'null') {
       return false;
+    }
+
+    const cleanCode = code.trim().toUpperCase();
+
+    if (!user) {
+      // Save for after registration/login
+      localStorage.setItem('pending_referral_code', cleanCode);
+      return true;
     }
 
     setLoading(true);
     try {
-      // Find referrer by referral code in profiles table
+      // Find referrer by referral code in profiles table (case-insensitive)
       const { data: referrer, error: referrerError } = await supabase
         .from('profiles')
-        .select('id')
-        .eq('referral_code', code)
-        .single();
+        .select('id, full_name')
+        .ilike('referral_code', cleanCode)
+        .maybeSingle();
 
       if (referrerError || !referrer) {
         toast.error('Invalid referral code');
@@ -237,23 +272,28 @@ export const LoyaltyProvider = ({ children }) => {
         return false;
       }
 
-      // Get referrer's loyalty points
-      const { data: referrerLoyalty, error: loyaltyError } = await supabase
-        .from('loyalty_points')
-        .select('total_points, lifetime_points')
-        .eq('user_id', referrer.id)
-        .single();
-
-      if (loyaltyError) {
-        console.error('Error fetching referrer loyalty:', loyaltyError);
-      }
-
       // Check if already used
       const { data: existing, error: existingError } = await supabase
         .from('referrals')
         .select('id')
         .eq('referred_user_id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (existingError && existingError.code !== 'PGRST116') {
+        throw existingError;
+      }
+
+      if (existing) {
+        // User already redeemed a referral
+        return false;
+      }
+
+      // Get referrer's loyalty points
+      const { data: referrerLoyalty } = await supabase
+        .from('loyalty_points')
+        .select('total_points, lifetime_points')
+        .eq('user_id', referrer.id)
+        .maybeSingle();
 
       if (existingError && existingError.code !== 'PGRST116') {
         throw existingError;

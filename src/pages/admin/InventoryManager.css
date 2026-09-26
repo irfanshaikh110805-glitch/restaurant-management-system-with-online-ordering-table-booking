@@ -1,5 +1,6 @@
 /* ==========================================================================
    LUXURY WARM MINIMALIST INVENTORY MANAGER STYLES
+   Palette: Warm Sand (#EBE7DF), Soft Taupe (#DFDACF), Deep Espresso (#1C1917), Gold (#DFBF77)
    ========================================================================== */
 
 .inventory-manager {
@@ -7,175 +8,849 @@
   max-width: 100%;
 }
 
-.inventory-header h1 {
-  font-family: "Italiana", "Playfair Display", Georgia, serif;
-  font-size: clamp(2.2rem, 4vw, 3rem);
+.btn-refresh-inventory {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: 9999px;
+  background: #DFDACF;
+  border: 1px solid rgba(28, 25, 23, 0.12);
   color: #1C1917;
-  margin-bottom: 2rem;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Summary Cards */
+.btn-refresh-inventory:hover:not(:disabled) {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
+}
+
+.btn-refresh-inventory:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-refresh-inventory .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   1. SUMMARY CARDS
+   ========================================================================== */
 .inventory-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .summary-card {
   background: #DFDACF;
-  padding: 1.75rem;
-  border-radius: 24px;
+  padding: 1.35rem 1.5rem;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  border: 1px solid rgba(28, 25, 23, 0.08);
+  gap: 1.15rem;
+  border: 1.5px solid rgba(28, 25, 23, 0.08);
   box-shadow: 0 8px 24px -6px rgba(28, 25, 23, 0.06);
-  transition: all 0.25s ease;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
 }
 
 .summary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -8px rgba(28, 25, 23, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -8px rgba(28, 25, 23, 0.12);
+  border-color: rgba(140, 122, 91, 0.4);
+}
+
+.summary-card.active-filter {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 8px 25px rgba(28, 25, 23, 0.2);
 }
 
 .summary-icon {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
-.summary-card.total .summary-icon {
+.summary-icon.total-icon {
   background: #1C1917;
   color: #DFBF77;
 }
 
-.summary-card.low-stock .summary-icon {
+.summary-card.active-filter .summary-icon.total-icon {
+  background: #DFBF77;
+  color: #1C1917;
+}
+
+.summary-icon.low-icon {
   background: #FEF3C7;
   color: #B45309;
 }
 
-.summary-card.out-stock .summary-icon {
+.summary-card.active-filter .summary-icon.low-icon {
+  background: #B45309;
+  color: #FEF3C7;
+}
+
+.summary-icon.out-icon {
   background: #FEE2E2;
   color: #B91C1C;
 }
 
-.summary-info h3 {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #8C7A5B;
-  margin-bottom: 0.25rem;
+.summary-card.active-filter .summary-icon.out-icon {
+  background: #B91C1C;
+  color: #FEE2E2;
 }
 
-.summary-info p {
+.summary-icon.in-icon {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.summary-card.active-filter .summary-icon.in-icon {
+  background: #15803D;
+  color: #DCFCE7;
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #78716C;
+}
+
+.summary-card.active-filter .summary-label {
+  color: #D4CDC0;
+}
+
+.summary-value {
+  font-family: "Playfair Display", "Cinzel", Georgia, serif;
   font-size: 1.85rem;
+  font-weight: 700;
+  color: #1C1917;
+  line-height: 1.1;
+}
+
+.summary-card.active-filter .summary-value {
+  color: #FAF7F2;
+}
+
+/* ==========================================================================
+   2. SEARCH & FILTER TOOLBAR
+   ========================================================================== */
+.inventory-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.inventory-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 280px;
+  max-width: 450px;
+}
+
+.inventory-search-wrap .search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8C7A5B;
+  pointer-events: none;
+  font-size: 1.1rem;
+}
+
+.inventory-search-input {
+  width: 100%;
+  padding: 0.75rem 1.15rem 0.75rem 2.8rem;
+  background: #DFDACF;
+  border: 1.5px solid rgba(28, 25, 23, 0.1);
+  border-radius: 9999px;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.88rem;
+  color: #1C1917;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.inventory-search-input:focus {
+  background: #FAF7F2;
+  border-color: #8C7A5B;
+  box-shadow: 0 0 0 3px rgba(140, 122, 91, 0.15);
+}
+
+.inventory-filter-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 0.55rem 1.15rem;
+  border-radius: 9999px;
+  background: #DFDACF;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  color: #57534E;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+  background: #D4CDC0;
+  color: #1C1917;
+}
+
+.filter-pill.active {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15);
+}
+
+.filter-pill.pill-low.active {
+  background: #B45309;
+  border-color: #B45309;
+}
+
+.filter-pill.pill-out.active {
+  background: #B91C1C;
+  border-color: #B91C1C;
+}
+
+/* ==========================================================================
+   3. INVENTORY TABLE (LUXURY DESKTOP VIEW)
+   ========================================================================== */
+.inventory-table-container {
+  background: #DFDACF;
+  border-radius: 24px;
+  border: 1px solid rgba(28, 25, 23, 0.09);
+  box-shadow: 0 10px 30px -8px rgba(28, 25, 23, 0.07);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.inventory-table thead {
+  background: rgba(28, 25, 23, 0.05);
+  border-bottom: 1.5px solid rgba(28, 25, 23, 0.08);
+}
+
+.inventory-table th {
+  padding: 1rem 1.5rem;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716C;
+}
+
+.inventory-table tbody tr {
+  border-bottom: 1px solid rgba(28, 25, 23, 0.06);
+  transition: all 0.2s ease;
+}
+
+.inventory-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.inventory-table tbody tr:hover {
+  background: rgba(235, 231, 223, 0.5);
+}
+
+.inventory-table td {
+  padding: 1.15rem 1.5rem;
+  font-size: 0.92rem;
+  color: #1C1917;
+  vertical-align: middle;
+}
+
+.mobile-cell-label {
+  display: none;
+}
+
+/* Item Name Column */
+.item-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+}
+
+.item-thumbnail {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  background: #D4CDC0;
+  flex-shrink: 0;
+}
+
+.item-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.item-name-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1C1917;
+}
+
+.item-id-sub {
+  font-size: 0.74rem;
+  color: #78716C;
+  font-weight: 500;
+}
+
+/* Price Column */
+.price-tag {
+  font-weight: 700;
+  font-size: 0.94rem;
+  color: #1C1917;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Current Stock & Progress Column */
+.quantity-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 140px;
+}
+
+.quantity-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.quantity-val {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1C1917;
+  font-variant-numeric: tabular-nums;
+}
+
+.quantity-threshold {
+  font-size: 0.74rem;
+  color: #78716C;
+  font-weight: 600;
+}
+
+.stock-progress-track {
+  height: 6px;
+  width: 100%;
+  background: rgba(28, 25, 23, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.stock-progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.stock-progress-bar.bar-good {
+  background: #16A34A;
+}
+
+.stock-progress-bar.bar-low {
+  background: #D97706;
+}
+
+.stock-progress-bar.bar-out {
+  background: #DC2626;
+}
+
+/* Status Pill Badges */
+.stock-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.stock-badge-good {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+}
+
+.stock-badge-low {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FCD34D;
+}
+
+.stock-badge-out {
+  background: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FCA5A5;
+}
+
+/* Action Button */
+.btn-update-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: 9999px;
+  background: #EBE7DF;
+  border: 1.5px solid rgba(28, 25, 23, 0.12);
+  color: #1C1917;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-update-stock:hover {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.15);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   4. UPDATE STOCK MODAL FORM
+   ========================================================================== */
+.stock-update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.item-info-banner {
+  background: rgba(235, 231, 223, 0.85);
+  padding: 1.25rem 1.35rem;
+  border-radius: 18px;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.item-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(28, 25, 23, 0.07);
+  padding-bottom: 0.65rem;
+}
+
+.item-banner-header h3 {
+  font-family: "Playfair Display", "Cinzel", Georgia, serif;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1C1917;
   margin: 0;
 }
 
-@media (max-width: 768px) {
-  .inventory-header h1 {
-    font-size: 1.75rem;
-    margin-bottom: 1.25rem;
+.item-banner-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #8C7A5B;
+  font-variant-numeric: tabular-nums;
+}
+
+.item-banner-stats {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-pill .stat-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #78716C;
+}
+
+.stat-pill .stat-value {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1C1917;
+}
+
+/* Stepper Input & Quick Chips */
+.form-group-stock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.form-label-stock {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716C;
+}
+
+.quantity-input-stepper {
+  display: flex;
+  align-items: center;
+  background: #EBE7DF;
+  border: 2px solid rgba(28, 25, 23, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.quantity-input-stepper:focus-within {
+  border-color: #8C7A5B;
+  background: #FAF7F2;
+  box-shadow: 0 0 0 4px rgba(140, 122, 91, 0.15);
+}
+
+.stepper-btn {
+  background: transparent;
+  border: none;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1C1917;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.stepper-btn:hover {
+  background: rgba(28, 25, 23, 0.08);
+  color: #8C7A5B;
+}
+
+.stepper-btn:active {
+  transform: scale(0.92);
+}
+
+.stock-number-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1C1917;
+  padding: 0.65rem 0;
+  outline: none;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+
+.stock-number-input::-webkit-outer-spin-button,
+.stock-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Quick Add Chips */
+.quick-adjust-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.25rem;
+}
+
+.chips-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #78716C;
+  margin-right: 0.2rem;
+}
+
+.chip-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  background: #EBE7DF;
+  border: 1px solid rgba(28, 25, 23, 0.12);
+  color: #44403C;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip-btn:hover {
+  background: #1C1917;
+  color: #FAF7F2;
+  border-color: #1C1917;
+}
+
+.chip-btn.chip-danger {
+  color: #B91C1C;
+  border-color: rgba(185, 28, 28, 0.25);
+}
+
+.chip-btn.chip-danger:hover {
+  background: #B91C1C;
+  color: #FAF7F2;
+}
+
+/* Modal Actions Bar */
+.modal-actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.btn-modal-cancel {
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  background: transparent;
+  border: 1.5px solid rgba(28, 25, 23, 0.15);
+  color: #57534E;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-cancel:hover {
+  background: rgba(28, 25, 23, 0.06);
+  color: #1C1917;
+  border-color: rgba(28, 25, 23, 0.3);
+}
+
+.btn-modal-submit {
+  padding: 0.75rem 1.85rem;
+  border-radius: 9999px;
+  background: #1C1917;
+  border: 1.5px solid #1C1917;
+  color: #FAF7F2;
+  font-family: var(--font-body), "Plus Jakarta Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(28, 25, 23, 0.18);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-modal-submit:hover:not(:disabled) {
+  background: #8C7A5B;
+  border-color: #8C7A5B;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(140, 122, 91, 0.3);
+}
+
+.btn-modal-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Empty & Loading States */
+.inventory-loading-state,
+.inventory-empty-state {
+  background: #DFDACF;
+  border-radius: 24px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid rgba(28, 25, 23, 0.08);
+}
+
+.inventory-empty-state .empty-icon {
+  color: #8C7A5B;
+  margin-bottom: 0.5rem;
+}
+
+.inventory-empty-state h3 {
+  font-family: "Playfair Display", "Cinzel", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1C1917;
+  margin: 0;
+}
+
+.inventory-empty-state p {
+  color: #78716C;
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 400px;
+}
+
+.btn-clear-filters {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: 9999px;
+  background: #1C1917;
+  color: #FAF7F2;
+  border: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+  background: #8C7A5B;
+}
+
+/* ==========================================================================
+   5. RESPONSIVE MOBILE TRANSFORMATION
+   ========================================================================== */
+@media (max-width: 900px) {
+  .inventory-toolbar {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .inventory-summary {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
+  .inventory-search-wrap {
+    max-width: 100%;
   }
 
-  .summary-card {
-    padding: 1rem 1.25rem;
-    border-radius: 18px;
-    gap: 1rem;
-  }
-
-  .summary-icon {
-    width: 44px;
-    height: 44px;
-    font-size: 1.25rem;
-    border-radius: 12px;
-  }
-
-  .summary-info p {
-    font-size: 1.4rem;
-  }
-
-  /* Mobile Inventory Table -> Card transformation */
   .inventory-table-container {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    overflow: visible !important;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
   }
 
   .inventory-table {
-    display: block !important;
-    width: 100% !important;
+    display: block;
+    width: 100%;
   }
 
   .inventory-table thead {
-    display: none !important;
+    display: none;
   }
 
   .inventory-table tbody {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.85rem !important;
-    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
   }
 
-  .inventory-table tr {
-    display: flex !important;
-    flex-direction: column !important;
-    background: #DFDACF !important;
-    border: 1px solid rgba(28, 25, 23, 0.1) !important;
-    border-radius: 20px !important;
-    padding: 1.15rem 1rem !important;
-    box-shadow: 0 4px 15px rgba(28, 25, 23, 0.05) !important;
-    gap: 0.45rem !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+  .inventory-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: #DFDACF;
+    border: 1px solid rgba(28, 25, 23, 0.1);
+    border-radius: 20px;
+    padding: 1.25rem 1.15rem;
+    box-shadow: 0 4px 16px rgba(28, 25, 23, 0.05);
+    gap: 0.65rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .inventory-table td {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0.4rem 0 !important;
-    border-bottom: 1px dashed rgba(28, 25, 23, 0.08) !important;
-    font-size: 0.88rem !important;
-    color: #1C1917 !important;
-    text-align: right !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    border-bottom: 1px dashed rgba(28, 25, 23, 0.08);
+    font-size: 0.88rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .inventory-table td:first-child {
-    padding-bottom: 0.55rem !important;
-    border-bottom: 1px solid rgba(28, 25, 23, 0.12) !important;
+  .mobile-cell-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #78716C;
   }
 
-  .inventory-table td:last-child {
-    border-bottom: none !important;
-    padding-top: 0.55rem !important;
+  .inventory-table td.item-name-cell {
+    padding-bottom: 0.75rem;
+    border-bottom: 1.5px solid rgba(28, 25, 23, 0.12);
   }
 
-  .btn-update {
-    width: 100% !important;
-    justify-content: center !important;
-    padding: 0.65rem 1rem !important;
+  .inventory-table td.actions-cell {
+    border-bottom: none;
+    padding-top: 0.65rem;
+  }
+
+  .btn-update-stock {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1.25rem;
   }
 }
+
 
 

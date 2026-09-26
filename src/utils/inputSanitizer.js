@@ -289,16 +289,19 @@ export function sanitizeObject(input, schema) {
             // Sanitize array items if itemSchema provided
             if (rules.itemSchema) {
               const sanitizedArray = [];
+              let hasItemError = false;
               for (const item of value) {
                 const result = sanitizeObject(item, rules.itemSchema);
-                if (result.valid) {
+                if (result && result.valid === true) {
                   sanitizedArray.push(result.data);
                 } else {
-                  errors.push(`Invalid item in ${field}: ${result.errors.join(', ')}`);
+                  hasItemError = true;
+                  const itemErrors = (result && result.errors && result.errors.length) ? result.errors.join(', ') : 'unknown validation error';
+                  errors.push(`Invalid item in ${field}: ${itemErrors}`);
                   break;
                 }
               }
-              if (sanitizedArray.length === value.length) {
+              if (!hasItemError && sanitizedArray.length === value.length) {
                 sanitized[field] = sanitizedArray;
               }
             } else {

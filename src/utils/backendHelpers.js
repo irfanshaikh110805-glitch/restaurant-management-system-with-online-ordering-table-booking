@@ -262,15 +262,15 @@ const _createOrderInternal = async (orderData) => {
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
-          user_id: orderData.userId,
+          user_id: orderData.userId || null,
           customer_name: orderData.customerName,
           total: orderData.total,
           subtotal: orderData.subtotal,
           tax_amount: orderData.taxAmount || 0,
           phone: orderData.phone,
-          table_number: orderData.tableNumber,
+          table_number: orderData.tableNumber || null,
           order_type: orderData.orderType || 'dine-in',
-          special_instructions: orderData.instructions,
+          special_instructions: orderData.instructions || null,
           status: 'pending',
           payment_status: orderData.paymentStatus || 'pending',
           payment_method: orderData.paymentMethod || 'pay-at-restaurant'

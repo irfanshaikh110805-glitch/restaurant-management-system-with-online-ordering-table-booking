@@ -37,6 +37,7 @@ lerna-debug.log*
 
 # Supabase
 .supabase/
+supabase/.temp/
 
 # OS
 Thumbs.db

@@ -44,24 +44,28 @@ export const VALIDATION_SCHEMAS = {
   
   // Order creation
   createOrder: {
-    userId: { type: 'string', required: false, maxLength: 36 },
+    userId: { type: 'string', required: false, maxLength: 50 },
     customerName: { type: 'string', required: true, minLength: 2, maxLength: 100 },
     phone: { type: 'phone', required: true },
-    tableNumber: { type: 'string', required: false, maxLength: 20 },
+    tableNumber: { type: 'string', required: false, maxLength: 50 },
     orderType: { type: 'enum', required: true, values: ['dine-in', 'takeout', 'delivery'] },
-    instructions: { type: 'string', required: false, maxLength: 500 },
+    instructions: { type: 'string', required: false, maxLength: 1000 },
     paymentMethod: { type: 'enum', required: true, values: ['pay-at-restaurant', 'online', 'card', 'upi'] },
     paymentStatus: { type: 'enum', required: true, values: ['pending', 'completed', 'failed'] },
+    deliveryFee: { type: 'number', required: false, min: 0, max: 10000 },
+    discountAmount: { type: 'number', required: false, min: 0, max: 100000 },
     items: { 
       type: 'array', 
       required: true, 
       minItems: 1, 
       maxItems: 50,
       itemSchema: {
-        id: { type: 'string', required: true, maxLength: 36 },
+        id: { type: 'string', required: true, maxLength: 100 },
         name: { type: 'string', required: true, maxLength: 200 },
         price: { type: 'number', required: true, min: 0, max: 100000 },
-        quantity: { type: 'number', required: true, min: 1, max: 100, integer: true }
+        quantity: { type: 'number', required: true, min: 1, max: 100, integer: true },
+        image_url: { type: 'string', required: false, maxLength: 2048 },
+        category: { type: 'string', required: false, maxLength: 100 }
       }
     },
     total: { type: 'number', required: true, min: 0, max: 1000000 },

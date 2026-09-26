@@ -1,22 +1,33 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { FiMail, FiLock, FiUser, FiPhone, FiGift, FiCheckCircle } from 'react-icons/fi'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext'
 import useSEO from '../hooks/useSEO'
 import './Auth.css'
 
 export default function Register() {
+  const [searchParams] = useSearchParams()
+  const urlRef = searchParams.get('ref')
+  const cleanInitialRef = (urlRef && urlRef !== 'null' && urlRef !== 'undefined') ? urlRef.trim().toUpperCase() : ''
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    referralCode: cleanInitialRef
   })
   const [loading, setLoading] = useState(false)
   const { signUp } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (cleanInitialRef) {
+      localStorage.setItem('pending_referral_code', cleanInitialRef)
+    }
+  }, [cleanInitialRef])
 
   useSEO({
     title: 'Sign Up',
@@ -53,6 +64,10 @@ export default function Register() {
     setLoading(true)
 
     try {
+      if (formData.referralCode && formData.referralCode.trim() !== '') {
+        localStorage.setItem('pending_referral_code', formData.referralCode.trim().toUpperCase())
+      }
+
       const { data: _data, error } = await signUp({
         email: formData.email,
         password: formData.password,
@@ -94,8 +109,29 @@ export default function Register() {
         <div className="auth-card card">
           <div className="auth-header">
             <h1>Create Account</h1>
-            <p className="text-secondary">Join us and start ordering</p>
+            <p className="text-secondary">Join us and unlock exclusive rewards</p>
           </div>
+
+          {formData.referralCode && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.85rem 1rem',
+              backgroundColor: 'rgba(223, 191, 119, 0.15)',
+              border: '1px solid rgba(223, 191, 119, 0.4)',
+              borderRadius: '14px',
+              marginBottom: '1.5rem',
+              color: '#1C1917',
+              fontSize: '0.875rem'
+            }}>
+              <FiCheckCircle style={{ color: '#166534', flexShrink: 0, fontSize: '1.2rem' }} />
+              <div>
+                <strong style={{ display: 'block', fontWeight: 700 }}>Referral Code Applied: {formData.referralCode}</strong>
+                <span style={{ color: '#57534E', fontSize: '0.8rem' }}>You'll receive 100 bonus loyalty points when your account is active!</span>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
@@ -175,6 +211,21 @@ export default function Register() {
                   onChange={handleChange}
                   placeholder="••••••••"
                   required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Referral Code (Optional)</label>
+              <div className="input-with-icon">
+                <FiGift className="input-icon" />
+                <input
+                  type="text"
+                  name="referralCode"
+                  className="form-control"
+                  value={formData.referralCode}
+                  onChange={(e) => setFormData(prev => ({ ...prev, referralCode: e.target.value.toUpperCase() }))}
+                  placeholder="e.g. HE78A9B2"
                 />
               </div>
             </div>

@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import rateLimiter from '../utils/rateLimiter'
 import { sanitizeEmail, sanitizeString, sanitizePhone } from '../utils/inputSanitizer'
-import { SECURITY_ERROR_MESSAGES } from '../utils/securityConfig'
+import { SECURITY_ERROR_MESSAGES, PASSWORD_POLICY } from '../utils/securityConfig'
 
 const AuthContext = createContext(null)
 
@@ -79,7 +79,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Enforce password policy
-      const { PASSWORD_POLICY } = await import('../utils/securityConfig');
       if (password.length < PASSWORD_POLICY.minLength) {
         return { 
           data: null, 

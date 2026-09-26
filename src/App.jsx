@@ -159,6 +159,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/signup" element={<Register />} />
 
               {/* Public & Customer Experience Routes */}
               <Route path="/booking" element={<Booking />} />
