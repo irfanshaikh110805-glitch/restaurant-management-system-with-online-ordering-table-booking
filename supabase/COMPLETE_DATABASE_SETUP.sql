@@ -12,6 +12,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SET search_path = public
 AS $$
 BEGIN
   NEW.updated_at = NOW();
@@ -619,244 +620,394 @@ ALTER TABLE public.combo_meals ENABLE ROW LEVEL SECURITY;
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN
 LANGUAGE sql
-SECURITY DEFINER
+SECURITY INVOKER
+SET search_path = public
 STABLE
 AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.profiles
-    WHERE id = auth.uid() AND role = 'admin'
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
   );
 $$;
 
+-- Secure trigger function
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'handle_new_user') THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM public, anon, authenticated';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.handle_new_user() TO supabase_auth_admin, postgres, service_role';
+  END IF;
+END $$;
+
+-- COVERING INDEXES FOR FOREIGN KEYS (Performance optimization)
+CREATE INDEX IF NOT EXISTS idx_booking_waitlist_user_id ON public.booking_waitlist(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_user_id ON public.bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_catering_requests_user_id ON public.catering_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_delivery_addresses_user_id ON public.delivery_addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_delivery_tracking_order_id ON public.delivery_tracking(order_id);
+CREATE INDEX IF NOT EXISTS idx_delivery_tracking_driver_id ON public.delivery_tracking(driver_id);
+CREATE INDEX IF NOT EXISTS idx_event_registrations_user_id ON public.event_registrations(user_id);
+CREATE INDEX IF NOT EXISTS idx_favorite_items_menu_item_id ON public.favorite_items(menu_item_id);
+CREATE INDEX IF NOT EXISTS idx_favorite_items_user_id ON public.favorite_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_item_reviews_menu_item_id ON public.item_reviews(menu_item_id);
+CREATE INDEX IF NOT EXISTS idx_item_reviews_order_id ON public.item_reviews(order_id);
+CREATE INDEX IF NOT EXISTS idx_item_reviews_user_id ON public.item_reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_loyalty_points_tier_id ON public.loyalty_points(current_tier_id);
+CREATE INDEX IF NOT EXISTS idx_loyalty_points_user_id ON public.loyalty_points(user_id);
+CREATE INDEX IF NOT EXISTS idx_menu_items_category_id ON public.menu_items(category_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON public.order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_menu_item_id ON public.order_items(menu_item_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_item_id ON public.order_items(item_id);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON public.orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_delivery_address_id ON public.orders(delivery_address_id);
+CREATE INDEX IF NOT EXISTS idx_payments_order_id ON public.payments(order_id);
+CREATE INDEX IF NOT EXISTS idx_points_transactions_user_id ON public.points_transactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_promo_code_usage_promo_code_id ON public.promo_code_usage(promo_code_id);
+CREATE INDEX IF NOT EXISTS idx_promo_code_usage_user_id ON public.promo_code_usage(user_id);
+CREATE INDEX IF NOT EXISTS idx_promo_code_usage_order_id ON public.promo_code_usage(order_id);
+CREATE INDEX IF NOT EXISTS idx_referrals_referrer_id ON public.referrals(referrer_id);
+CREATE INDEX IF NOT EXISTS idx_referrals_referred_user_id ON public.referrals(referred_user_id);
+CREATE INDEX IF NOT EXISTS idx_review_votes_user_id ON public.review_votes(user_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON public.reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_item_id ON public.reviews(item_id);
+CREATE INDEX IF NOT EXISTS idx_saved_payment_methods_user_id ON public.saved_payment_methods(user_id);
+
 -- PROFILES
 DROP POLICY IF EXISTS "Public read profiles" ON public.profiles;
-CREATE POLICY "Public read profiles" ON public.profiles FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
-CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
-CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "Public read profiles" ON public.profiles FOR SELECT USING (true);
+CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH CHECK ((SELECT auth.uid()) = id);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING ((SELECT auth.uid()) = id OR (SELECT public.is_admin()));
 
 -- MENU CATEGORIES
 DROP POLICY IF EXISTS "Public read categories" ON public.menu_categories;
-CREATE POLICY "Public read categories" ON public.menu_categories FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin write categories" ON public.menu_categories;
-CREATE POLICY "Admin write categories" ON public.menu_categories FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert categories" ON public.menu_categories;
+DROP POLICY IF EXISTS "Admin update categories" ON public.menu_categories;
+DROP POLICY IF EXISTS "Admin delete categories" ON public.menu_categories;
+CREATE POLICY "Public read categories" ON public.menu_categories FOR SELECT USING (true);
+CREATE POLICY "Admin insert categories" ON public.menu_categories FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update categories" ON public.menu_categories FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete categories" ON public.menu_categories FOR DELETE USING ((SELECT public.is_admin()));
 
 -- MENU ITEMS
 DROP POLICY IF EXISTS "Public read menu items" ON public.menu_items;
-CREATE POLICY "Public read menu items" ON public.menu_items FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin write menu items" ON public.menu_items;
-CREATE POLICY "Admin write menu items" ON public.menu_items FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert menu items" ON public.menu_items;
+DROP POLICY IF EXISTS "Admin update menu items" ON public.menu_items;
+DROP POLICY IF EXISTS "Admin delete menu items" ON public.menu_items;
+CREATE POLICY "Public read menu items" ON public.menu_items FOR SELECT USING (true);
+CREATE POLICY "Admin insert menu items" ON public.menu_items FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update menu items" ON public.menu_items FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete menu items" ON public.menu_items FOR DELETE USING ((SELECT public.is_admin()));
 
 -- COMBO MEALS
 DROP POLICY IF EXISTS "Public read combo meals" ON public.combo_meals;
-CREATE POLICY "Public read combo meals" ON public.combo_meals FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin write combo meals" ON public.combo_meals;
-CREATE POLICY "Admin write combo meals" ON public.combo_meals FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert combo meals" ON public.combo_meals;
+DROP POLICY IF EXISTS "Admin update combo meals" ON public.combo_meals;
+DROP POLICY IF EXISTS "Admin delete combo meals" ON public.combo_meals;
+CREATE POLICY "Public read combo meals" ON public.combo_meals FOR SELECT USING (true);
+CREATE POLICY "Admin insert combo meals" ON public.combo_meals FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update combo meals" ON public.combo_meals FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete combo meals" ON public.combo_meals FOR DELETE USING ((SELECT public.is_admin()));
 
 -- DELIVERY ADDRESSES
 DROP POLICY IF EXISTS "Users read own addresses" ON public.delivery_addresses;
-CREATE POLICY "Users read own addresses" ON public.delivery_addresses FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own addresses" ON public.delivery_addresses;
-CREATE POLICY "Users insert own addresses" ON public.delivery_addresses FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users update own addresses" ON public.delivery_addresses;
-CREATE POLICY "Users update own addresses" ON public.delivery_addresses FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users delete own addresses" ON public.delivery_addresses;
-CREATE POLICY "Users delete own addresses" ON public.delivery_addresses FOR DELETE USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "Users read own addresses" ON public.delivery_addresses FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own addresses" ON public.delivery_addresses FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
+CREATE POLICY "Users update own addresses" ON public.delivery_addresses FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own addresses" ON public.delivery_addresses FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- DELIVERY ZONES
 DROP POLICY IF EXISTS "Public read delivery zones" ON public.delivery_zones;
-CREATE POLICY "Public read delivery zones" ON public.delivery_zones FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin manage delivery zones" ON public.delivery_zones;
-CREATE POLICY "Admin manage delivery zones" ON public.delivery_zones FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert delivery zones" ON public.delivery_zones;
+DROP POLICY IF EXISTS "Admin update delivery zones" ON public.delivery_zones;
+DROP POLICY IF EXISTS "Admin delete delivery zones" ON public.delivery_zones;
+CREATE POLICY "Public read delivery zones" ON public.delivery_zones FOR SELECT USING (true);
+CREATE POLICY "Admin insert delivery zones" ON public.delivery_zones FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update delivery zones" ON public.delivery_zones FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete delivery zones" ON public.delivery_zones FOR DELETE USING ((SELECT public.is_admin()));
 
 -- ORDERS
 DROP POLICY IF EXISTS "Users read own orders" ON public.orders;
-CREATE POLICY "Users read own orders" ON public.orders FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own orders" ON public.orders;
-CREATE POLICY "Users insert own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users/Admins update orders" ON public.orders;
-CREATE POLICY "Users/Admins update orders" ON public.orders FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Admins delete orders" ON public.orders;
-CREATE POLICY "Admins delete orders" ON public.orders FOR DELETE USING (public.is_admin());
+CREATE POLICY "Users read own orders" ON public.orders FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own orders" ON public.orders FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users/Admins update orders" ON public.orders FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Admins delete orders" ON public.orders FOR DELETE USING ((SELECT public.is_admin()));
 
 -- ORDER ITEMS
 DROP POLICY IF EXISTS "Users read own order items" ON public.order_items;
-CREATE POLICY "Users read own order items" ON public.order_items FOR SELECT USING (
-  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid()) OR public.is_admin()
-);
 DROP POLICY IF EXISTS "Users insert own order items" ON public.order_items;
-CREATE POLICY "Users insert own order items" ON public.order_items FOR INSERT WITH CHECK (
-  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid()) OR public.is_admin()
-);
 DROP POLICY IF EXISTS "Admins manage order items" ON public.order_items;
-CREATE POLICY "Admins manage order items" ON public.order_items FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admins update order items" ON public.order_items;
+DROP POLICY IF EXISTS "Admins delete order items" ON public.order_items;
+CREATE POLICY "Users read own order items" ON public.order_items FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = (SELECT auth.uid())) OR (SELECT public.is_admin())
+);
+CREATE POLICY "Users insert own order items" ON public.order_items FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = order_items.order_id AND orders.user_id = (SELECT auth.uid())) OR (SELECT public.is_admin())
+);
+CREATE POLICY "Admins update order items" ON public.order_items FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admins delete order items" ON public.order_items FOR DELETE USING ((SELECT public.is_admin()));
 
 -- DELIVERY TRACKING
 DROP POLICY IF EXISTS "Users read own tracking" ON public.delivery_tracking;
-CREATE POLICY "Users read own tracking" ON public.delivery_tracking FOR SELECT USING (
-  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = delivery_tracking.order_id AND orders.user_id = auth.uid()) OR public.is_admin()
-);
 DROP POLICY IF EXISTS "Admins manage tracking" ON public.delivery_tracking;
-CREATE POLICY "Admins manage tracking" ON public.delivery_tracking FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admins insert tracking" ON public.delivery_tracking;
+DROP POLICY IF EXISTS "Admins update tracking" ON public.delivery_tracking;
+DROP POLICY IF EXISTS "Admins delete tracking" ON public.delivery_tracking;
+CREATE POLICY "Users read own tracking" ON public.delivery_tracking FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = delivery_tracking.order_id AND orders.user_id = (SELECT auth.uid())) OR (SELECT public.is_admin())
+);
+CREATE POLICY "Admins insert tracking" ON public.delivery_tracking FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admins update tracking" ON public.delivery_tracking FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admins delete tracking" ON public.delivery_tracking FOR DELETE USING ((SELECT public.is_admin()));
 
 -- PAYMENTS
 DROP POLICY IF EXISTS "Users read own payments" ON public.payments;
-CREATE POLICY "Users read own payments" ON public.payments FOR SELECT USING (
-  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = payments.order_id AND orders.user_id = auth.uid()) OR public.is_admin()
-);
 DROP POLICY IF EXISTS "System/Users insert payments" ON public.payments;
-CREATE POLICY "System/Users insert payments" ON public.payments FOR INSERT WITH CHECK (
-  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = payments.order_id AND orders.user_id = auth.uid()) OR public.is_admin()
-);
 DROP POLICY IF EXISTS "Admins manage payments" ON public.payments;
-CREATE POLICY "Admins manage payments" ON public.payments FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admins update payments" ON public.payments;
+DROP POLICY IF EXISTS "Admins delete payments" ON public.payments;
+CREATE POLICY "Users read own payments" ON public.payments FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = payments.order_id AND orders.user_id = (SELECT auth.uid())) OR (SELECT public.is_admin())
+);
+CREATE POLICY "System/Users insert payments" ON public.payments FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM public.orders WHERE orders.id = payments.order_id AND orders.user_id = (SELECT auth.uid())) OR (SELECT public.is_admin())
+);
+CREATE POLICY "Admins update payments" ON public.payments FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admins delete payments" ON public.payments FOR DELETE USING ((SELECT public.is_admin()));
 
 -- BOOKINGS
 DROP POLICY IF EXISTS "Users read own bookings" ON public.bookings;
-CREATE POLICY "Users read own bookings" ON public.bookings FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own bookings" ON public.bookings;
-CREATE POLICY "Users insert own bookings" ON public.bookings FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users update own bookings" ON public.bookings;
-CREATE POLICY "Users update own bookings" ON public.bookings FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Admins manage bookings" ON public.bookings;
-CREATE POLICY "Admins manage bookings" ON public.bookings FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admins delete bookings" ON public.bookings;
+CREATE POLICY "Users read own bookings" ON public.bookings FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own bookings" ON public.bookings FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own bookings" ON public.bookings FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Admins delete bookings" ON public.bookings FOR DELETE USING ((SELECT public.is_admin()));
 
 -- BOOKING WAITLIST
 DROP POLICY IF EXISTS "Users read own waitlist" ON public.booking_waitlist;
-CREATE POLICY "Users read own waitlist" ON public.booking_waitlist FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own waitlist" ON public.booking_waitlist;
-CREATE POLICY "Users insert own waitlist" ON public.booking_waitlist FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Admins manage waitlist" ON public.booking_waitlist;
-CREATE POLICY "Admins manage waitlist" ON public.booking_waitlist FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Users update own waitlist" ON public.booking_waitlist;
+DROP POLICY IF EXISTS "Users delete own waitlist" ON public.booking_waitlist;
+CREATE POLICY "Users read own waitlist" ON public.booking_waitlist FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own waitlist" ON public.booking_waitlist FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own waitlist" ON public.booking_waitlist FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own waitlist" ON public.booking_waitlist FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- REVIEWS
 DROP POLICY IF EXISTS "Public read reviews" ON public.reviews;
-CREATE POLICY "Public read reviews" ON public.reviews FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Users insert own review" ON public.reviews;
-CREATE POLICY "Users insert own review" ON public.reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users/Admins update reviews" ON public.reviews;
-CREATE POLICY "Users/Admins update reviews" ON public.reviews FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Admins delete reviews" ON public.reviews;
-CREATE POLICY "Admins delete reviews" ON public.reviews FOR DELETE USING (public.is_admin());
+CREATE POLICY "Public read reviews" ON public.reviews FOR SELECT USING (true);
+CREATE POLICY "Users insert own review" ON public.reviews FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
+CREATE POLICY "Users/Admins update reviews" ON public.reviews FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Admins delete reviews" ON public.reviews FOR DELETE USING ((SELECT public.is_admin()));
 
 -- ITEM REVIEWS
 DROP POLICY IF EXISTS "Public read item reviews" ON public.item_reviews;
-CREATE POLICY "Public read item reviews" ON public.item_reviews FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Users insert own item review" ON public.item_reviews;
-CREATE POLICY "Users insert own item review" ON public.item_reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users/Admins update item reviews" ON public.item_reviews;
-CREATE POLICY "Users/Admins update item reviews" ON public.item_reviews FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Admins delete item reviews" ON public.item_reviews;
-CREATE POLICY "Admins delete item reviews" ON public.item_reviews FOR DELETE USING (public.is_admin());
+CREATE POLICY "Public read item reviews" ON public.item_reviews FOR SELECT USING (true);
+CREATE POLICY "Users insert own item review" ON public.item_reviews FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
+CREATE POLICY "Users/Admins update item reviews" ON public.item_reviews FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Admins delete item reviews" ON public.item_reviews FOR DELETE USING ((SELECT public.is_admin()));
 
 -- REVIEW VOTES
 DROP POLICY IF EXISTS "Public read votes" ON public.review_votes;
-CREATE POLICY "Public read votes" ON public.review_votes FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Users manage own vote" ON public.review_votes;
-CREATE POLICY "Users manage own vote" ON public.review_votes FOR ALL USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users insert own vote" ON public.review_votes;
+DROP POLICY IF EXISTS "Users update own vote" ON public.review_votes;
+DROP POLICY IF EXISTS "Users delete own vote" ON public.review_votes;
+CREATE POLICY "Public read votes" ON public.review_votes FOR SELECT USING (true);
+CREATE POLICY "Users insert own vote" ON public.review_votes FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
+CREATE POLICY "Users update own vote" ON public.review_votes FOR UPDATE USING ((SELECT auth.uid()) = user_id);
+CREATE POLICY "Users delete own vote" ON public.review_votes FOR DELETE USING ((SELECT auth.uid()) = user_id);
 
 -- PROMO CODES
 DROP POLICY IF EXISTS "Select promo codes" ON public.promo_codes;
-CREATE POLICY "Select promo codes" ON public.promo_codes FOR SELECT USING (is_active = true OR public.is_admin());
 DROP POLICY IF EXISTS "Admin manage promo codes" ON public.promo_codes;
-CREATE POLICY "Admin manage promo codes" ON public.promo_codes FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert promo codes" ON public.promo_codes;
+DROP POLICY IF EXISTS "Admin update promo codes" ON public.promo_codes;
+DROP POLICY IF EXISTS "Admin delete promo codes" ON public.promo_codes;
+CREATE POLICY "Select promo codes" ON public.promo_codes FOR SELECT USING (is_active = true OR (SELECT public.is_admin()));
+CREATE POLICY "Admin insert promo codes" ON public.promo_codes FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update promo codes" ON public.promo_codes FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete promo codes" ON public.promo_codes FOR DELETE USING ((SELECT public.is_admin()));
 
 -- PROMO CODE USAGE
 DROP POLICY IF EXISTS "Users read own promo usage" ON public.promo_code_usage;
-CREATE POLICY "Users read own promo usage" ON public.promo_code_usage FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own promo usage" ON public.promo_code_usage;
-CREATE POLICY "Users insert own promo usage" ON public.promo_code_usage FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "Users read own promo usage" ON public.promo_code_usage FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own promo usage" ON public.promo_code_usage FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- LOYALTY TIERS
 DROP POLICY IF EXISTS "Public read loyalty tiers" ON public.loyalty_tiers;
-CREATE POLICY "Public read loyalty tiers" ON public.loyalty_tiers FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin manage loyalty tiers" ON public.loyalty_tiers;
-CREATE POLICY "Admin manage loyalty tiers" ON public.loyalty_tiers FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert loyalty tiers" ON public.loyalty_tiers;
+DROP POLICY IF EXISTS "Admin update loyalty tiers" ON public.loyalty_tiers;
+DROP POLICY IF EXISTS "Admin delete loyalty tiers" ON public.loyalty_tiers;
+CREATE POLICY "Public read loyalty tiers" ON public.loyalty_tiers FOR SELECT USING (true);
+CREATE POLICY "Admin insert loyalty tiers" ON public.loyalty_tiers FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update loyalty tiers" ON public.loyalty_tiers FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete loyalty tiers" ON public.loyalty_tiers FOR DELETE USING ((SELECT public.is_admin()));
 
 -- LOYALTY POINTS
 DROP POLICY IF EXISTS "Users read own loyalty points" ON public.loyalty_points;
-CREATE POLICY "Users read own loyalty points" ON public.loyalty_points FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users/System update loyalty points" ON public.loyalty_points;
-CREATE POLICY "Users/System update loyalty points" ON public.loyalty_points FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users/System insert loyalty points" ON public.loyalty_points;
+DROP POLICY IF EXISTS "Admin delete loyalty points" ON public.loyalty_points;
+CREATE POLICY "Users read own loyalty points" ON public.loyalty_points FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users/System insert loyalty points" ON public.loyalty_points FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users/System update loyalty points" ON public.loyalty_points FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Admin delete loyalty points" ON public.loyalty_points FOR DELETE USING ((SELECT public.is_admin()));
 
 -- POINTS TRANSACTIONS
 DROP POLICY IF EXISTS "Users read own transactions" ON public.points_transactions;
-CREATE POLICY "Users read own transactions" ON public.points_transactions FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users/System insert transactions" ON public.points_transactions;
-CREATE POLICY "Users/System insert transactions" ON public.points_transactions FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "Users read own transactions" ON public.points_transactions FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users/System insert transactions" ON public.points_transactions FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- LOYALTY REWARDS
 DROP POLICY IF EXISTS "Public read loyalty rewards" ON public.loyalty_rewards;
-CREATE POLICY "Public read loyalty rewards" ON public.loyalty_rewards FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin manage loyalty rewards" ON public.loyalty_rewards;
-CREATE POLICY "Admin manage loyalty rewards" ON public.loyalty_rewards FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert loyalty rewards" ON public.loyalty_rewards;
+DROP POLICY IF EXISTS "Admin update loyalty rewards" ON public.loyalty_rewards;
+DROP POLICY IF EXISTS "Admin delete loyalty rewards" ON public.loyalty_rewards;
+CREATE POLICY "Public read loyalty rewards" ON public.loyalty_rewards FOR SELECT USING (true);
+CREATE POLICY "Admin insert loyalty rewards" ON public.loyalty_rewards FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update loyalty rewards" ON public.loyalty_rewards FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete loyalty rewards" ON public.loyalty_rewards FOR DELETE USING ((SELECT public.is_admin()));
 
 -- REFERRALS
 DROP POLICY IF EXISTS "Users read own referrals" ON public.referrals;
-CREATE POLICY "Users read own referrals" ON public.referrals FOR SELECT USING (auth.uid() = referrer_id OR auth.uid() = referred_user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert referrals" ON public.referrals;
-CREATE POLICY "Users insert referrals" ON public.referrals FOR INSERT WITH CHECK (auth.uid() = referrer_id OR auth.uid() = referred_user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users/Admins update referrals" ON public.referrals;
-CREATE POLICY "Users/Admins update referrals" ON public.referrals FOR UPDATE USING (auth.uid() = referrer_id OR auth.uid() = referred_user_id OR public.is_admin());
+CREATE POLICY "Users read own referrals" ON public.referrals FOR SELECT USING ((SELECT auth.uid()) = referrer_id OR (SELECT auth.uid()) = referred_user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert referrals" ON public.referrals FOR INSERT WITH CHECK ((SELECT auth.uid()) = referrer_id OR (SELECT auth.uid()) = referred_user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users/Admins update referrals" ON public.referrals FOR UPDATE USING ((SELECT auth.uid()) = referrer_id OR (SELECT auth.uid()) = referred_user_id OR (SELECT public.is_admin()));
 
 -- FLASH SALES
 DROP POLICY IF EXISTS "Public read flash sales" ON public.flash_sales;
-CREATE POLICY "Public read flash sales" ON public.flash_sales FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin manage flash sales" ON public.flash_sales;
-CREATE POLICY "Admin manage flash sales" ON public.flash_sales FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert flash sales" ON public.flash_sales;
+DROP POLICY IF EXISTS "Admin update flash sales" ON public.flash_sales;
+DROP POLICY IF EXISTS "Admin delete flash sales" ON public.flash_sales;
+CREATE POLICY "Public read flash sales" ON public.flash_sales FOR SELECT USING (true);
+CREATE POLICY "Admin insert flash sales" ON public.flash_sales FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update flash sales" ON public.flash_sales FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete flash sales" ON public.flash_sales FOR DELETE USING ((SELECT public.is_admin()));
 
 -- NOTIFICATIONS
 DROP POLICY IF EXISTS "Users read own notifications" ON public.notifications;
-CREATE POLICY "Users read own notifications" ON public.notifications FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Allow notification creation" ON public.notifications;
-CREATE POLICY "Allow notification creation" ON public.notifications FOR INSERT WITH CHECK (true);
 DROP POLICY IF EXISTS "Users update own notifications" ON public.notifications;
-CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDATE USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users delete own notifications" ON public.notifications;
-CREATE POLICY "Users delete own notifications" ON public.notifications FOR DELETE USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "Users read own notifications" ON public.notifications FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Allow notification creation" ON public.notifications FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own notifications" ON public.notifications FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own notifications" ON public.notifications FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- NOTIFICATION PREFERENCES
 DROP POLICY IF EXISTS "Users manage own notification preferences" ON public.notification_preferences;
-CREATE POLICY "Users manage own notification preferences" ON public.notification_preferences FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users read own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Users insert own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Users update own notification preferences" ON public.notification_preferences;
+DROP POLICY IF EXISTS "Users delete own notification preferences" ON public.notification_preferences;
+CREATE POLICY "Users read own notification preferences" ON public.notification_preferences FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own notification preferences" ON public.notification_preferences FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own notification preferences" ON public.notification_preferences FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own notification preferences" ON public.notification_preferences FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- USER PREFERENCES
 DROP POLICY IF EXISTS "Users manage own user preferences" ON public.user_preferences;
-CREATE POLICY "Users manage own user preferences" ON public.user_preferences FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users read own user preferences" ON public.user_preferences;
+DROP POLICY IF EXISTS "Users insert own user preferences" ON public.user_preferences;
+DROP POLICY IF EXISTS "Users update own user preferences" ON public.user_preferences;
+DROP POLICY IF EXISTS "Users delete own user preferences" ON public.user_preferences;
+CREATE POLICY "Users read own user preferences" ON public.user_preferences FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own user preferences" ON public.user_preferences FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own user preferences" ON public.user_preferences FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own user preferences" ON public.user_preferences FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- FAVORITE ITEMS
 DROP POLICY IF EXISTS "Users manage own favorites" ON public.favorite_items;
-CREATE POLICY "Users manage own favorites" ON public.favorite_items FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users read own favorites" ON public.favorite_items;
+DROP POLICY IF EXISTS "Users insert own favorites" ON public.favorite_items;
+DROP POLICY IF EXISTS "Users update own favorites" ON public.favorite_items;
+DROP POLICY IF EXISTS "Users delete own favorites" ON public.favorite_items;
+CREATE POLICY "Users read own favorites" ON public.favorite_items FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own favorites" ON public.favorite_items FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own favorites" ON public.favorite_items FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own favorites" ON public.favorite_items FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- SAVED PAYMENT METHODS
 DROP POLICY IF EXISTS "Users manage own saved payment methods" ON public.saved_payment_methods;
-CREATE POLICY "Users manage own saved payment methods" ON public.saved_payment_methods FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users read own saved payment methods" ON public.saved_payment_methods;
+DROP POLICY IF EXISTS "Users insert own saved payment methods" ON public.saved_payment_methods;
+DROP POLICY IF EXISTS "Users update own saved payment methods" ON public.saved_payment_methods;
+DROP POLICY IF EXISTS "Users delete own saved payment methods" ON public.saved_payment_methods;
+CREATE POLICY "Users read own saved payment methods" ON public.saved_payment_methods FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own saved payment methods" ON public.saved_payment_methods FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own saved payment methods" ON public.saved_payment_methods FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own saved payment methods" ON public.saved_payment_methods FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- EVENTS
 DROP POLICY IF EXISTS "Public read events" ON public.events;
-CREATE POLICY "Public read events" ON public.events FOR SELECT USING (true);
 DROP POLICY IF EXISTS "Admin manage events" ON public.events;
-CREATE POLICY "Admin manage events" ON public.events FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Admin insert events" ON public.events;
+DROP POLICY IF EXISTS "Admin update events" ON public.events;
+DROP POLICY IF EXISTS "Admin delete events" ON public.events;
+CREATE POLICY "Public read events" ON public.events FOR SELECT USING (true);
+CREATE POLICY "Admin insert events" ON public.events FOR INSERT WITH CHECK ((SELECT public.is_admin()));
+CREATE POLICY "Admin update events" ON public.events FOR UPDATE USING ((SELECT public.is_admin()));
+CREATE POLICY "Admin delete events" ON public.events FOR DELETE USING ((SELECT public.is_admin()));
 
 -- EVENT REGISTRATIONS
 DROP POLICY IF EXISTS "Users read own event registrations" ON public.event_registrations;
-CREATE POLICY "Users read own event registrations" ON public.event_registrations FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own event registrations" ON public.event_registrations;
-CREATE POLICY "Users insert own event registrations" ON public.event_registrations FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Users/Admins manage event registrations" ON public.event_registrations;
-CREATE POLICY "Users/Admins manage event registrations" ON public.event_registrations FOR ALL USING (auth.uid() = user_id OR public.is_admin());
+DROP POLICY IF EXISTS "Users update own event registrations" ON public.event_registrations;
+DROP POLICY IF EXISTS "Users delete own event registrations" ON public.event_registrations;
+CREATE POLICY "Users read own event registrations" ON public.event_registrations FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own event registrations" ON public.event_registrations FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own event registrations" ON public.event_registrations FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own event registrations" ON public.event_registrations FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- CATERING REQUESTS
 DROP POLICY IF EXISTS "Users read own catering requests" ON public.catering_requests;
-CREATE POLICY "Users read own catering requests" ON public.catering_requests FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
 DROP POLICY IF EXISTS "Users insert own catering requests" ON public.catering_requests;
-CREATE POLICY "Users insert own catering requests" ON public.catering_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
 DROP POLICY IF EXISTS "Admins manage catering requests" ON public.catering_requests;
-CREATE POLICY "Admins manage catering requests" ON public.catering_requests FOR ALL USING (public.is_admin());
+DROP POLICY IF EXISTS "Users update own catering requests" ON public.catering_requests;
+DROP POLICY IF EXISTS "Users delete own catering requests" ON public.catering_requests;
+CREATE POLICY "Users read own catering requests" ON public.catering_requests FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users insert own catering requests" ON public.catering_requests FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users update own catering requests" ON public.catering_requests FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
+CREATE POLICY "Users delete own catering requests" ON public.catering_requests FOR DELETE USING ((SELECT auth.uid()) = user_id OR (SELECT public.is_admin()));
 
 -- STORAGE (menu-images)
 DROP POLICY IF EXISTS "Public read menu images" ON storage.objects;
-CREATE POLICY "Public read menu images" ON storage.objects FOR SELECT USING (bucket_id = 'menu-images');
+DROP POLICY IF EXISTS "Authenticated users upload menu images" ON storage.objects;
+CREATE POLICY "Authenticated users upload menu images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'menu-images' AND auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Authenticated users update menu images" ON storage.objects;
+CREATE POLICY "Authenticated users update menu images" ON storage.objects FOR UPDATE USING (bucket_id = 'menu-images' AND auth.role() = 'authenticated');
 DROP POLICY IF EXISTS "Authenticated users upload menu images" ON storage.objects;
 CREATE POLICY "Authenticated users upload menu images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'menu-images' AND auth.role() = 'authenticated');
 DROP POLICY IF EXISTS "Authenticated users update menu images" ON storage.objects;
@@ -898,14 +1049,14 @@ BEGIN
 
   INSERT INTO public.menu_items (name, description, price, category_id, is_available, is_featured, dietary_info, dietary_tags, spice_level, rating, order_count, image_url)
   VALUES 
-    ('Paneer Tikka Platter', 'Cottage cheese cubes marinated in spiced yogurt and grilled in traditional clay oven.', 280.00, cat_starters, true, true, 'Vegetarian', ARRAY['vegetarian', 'gluten-free'], 'medium', 4.8, 142, 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=800&auto=format&fit=crop&q=60'),
-    ('Crispy Corn Delight', 'Golden fried sweet corn tossed with bell peppers, green chilies, and aromatic herbs.', 210.00, cat_starters, true, false, 'Vegetarian', ARRAY['vegetarian'], 'mild', 4.5, 95, 'https://images.unsplash.com/photo-1514944298352-fa0f9d8f63bf?w=800&auto=format&fit=crop&q=60'),
-    ('Chicken Malai Tikka', 'Tender chicken morsels steeped in rich cream, cashew paste, and gentle royal cardamom.', 340.00, cat_starters, true, true, 'Non-Vegetarian', ARRAY['halal'], 'mild', 4.9, 210, 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=800&auto=format&fit=crop&q=60'),
+    ('Paneer Tikka Platter', 'Cottage cheese cubes marinated in spiced yogurt and grilled in traditional clay oven.', 280.00, cat_starters, true, true, 'Vegetarian', ARRAY['vegetarian', 'gluten-free'], 'medium', 4.8, 142, 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&auto=format&fit=crop&q=60'),
+    ('Crispy Corn Delight', 'Golden fried sweet corn tossed with bell peppers, green chilies, and aromatic herbs.', 210.00, cat_starters, true, false, 'Vegetarian', ARRAY['vegetarian'], 'mild', 4.5, 95, 'https://images.unsplash.com/photo-1551248429-40975aa4de74?w=800&auto=format&fit=crop&q=60'),
+    ('Chicken Malai Tikka', 'Tender chicken morsels steeped in rich cream, cashew paste, and gentle royal cardamom.', 340.00, cat_starters, true, true, 'Non-Vegetarian', ARRAY['halal'], 'mild', 4.9, 210, 'https://images.unsplash.com/photo-1632778149955-e80f8ceca2e8?w=800&auto=format&fit=crop&q=60'),
     ('Hyderabadi Dum Biryani (Chicken)', 'Fragrant basmati rice layered with spiced marinated chicken and slow-cooked with royal saffron.', 380.00, cat_biryani, true, true, 'Non-Vegetarian', ARRAY['halal'], 'spicy', 4.9, 450, 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&auto=format&fit=crop&q=60'),
     ('Mutton Royal Dum Biryani', 'Prime tender cuts of mutton simmered in fragrant awadhi spices, layered with aged basmati rice.', 480.00, cat_biryani, true, true, 'Non-Vegetarian', ARRAY['halal'], 'spicy', 5.0, 380, 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=800&auto=format&fit=crop&q=60'),
     ('Everest Special Veg Dum Biryani', 'Fresh farm garden vegetables, paneer cubes, and golden caramelized onions layered with long-grain rice.', 290.00, cat_biryani, true, false, 'Vegetarian', ARRAY['vegetarian'], 'medium', 4.7, 180, 'https://images.unsplash.com/photo-1642821373181-696a54913e9a?w=800&auto=format&fit=crop&q=60'),
     ('Galouti Kebab', 'Melt-in-mouth minced mutton patties infused with 16 exotic royal spices, served on miniature parathas.', 420.00, cat_kebabs, true, true, 'Non-Vegetarian', ARRAY['halal'], 'medium', 4.9, 190, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&auto=format&fit=crop&q=60'),
-    ('Seekh Kebab Supreme', 'Finely spiced minced lamb grilled over charcoal sigris, garnished with fresh mint & onion rings.', 390.00, cat_kebabs, true, false, 'Non-Vegetarian', ARRAY['halal'], 'spicy', 4.8, 160, 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?w=800&auto=format&fit=crop&q=60'),
+    ('Seekh Kebab Supreme', 'Finely spiced minced lamb grilled over charcoal sigris, garnished with fresh mint & onion rings.', 390.00, cat_kebabs, true, false, 'Non-Vegetarian', ARRAY['halal'], 'spicy', 4.8, 160, 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=60'),
     ('Butter Chicken Everest Special', 'Tandoor grilled chicken chunks simmered in a velvety, buttery tomato & cashew silk gravy.', 390.00, cat_main, true, true, 'Non-Vegetarian', ARRAY['halal'], 'mild', 4.9, 520, 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=800&auto=format&fit=crop&q=60'),
     ('Paneer Butter Masala', 'Fresh cottage cheese cubes gently cooked in a creamy spiced tomato gravy with fragrant kasuri methi.', 310.00, cat_main, true, true, 'Vegetarian', ARRAY['vegetarian'], 'mild', 4.8, 310, 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800&auto=format&fit=crop&q=60'),
     ('Dal Makhani Bukhara', 'Whole black lentils slow simmered overnight over live charcoal, enriched with fresh dairy butter.', 260.00, cat_main, true, false, 'Vegetarian', ARRAY['vegetarian', 'gluten-free'], 'mild', 4.8, 280, 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&auto=format&fit=crop&q=60'),
