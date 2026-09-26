@@ -92,13 +92,13 @@ export default function HomeOptimized() {
     return () => clearInterval(timer)
   }, [])
 
-  // Fetch real menu items with real UUIDs from Supabase
+  // Fetch real menu items with category names from Supabase
   useEffect(() => {
     const fetchSignatureDishes = async () => {
       try {
         const { data, error } = await supabase
           .from('menu_items')
-          .select('*')
+          .select('*, menu_categories(name)')
           .eq('is_available', true)
           .limit(3)
 
@@ -106,11 +106,11 @@ export default function HomeOptimized() {
           setPedestalDishes(data.map((dish, idx) => ({
             id: dish.id,
             name: dish.name,
-            category: dish.category_id || 'Signature',
+            category: dish.menu_categories?.name || 'Signature',
             price: Number(dish.price),
             image: dish.image_url || SIGNATURE_PEDESTAL_DISHES[idx]?.image || `/pedestal_dish_${idx + 1}.jpg`,
             description: dish.description || SIGNATURE_PEDESTAL_DISHES[idx]?.description,
-            calories: dish.calories || '350 kcal',
+            calories: dish.calories ? `${dish.calories} kcal` : '350 kcal',
             tag: idx === 0 ? 'Chef Choice' : idx === 1 ? 'Signature' : 'Artisan'
           })))
         }
